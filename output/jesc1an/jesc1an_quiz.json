@@ -1,0 +1,127 @@
+{
+  "title": "Answer Key Revision Workshop - Kid-friendly workshop quiz",
+  "version": "1.0",
+  "totalQuestions": 8,
+  "modules": [
+    {
+      "name": "Using the key",
+      "focus": "This resource is for checking, not skipping practice.",
+      "questions": [
+        {
+          "id": "j1an_1",
+          "question": "What is this PDF mostly for?",
+          "options": [
+            "Checking your own answers",
+            "Watching cartoons",
+            "Drawing maps",
+            "Counting pencils"
+          ],
+          "answer": 0,
+          "explanation": "It is an answer resource for self-checking."
+        },
+        {
+          "id": "j1an_2",
+          "question": "When should you use the answer key?",
+          "options": [
+            "After you try the work",
+            "Before reading the question",
+            "Instead of studying",
+            "Only when bored"
+          ],
+          "answer": 0,
+          "explanation": "Trying first makes the check useful."
+        }
+      ]
+    },
+    {
+      "name": "Reading patterns",
+      "focus": "Different answer shapes tell you what kind of question it was.",
+      "questions": [
+        {
+          "id": "j1an_3",
+          "question": "If the key shows more than one letter, that usually means",
+          "options": [
+            "More than one option may be correct",
+            "The page is broken",
+            "The chapter has no answers",
+            "The pencil is dull"
+          ],
+          "answer": 0,
+          "explanation": "Multiple letters usually mean a multi-answer question."
+        },
+        {
+          "id": "j1an_4",
+          "question": "If the key says True/False, the question was probably a",
+          "options": [
+            "statement to judge",
+            "picture puzzle",
+            "music task",
+            "labelling race"
+          ],
+          "answer": 0,
+          "explanation": "True/False belongs to statement questions."
+        }
+      ]
+    },
+    {
+      "name": "Fixing mistakes",
+      "focus": "Mistakes are clues for what to revise next.",
+      "questions": [
+        {
+          "id": "j1an_5",
+          "question": "What should you do after finding a wrong answer?",
+          "options": [
+            "Read the explanation and retry",
+            "Hide the notebook",
+            "Stop studying",
+            "Ignore it"
+          ],
+          "answer": 0,
+          "explanation": "Retrying helps the idea stick."
+        },
+        {
+          "id": "j1an_6",
+          "question": "Why is retrying helpful?",
+          "options": [
+            "It helps you remember later",
+            "It changes the answer key",
+            "It makes pages vanish",
+            "It removes homework"
+          ],
+          "answer": 0,
+          "explanation": "A second attempt builds stronger memory."
+        }
+      ]
+    },
+    {
+      "name": "Revision habits",
+      "focus": "Use the key to learn, not to copy.",
+      "questions": [
+        {
+          "id": "j1an_7",
+          "question": "What is the main job of a revision resource?",
+          "options": [
+            "Help you check and remember",
+            "Decorate the desk",
+            "Replace all practice",
+            "Hide the syllabus"
+          ],
+          "answer": 0,
+          "explanation": "A revision resource supports honest study."
+        },
+        {
+          "id": "j1an_8",
+          "question": "What is the best study habit here?",
+          "options": [
+            "Try first, check second, retry third",
+            "Open answers first",
+            "Skip revision",
+            "Read once and stop"
+          ],
+          "answer": 0,
+          "explanation": "That routine keeps practice real."
+        }
+      ]
+    }
+  ]
+}

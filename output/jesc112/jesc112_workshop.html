@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Magnetic Effects of Electric Current</title>
+  <style>
+    :root {
+      --bg:#f5f9ff; --surface:#ffffff; --text:#10213a; --muted:#5c6f8a;
+      --border:#d7e4f5; --primary:#2563eb; --accent:#14b8a6; --good:#15803d; --bad:#b91c1c;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Segoe UI, system-ui, sans-serif; color:var(--text);
+      background:linear-gradient(180deg, var(--bg), color-mix(in srgb, var(--bg) 80%, white)); }
+    #bar { position:fixed; top:0; left:0; height:4px; width:0; background:linear-gradient(90deg,var(--primary),var(--accent)); z-index:50; }
+    #shell { max-width:1100px; margin:0 auto; padding:16px 14px 36px; }
+    #top { position:sticky; top:8px; z-index:30; display:flex; justify-content:space-between; gap:10px; align-items:center;
+      padding:12px 14px; background:rgba(255,255,255,.9); border:1px solid var(--border); border-radius:18px; backdrop-filter:blur(10px); }
+    .brand strong { display:block; font-size:1.02rem; }
+    .brand span { color:var(--muted); font-size:.92rem; }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; }
+    button { font:inherit; }
+    .btn { border:1px solid var(--border); background:#fff; padding:10px 14px; border-radius:12px; cursor:pointer; }
+    .btn.primary { background:linear-gradient(135deg,var(--primary),var(--accent)); color:#fff; border-color:transparent; }
+    #slide { margin-top:16px; background:rgba(255,255,255,.92); border:1px solid var(--border); border-radius:22px; overflow:hidden; box-shadow:0 16px 32px rgba(15,23,42,.12); }
+    .panel { display:none; padding:22px; }
+    .panel.active { display:block; }
+    .eyebrow { text-transform:uppercase; letter-spacing:.14em; color:var(--primary); font-size:.78rem; font-weight:800; margin-bottom:10px; }
+    h1,h2,h3 { margin:0 0 10px; line-height:1.15; }
+    h2 { font-size:clamp(1.7rem, 4vw, 2.8rem); }
+    .lede, p, li { line-height:1.65; font-size:1.02rem; }
+    .lede { color:var(--muted); max-width:70ch; }
+    .grid { display:grid; grid-template-columns:repeat(12, 1fr); gap:14px; margin-top:16px; }
+    .card { grid-column:span 6; padding:16px; border:1px solid var(--border); border-radius:18px; background:#fff; }
+    .callout { margin-top:12px; padding:12px 14px; border-radius:14px; background:color-mix(in srgb, var(--primary) 10%, white); border-left:4px solid var(--primary); }
+    .previews { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:10px; }
+    .preview { margin:0; padding:10px; border:1px solid var(--border); border-radius:16px; background:#fff; }
+    .preview img { width:100%; display:block; border-radius:12px; }
+    .preview figcaption { color:var(--muted); font-size:.9rem; margin-top:6px; }
+    #toc { position:fixed; left:-350px; top:0; bottom:0; width:min(330px, 92vw); background:rgba(255,255,255,.96); border-right:1px solid var(--border);
+      box-shadow:18px 0 32px rgba(15,23,42,.14); z-index:40; padding:16px; overflow:auto; transition:left .2s ease; }
+    #toc.open { left:0; }
+    .toc-item { width:100%; text-align:left; display:block; margin:0 0 8px; border:1px solid var(--border); background:#fff; padding:10px 12px; border-radius:12px; cursor:pointer; }
+    .toc-item.active { border-color:var(--primary); background:color-mix(in srgb, var(--primary) 10%, white); font-weight:700; }
+    .footer { display:flex; justify-content:space-between; gap:10px; margin-top:14px; flex-wrap:wrap; }
+    .qmodule { margin-top:14px; }
+    .qcard { margin-top:12px; border:1px solid var(--border); border-radius:18px; padding:14px; background:#fff; }
+    .qtitle { font-weight:700; margin-bottom:10px; }
+    .opts { display:grid; gap:10px; }
+    .opt { width:100%; display:flex; gap:10px; text-align:left; border:1px solid var(--border); border-radius:14px; background:#fff; padding:11px 12px; cursor:pointer; }
+    .opt span { width:26px; height:26px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:color-mix(in srgb, var(--primary) 12%, white); color:var(--primary); font-weight:800; flex:none; }
+    .opt.correct { border-color:#16a34a; background:#f0fdf4; }
+    .opt.wrong { border-color:#dc2626; background:#fef2f2; }
+    .opt.locked { pointer-events:none; opacity:.88; }
+    .feedback { display:none; margin-top:10px; padding:12px 14px; border-radius:14px; }
+    .feedback.show { display:block; }
+    .feedback.good { background:#f0fdf4; color:#166534; border:1px solid #86efac; }
+    .feedback.bad { background:#fef2f2; color:#991b1b; border:1px solid #fecaca; }
+    .summary { display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:12px; margin:16px 0; }
+    .stat { padding:14px; border:1px solid var(--border); border-radius:18px; background:#fff; }
+    .muted { color:var(--muted); }
+    @media (max-width:820px) { .card { grid-column:span 12; } #top { flex-direction:column; align-items:flex-start; } }
+  </style>
+</head>
+<body>
+  <div id="bar"></div>
+  <aside id="toc">
+    <button class="btn" data-close>Close</button>
+    <h3>Magnetic Effects of Electric Current</h3>
+    <p class="muted">Kid-friendly workshop on current, magnetism, field lines, and circuit safety.</p>
+    <button class="toc-item" data-jump="0">1. Electricity can act like a magnet</button><button class="toc-item" data-jump="1">2. Current makes magnetism</button><button class="toc-item" data-jump="2">3. Reading magnetic field lines</button><button class="toc-item" data-jump="3">4. Wires, coils, and electromagnets</button><button class="toc-item" data-jump="4">5. Circuit safety</button><button class="toc-item" data-jump="5">6. Quiz</button>
+  </aside>
+  <div id="shell">
+    <header id="top">
+      <div class="brand"><strong>Magnetic Effects of Electric Current</strong><span>Kid-friendly workshop on current, magnetism, field lines, and circuit safety.</span></div>
+      <div class="actions">
+        <button class="btn" data-open>Menu</button>
+        <button class="btn" data-home>Start</button>
+        <button class="btn primary" data-end>Quiz</button>
+        <span class="btn" id="counter">Slide 1 / 6</span>
+      </div>
+    </header>
+    <main id="slide">
+      
+            <section class="panel" data-slide="0">
+              <div class="eyebrow">Start here</div>
+              <h2>Electricity can act like a magnet</h2>
+              <p class="lede">The chapter begins with a simple clue: current in a wire can move a compass needle.</p>
+              <div class="grid">
+                <div class="card">
+                  <h3>Key ideas</h3>
+                  <ul><li>A current-carrying wire makes a magnetic effect.</li><li>Oersted&#x27;s experiment linked electricity and magnetism.</li><li>A compass is the small magnet that reveals the change.</li></ul>
+                  <div class="callout">Move through the slides first, then use the quiz to check what stuck.</div>
+                </div>
+                <div class="card">
+                  <h3>Page previews</h3>
+                  <div class="previews"><figure class="preview"><img src="page_previews/page_0001.png" alt="Page 1 preview"><figcaption>Page 1</figcaption></figure><figure class="preview"><img src="page_previews/page_0002.png" alt="Page 2 preview"><figcaption>Page 2</figcaption></figure></div>
+                </div>
+              </div>
+            </section>
+            
+            <section class="panel" data-slide="1">
+              <div class="eyebrow">Module 1</div>
+              <h2>Current makes magnetism</h2>
+              <p class="lede">The first idea is easy to test: when current flows, the wire behaves like a magnet for nearby objects.</p>
+              <div class="grid">
+                <div class="card">
+                  <h3>Key ideas</h3>
+                  <ul><li>The needle swing is evidence of a magnetic field.</li><li>The effect happens around the wire, not inside the compass.</li><li>Electricity and magnetism are connected ideas.</li></ul>
+                  <div class="callout">If the compass moves, the wire is doing more than just carrying charge.</div>
+                </div>
+                <div class="card">
+                  <h3>Page previews</h3>
+                  <div class="previews"><figure class="preview"><img src="page_previews/page_0001.png" alt="Page 1 preview"><figcaption>Page 1</figcaption></figure><figure class="preview"><img src="page_previews/page_0002.png" alt="Page 2 preview"><figcaption>Page 2</figcaption></figure><figure class="preview"><img src="page_previews/page_0003.png" alt="Page 3 preview"><figcaption>Page 3</figcaption></figure></div>
+                </div>
+              </div>
+            </section>
+            
+            <section class="panel" data-slide="2">
+              <div class="eyebrow">Module 2</div>
+              <h2>Reading magnetic field lines</h2>
+              <p class="lede">Field lines are drawings that show direction and strength around a magnet.</p>
+              <div class="grid">
+                <div class="card">
+                  <h3>Key ideas</h3>
+                  <ul><li>Outside the magnet, lines go from north to south.</li><li>Closer lines mean a stronger field.</li><li>Field lines do not cross each other.</li></ul>
+                  <div class="callout">Think of the lines as a map of magnetic push and pull.</div>
+                </div>
+                <div class="card">
+                  <h3>Page previews</h3>
+                  <div class="previews"><figure class="preview"><img src="page_previews/page_0003.png" alt="Page 3 preview"><figcaption>Page 3</figcaption></figure><figure class="preview"><img src="page_previews/page_0004.png" alt="Page 4 preview"><figcaption>Page 4</figcaption></figure><figure class="preview"><img src="page_previews/page_0005.png" alt="Page 5 preview"><figcaption>Page 5</figcaption></figure></div>
+                </div>
+              </div>
+            </section>
+            
+            <section class="panel" data-slide="3">
+              <div class="eyebrow">Module 3</div>
+              <h2>Wires, coils, and electromagnets</h2>
+              <p class="lede">Different wire shapes make different field patterns, and a coil with soft iron becomes an electromagnet.</p>
+              <div class="grid">
+                <div class="card">
+                  <h3>Key ideas</h3>
+                  <ul><li>A straight wire makes circles around it.</li><li>A solenoid acts like a bar magnet.</li><li>Soft iron helps make a stronger electromagnet.</li></ul>
+                  <div class="callout">A coil plus iron core is the chapter&#x27;s useful magnet trick.</div>
+                </div>
+                <div class="card">
+                  <h3>Page previews</h3>
+                  <div class="previews"><figure class="preview"><img src="page_previews/page_0006.png" alt="Page 6 preview"><figcaption>Page 6</figcaption></figure><figure class="preview"><img src="page_previews/page_0007.png" alt="Page 7 preview"><figcaption>Page 7</figcaption></figure><figure class="preview"><img src="page_previews/page_0008.png" alt="Page 8 preview"><figcaption>Page 8</figcaption></figure><figure class="preview"><img src="page_previews/page_0009.png" alt="Page 9 preview"><figcaption>Page 9</figcaption></figure></div>
+                </div>
+              </div>
+            </section>
+            
+            <section class="panel" data-slide="4">
+              <div class="eyebrow">Module 4</div>
+              <h2>Circuit safety</h2>
+              <p class="lede">The last part of the chapter is about staying safe at home with fuses, earth wires, and careful use of power.</p>
+              <div class="grid">
+                <div class="card">
+                  <h3>Key ideas</h3>
+                  <ul><li>A fuse protects against extra current.</li><li>An earth wire helps stop shocks.</li><li>Too many appliances can overload one circuit.</li></ul>
+                  <div class="callout">Good wiring is about safety, not just about making things work.</div>
+                </div>
+                <div class="card">
+                  <h3>Page previews</h3>
+                  <div class="previews"><figure class="preview"><img src="page_previews/page_0010.png" alt="Page 10 preview"><figcaption>Page 10</figcaption></figure><figure class="preview"><img src="page_previews/page_0011.png" alt="Page 11 preview"><figcaption>Page 11</figcaption></figure><figure class="preview"><img src="page_previews/page_0012.png" alt="Page 12 preview"><figcaption>Page 12</figcaption></figure><figure class="preview"><img src="page_previews/page_0013.png" alt="Page 13 preview"><figcaption>Page 13</figcaption></figure></div>
+                </div>
+              </div>
+            </section>
+            
+      <section class="panel" data-slide="5">
+        <div class="eyebrow">Quiz time</div>
+        <h2>Quick self-check</h2>
+        <p class="lede">These questions are saved in this browser. Pick an answer, see the feedback, and use Try again to reset everything.</p>
+        <div class="summary">
+          <div class="stat"><div class="muted">Answered</div><strong id="answered">0</strong></div>
+          <div class="stat"><div class="muted">Correct</div><strong id="correct">0</strong></div>
+          <div class="stat"><div class="muted">Total</div><strong>8</strong></div>
+        </div>
+        <button class="btn" id="retry">Try again</button>
+        
+            <div class="qmodule">
+              <h3>Current and magnetism</h3>
+              <p class="muted">A wire with current can behave like a magnet.</p>
+              
+                <div class="qcard" data-qid="j112_1">
+                  <div class="qtitle">What happens when current flows through a wire?</div>
+                  <div class="opts"><button class="opt" data-qid="j112_1" data-choice="0"><span>A</span><em>It creates a magnetic effect</em></button><button class="opt" data-qid="j112_1" data-choice="1"><span>B</span><em>It becomes glass</em></button><button class="opt" data-qid="j112_1" data-choice="2"><span>C</span><em>It stops all movement</em></button><button class="opt" data-qid="j112_1" data-choice="3"><span>D</span><em>It loses all heat</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+                <div class="qcard" data-qid="j112_2">
+                  <div class="qtitle">Which scientist showed the compass deflection near a wire?</div>
+                  <div class="opts"><button class="opt" data-qid="j112_2" data-choice="0"><span>A</span><em>Oersted</em></button><button class="opt" data-qid="j112_2" data-choice="1"><span>B</span><em>Newton</em></button><button class="opt" data-qid="j112_2" data-choice="2"><span>C</span><em>Curie</em></button><button class="opt" data-qid="j112_2" data-choice="3"><span>D</span><em>Galileo</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+            </div>
+            
+            <div class="qmodule">
+              <h3>Magnetic field lines</h3>
+              <p class="muted">Lines help us picture direction and strength.</p>
+              
+                <div class="qcard" data-qid="j112_3">
+                  <div class="qtitle">Outside a bar magnet, field lines go from</div>
+                  <div class="opts"><button class="opt" data-qid="j112_3" data-choice="0"><span>A</span><em>north to south</em></button><button class="opt" data-qid="j112_3" data-choice="1"><span>B</span><em>south to north</em></button><button class="opt" data-qid="j112_3" data-choice="2"><span>C</span><em>top to bottom</em></button><button class="opt" data-qid="j112_3" data-choice="3"><span>D</span><em>middle to edge</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+                <div class="qcard" data-qid="j112_4">
+                  <div class="qtitle">When field lines are crowded together, the field is</div>
+                  <div class="opts"><button class="opt" data-qid="j112_4" data-choice="0"><span>A</span><em>stronger</em></button><button class="opt" data-qid="j112_4" data-choice="1"><span>B</span><em>weaker</em></button><button class="opt" data-qid="j112_4" data-choice="2"><span>C</span><em>gone</em></button><button class="opt" data-qid="j112_4" data-choice="3"><span>D</span><em>backwards</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+            </div>
+            
+            <div class="qmodule">
+              <h3>Wires and coils</h3>
+              <p class="muted">Wire shape changes the magnetic pattern.</p>
+              
+                <div class="qcard" data-qid="j112_5">
+                  <div class="qtitle">The field lines around a straight current-carrying wire are</div>
+                  <div class="opts"><button class="opt" data-qid="j112_5" data-choice="0"><span>A</span><em>concentric circles</em></button><button class="opt" data-qid="j112_5" data-choice="1"><span>B</span><em>straight stripes</em></button><button class="opt" data-qid="j112_5" data-choice="2"><span>C</span><em>triangles</em></button><button class="opt" data-qid="j112_5" data-choice="3"><span>D</span><em>random dots</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+                <div class="qcard" data-qid="j112_6">
+                  <div class="qtitle">An electromagnet is made from a coil around</div>
+                  <div class="opts"><button class="opt" data-qid="j112_6" data-choice="0"><span>A</span><em>soft iron</em></button><button class="opt" data-qid="j112_6" data-choice="1"><span>B</span><em>rubber</em></button><button class="opt" data-qid="j112_6" data-choice="2"><span>C</span><em>wood</em></button><button class="opt" data-qid="j112_6" data-choice="3"><span>D</span><em>plastic</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+            </div>
+            
+            <div class="qmodule">
+              <h3>Safety</h3>
+              <p class="muted">Protection against shocks, overloads, and short circuits.</p>
+              
+                <div class="qcard" data-qid="j112_7">
+                  <div class="qtitle">Which part protects a circuit from too much current?</div>
+                  <div class="opts"><button class="opt" data-qid="j112_7" data-choice="0"><span>A</span><em>A fuse</em></button><button class="opt" data-qid="j112_7" data-choice="1"><span>B</span><em>A spoon</em></button><button class="opt" data-qid="j112_7" data-choice="2"><span>C</span><em>A book</em></button><button class="opt" data-qid="j112_7" data-choice="3"><span>D</span><em>A fan blade</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+                <div class="qcard" data-qid="j112_8">
+                  <div class="qtitle">What does the earth wire do?</div>
+                  <div class="opts"><button class="opt" data-qid="j112_8" data-choice="0"><span>A</span><em>Carries leaking current safely to the ground</em></button><button class="opt" data-qid="j112_8" data-choice="1"><span>B</span><em>Makes bulbs blue</em></button><button class="opt" data-qid="j112_8" data-choice="2"><span>C</span><em>Stores food energy</em></button><button class="opt" data-qid="j112_8" data-choice="3"><span>D</span><em>Changes wire colour</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+            </div>
+            
+      </section>
+      <div class="footer"><button class="btn" data-prev>Previous</button><button class="btn primary" data-next>Next</button></div>
+    </main>
+  </div>
+  <script>
+    const DATA = {
+  "slug": "jesc112",
+  "title": "Magnetic Effects of Electric Current",
+  "subtitle": "Kid-friendly workshop on current, magnetism, field lines, and circuit safety.",
+  "theme": {
+    "bg": "#f5f9ff",
+    "surface": "#ffffff",
+    "text": "#10213a",
+    "muted": "#5c6f8a",
+    "border": "#d7e4f5",
+    "primary": "#2563eb",
+    "accent": "#14b8a6"
+  },
+  "slides": [
+    {
+      "eyebrow": "Start here",
+      "title": "Electricity can act like a magnet",
+      "summary": "The chapter begins with a simple clue: current in a wire can move a compass needle.",
+      "bullets": [
+        "A current-carrying wire makes a magnetic effect.",
+        "Oersted's experiment linked electricity and magnetism.",
+        "A compass is the small magnet that reveals the change."
+      ],
+      "callout": "Move through the slides first, then use the quiz to check what stuck.",
+      "pages": [
+        1,
+        2
+      ]
+    },
+    {
+      "eyebrow": "Module 1",
+      "title": "Current makes magnetism",
+      "summary": "The first idea is easy to test: when current flows, the wire behaves like a magnet for nearby objects.",
+      "bullets": [
+        "The needle swing is evidence of a magnetic field.",
+        "The effect happens around the wire, not inside the compass.",
+        "Electricity and magnetism are connected ideas."
+      ],
+      "callout": "If the compass moves, the wire is doing more than just carrying charge.",
+      "pages": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "eyebrow": "Module 2",
+      "title": "Reading magnetic field lines",
+      "summary": "Field lines are drawings that show direction and strength around a magnet.",
+      "bullets": [
+        "Outside the magnet, lines go from north to south.",
+        "Closer lines mean a stronger field.",
+        "Field lines do not cross each other."
+      ],
+      "callout": "Think of the lines as a map of magnetic push and pull.",
+      "pages": [
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "eyebrow": "Module 3",
+      "title": "Wires, coils, and electromagnets",
+      "summary": "Different wire shapes make different field patterns, and a coil with soft iron becomes an electromagnet.",
+      "bullets": [
+        "A straight wire makes circles around it.",
+        "A solenoid acts like a bar magnet.",
+        "Soft iron helps make a stronger electromagnet."
+      ],
+      "callout": "A coil plus iron core is the chapter's useful magnet trick.",
+      "pages": [
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "eyebrow": "Module 4",
+      "title": "Circuit safety",
+      "summary": "The last part of the chapter is about staying safe at home with fuses, earth wires, and careful use of power.",
+      "bullets": [
+        "A fuse protects against extra current.",
+        "An earth wire helps stop shocks.",
+        "Too many appliances can overload one circuit."
+      ],
+      "callout": "Good wiring is about safety, not just about making things work.",
+      "pages": [
+        10,
+        11,
+        12,
+        13
+      ]
+    }
+  ],
+  "quiz": {
+    "modules": [
+      {
+        "name": "Current and magnetism",
+        "focus": "A wire with current can behave like a magnet.",
+        "questions": [
+          {
+            "id": "j112_1",
+            "question": "What happens when current flows through a wire?",
+            "options": [
+              "It creates a magnetic effect",
+              "It becomes glass",
+              "It stops all movement",
+              "It loses all heat"
+            ],
+            "answer": 0,
+            "explanation": "A current-carrying wire creates a magnetic field around it."
+          },
+          {
+            "id": "j112_2",
+            "question": "Which scientist showed the compass deflection near a wire?",
+            "options": [
+              "Oersted",
+              "Newton",
+              "Curie",
+              "Galileo"
+            ],
+            "answer": 0,
+            "explanation": "Oersted connected electricity and magnetism in the experiment."
+          }
+        ]
+      },
+      {
+        "name": "Magnetic field lines",
+        "focus": "Lines help us picture direction and strength.",
+        "questions": [
+          {
+            "id": "j112_3",
+            "question": "Outside a bar magnet, field lines go from",
+            "options": [
+              "north to south",
+              "south to north",
+              "top to bottom",
+              "middle to edge"
+            ],
+            "answer": 0,
+            "explanation": "That is the direction used outside the magnet."
+          },
+          {
+            "id": "j112_4",
+            "question": "When field lines are crowded together, the field is",
+            "options": [
+              "stronger",
+              "weaker",
+              "gone",
+              "backwards"
+            ],
+            "answer": 0,
+            "explanation": "Crowded lines mean a stronger magnetic field."
+          }
+        ]
+      },
+      {
+        "name": "Wires and coils",
+        "focus": "Wire shape changes the magnetic pattern.",
+        "questions": [
+          {
+            "id": "j112_5",
+            "question": "The field lines around a straight current-carrying wire are",
+            "options": [
+              "concentric circles",
+              "straight stripes",
+              "triangles",
+              "random dots"
+            ],
+            "answer": 0,
+            "explanation": "A straight wire gives circular field lines."
+          },
+          {
+            "id": "j112_6",
+            "question": "An electromagnet is made from a coil around",
+            "options": [
+              "soft iron",
+              "rubber",
+              "wood",
+              "plastic"
+            ],
+            "answer": 0,
+            "explanation": "Soft iron helps the coil become a strong magnet."
+          }
+        ]
+      },
+      {
+        "name": "Safety",
+        "focus": "Protection against shocks, overloads, and short circuits.",
+        "questions": [
+          {
+            "id": "j112_7",
+            "question": "Which part protects a circuit from too much current?",
+            "options": [
+              "A fuse",
+              "A spoon",
+              "A book",
+              "A fan blade"
+            ],
+            "answer": 0,
+            "explanation": "A fuse breaks the circuit when current gets too high."
+          },
+          {
+            "id": "j112_8",
+            "question": "What does the earth wire do?",
+            "options": [
+              "Carries leaking current safely to the ground",
+              "Makes bulbs blue",
+              "Stores food energy",
+              "Changes wire colour"
+            ],
+            "answer": 0,
+            "explanation": "Earthing is a safety path for leakage current."
+          }
+        ]
+      }
+    ]
+  }
+};
+    const KEY = 'workshop:jesc112';
+    const state = {
+      slide: Number(localStorage.getItem(KEY + ':slide') || 0),
+      answers: JSON.parse(localStorage.getItem(KEY + ':answers') || '{}')
+    };
+    const panels = [...document.querySelectorAll('.panel')];
+    const bar = document.getElementById('bar');
+    const toc = document.getElementById('toc');
+    const counter = document.getElementById('counter');
+    const answered = document.getElementById('answered');
+    const correct = document.getElementById('correct');
+    const total = DATA.quiz.totalQuestions || 1;
+    function save() {
+      localStorage.setItem(KEY + ':slide', String(state.slide));
+      localStorage.setItem(KEY + ':answers', JSON.stringify(state.answers));
+    }
+    function show(n) {
+      state.slide = Math.max(0, Math.min(n, panels.length - 1));
+      panels.forEach((p, i) => p.classList.toggle('active', i === state.slide));
+      bar.style.width = ((state.slide + 1) / panels.length * 100) + '%';
+      counter.textContent = `Slide ${state.slide + 1} / ${panels.length}`;
+      document.querySelectorAll('.toc-item').forEach((b, i) => b.classList.toggle('active', i === state.slide));
+      save();
+    }
+    function score() {
+      let a = 0, c = 0;
+      for (const m of DATA.quiz.modules) for (const q of m.questions) {
+        if (state.answers[q.id] !== undefined) {
+          a += 1;
+          if (state.answers[q.id] === q.answer) c += 1;
+        }
+      }
+      answered.textContent = a;
+      correct.textContent = c;
+    }
+    function lock(card, q, chosen) {
+      const fb = card.querySelector('.feedback');
+      card.querySelectorAll('.opt').forEach(btn => {
+        btn.classList.add('locked');
+        const c = Number(btn.dataset.choice);
+        if (c === q.answer) btn.classList.add('correct');
+        if (c === chosen && chosen !== q.answer) btn.classList.add('wrong');
+      });
+      fb.classList.add('show');
+      fb.classList.add(chosen === q.answer ? 'good' : 'bad');
+      fb.innerHTML = '<strong>' + (chosen === q.answer ? 'Correct. ' : 'Not quite. ') + '</strong>' + q.explanation;
+    }
+    document.querySelectorAll('.opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const qid = btn.dataset.qid;
+        const chosen = Number(btn.dataset.choice);
+        const q = DATA.quiz.modules.flatMap(m => m.questions).find(item => item.id === qid);
+        const card = btn.closest('.qcard');
+        state.answers[qid] = chosen;
+        save();
+        lock(card, q, chosen);
+        score();
+      });
+    });
+    document.getElementById('retry').addEventListener('click', () => {
+      state.answers = {};
+      localStorage.removeItem(KEY + ':answers');
+      document.querySelectorAll('.qcard').forEach(card => {
+        card.querySelectorAll('.opt').forEach(btn => btn.classList.remove('correct', 'wrong', 'locked'));
+        const fb = card.querySelector('.feedback');
+        fb.className = 'feedback';
+        fb.textContent = '';
+      });
+      score();
+      show(DATA.slides.length);
+    });
+    document.querySelectorAll('[data-open]').forEach(btn => btn.addEventListener('click', () => toc.classList.add('open')));
+    document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => toc.classList.remove('open')));
+    document.querySelectorAll('[data-home]').forEach(btn => btn.addEventListener('click', () => show(0)));
+    document.querySelectorAll('[data-end]').forEach(btn => btn.addEventListener('click', () => show(panels.length - 1)));
+    document.querySelectorAll('[data-prev]').forEach(btn => btn.addEventListener('click', () => show(state.slide - 1)));
+    document.querySelectorAll('[data-next]').forEach(btn => btn.addEventListener('click', () => show(state.slide + 1)));
+    document.querySelectorAll('[data-jump]').forEach(btn => btn.addEventListener('click', () => {
+      show(Number(btn.dataset.jump));
+      toc.classList.remove('open');
+    }));
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') toc.classList.remove('open');
+      if (e.key === 'ArrowLeft') show(state.slide - 1);
+      if (e.key === 'ArrowRight') show(state.slide + 1);
+      if (e.key.toLowerCase() === 'm') toc.classList.toggle('open');
+    });
+    DATA.quiz.modules.forEach(m => m.questions.forEach(q => {
+      if (state.answers[q.id] !== undefined) {
+        const card = document.querySelector(`.qcard[data-qid="${q.id}"]`);
+        if (card) lock(card, q, state.answers[q.id]);
+      }
+    }));
+    score();
+    show(state.slide);
+  </script>
+</body>
+</html>

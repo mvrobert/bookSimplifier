@@ -1,0 +1,127 @@
+{
+  "title": "Our Environment - Kid-friendly workshop quiz",
+  "version": "1.0",
+  "totalQuestions": 8,
+  "modules": [
+    {
+      "name": "Ecosystems",
+      "focus": "Living and non-living parts interact in one place.",
+      "questions": [
+        {
+          "id": "j113_1",
+          "question": "What is an ecosystem made of?",
+          "options": [
+            "Living things and non-living surroundings",
+            "Only animals",
+            "Only rocks",
+            "Only one plant"
+          ],
+          "answer": 0,
+          "explanation": "Ecosystems include biotic and abiotic parts."
+        },
+        {
+          "id": "j113_2",
+          "question": "An aquarium is a",
+          "options": [
+            "human-made ecosystem",
+            "desert",
+            "mountain",
+            "machine"
+          ],
+          "answer": 0,
+          "explanation": "People set it up, so it is human-made."
+        }
+      ]
+    },
+    {
+      "name": "Food chains and webs",
+      "focus": "Food moves through linked eating relationships.",
+      "questions": [
+        {
+          "id": "j113_3",
+          "question": "Which sequence is a food chain?",
+          "options": [
+            "Grass -> goat -> human",
+            "Stone -> cloud -> chair",
+            "Pen -> bag -> book",
+            "Sun -> rain -> soil"
+          ],
+          "answer": 0,
+          "explanation": "It shows who eats whom."
+        },
+        {
+          "id": "j113_4",
+          "question": "What does a food web show?",
+          "options": [
+            "Many connected food chains",
+            "Only one animal",
+            "A map of roads",
+            "A weather chart"
+          ],
+          "answer": 0,
+          "explanation": "Food webs connect lots of chains together."
+        }
+      ]
+    },
+    {
+      "name": "Energy flow",
+      "focus": "Energy enters from the Sun and moves step by step.",
+      "questions": [
+        {
+          "id": "j113_5",
+          "question": "About how much sunlight energy do plants capture?",
+          "options": [
+            "About 1%",
+            "About 50%",
+            "About 100%",
+            "About 0%"
+          ],
+          "answer": 0,
+          "explanation": "The chapter says plants capture only a small part of sunlight."
+        },
+        {
+          "id": "j113_6",
+          "question": "About how much food energy goes to the next level?",
+          "options": [
+            "About 10%",
+            "About 90%",
+            "About 50%",
+            "Exactly 100%"
+          ],
+          "answer": 0,
+          "explanation": "The 10% rule is the chapter's easy memory trick."
+        }
+      ]
+    },
+    {
+      "name": "Clean habits",
+      "focus": "Waste, ozone, and better choices for nature.",
+      "questions": [
+        {
+          "id": "j113_7",
+          "question": "Which item is biodegradable?",
+          "options": [
+            "Fruit peels",
+            "Plastic bag",
+            "Glass bottle",
+            "Metal spoon"
+          ],
+          "answer": 0,
+          "explanation": "Fruit peels break down naturally."
+        },
+        {
+          "id": "j113_8",
+          "question": "Why is the ozone layer important?",
+          "options": [
+            "It blocks harmful UV radiation",
+            "It makes food sweeter",
+            "It creates wind",
+            "It stores water"
+          ],
+          "answer": 0,
+          "explanation": "The ozone layer protects living things from ultraviolet rays."
+        }
+      ]
+    }
+  ]
+}

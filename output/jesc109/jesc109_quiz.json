@@ -1,0 +1,415 @@
+{
+  "title": "Light - Reflection and Refraction - Kid-friendly science workshop with tiny lessons and quick quizzes",
+  "version": "1.0",
+  "totalQuestions": 32,
+  "modules": [
+    {
+      "id": 0,
+      "name": "M0: Light Helps Us See",
+      "questions": [
+        {
+          "question": "How do we usually see an object?",
+          "options": [
+            "Light from the object reaches our eyes",
+            "The object makes sound only",
+            "The object always glows by itself",
+            "The object turns into air"
+          ],
+          "answer": 0,
+          "explanation": "We see because reflected or transmitted light enters the eye.",
+          "id": "q0_1"
+        },
+        {
+          "question": "What is reflection of light?",
+          "options": [
+            "Light bouncing from a surface",
+            "Light melting into water",
+            "Light disappearing completely",
+            "Light becoming a sound wave"
+          ],
+          "answer": 0,
+          "explanation": "Reflection is the bouncing back of light from a surface.",
+          "id": "q0_2"
+        },
+        {
+          "question": "Which law says the incoming angle equals the outgoing angle?",
+          "options": [
+            "Angle of incidence equals angle of reflection",
+            "Angle of incidence is always zero",
+            "The normal is a mirror",
+            "The reflected ray bends toward the mirror"
+          ],
+          "answer": 0,
+          "explanation": "This is one of the two laws of reflection.",
+          "id": "q0_3"
+        },
+        {
+          "question": "What do the incident ray, normal, and reflected ray do?",
+          "options": [
+            "They lie in the same plane",
+            "They make a triangle only",
+            "They must be parallel",
+            "They cannot touch the mirror"
+          ],
+          "answer": 0,
+          "explanation": "The chapter states this as the second law of reflection.",
+          "id": "q0_4"
+        },
+        {
+          "question": "What kind of image is formed by a plane mirror?",
+          "options": [
+            "Virtual and erect",
+            "Real and upside down only",
+            "Always tiny and black",
+            "Only a shadow"
+          ],
+          "answer": 0,
+          "explanation": "A plane mirror forms a virtual, erect image.",
+          "id": "q0_5"
+        },
+        {
+          "question": "What does lateral inversion mean?",
+          "options": [
+            "Left and right appear swapped",
+            "The image becomes invisible",
+            "Top and bottom disappear",
+            "The mirror changes color"
+          ],
+          "answer": 0,
+          "explanation": "Plane mirrors reverse left-right appearance.",
+          "id": "q0_6"
+        },
+        {
+          "question": "Why is a dark room hard to see in?",
+          "options": [
+            "Not enough light reaches the eyes",
+            "The walls become liquid",
+            "Sound stops working",
+            "The mirror laws change"
+          ],
+          "answer": 0,
+          "explanation": "Visibility depends on light reaching the eye.",
+          "id": "q0_7"
+        },
+        {
+          "question": "Which word best matches light bouncing off a polished surface?",
+          "options": [
+            "Reflection",
+            "Evaporation",
+            "Freezing",
+            "Filtration"
+          ],
+          "answer": 0,
+          "explanation": "Reflection is the correct term.",
+          "id": "q0_8"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "M1: Curved Mirrors and Images",
+      "questions": [
+        {
+          "question": "Which curved mirror bends inward like the inside of a spoon?",
+          "options": [
+            "Concave mirror",
+            "Convex mirror",
+            "Flat mirror",
+            "Broken mirror"
+          ],
+          "answer": 0,
+          "explanation": "A concave mirror curves inward.",
+          "id": "q1_1"
+        },
+        {
+          "question": "Which curved mirror bends outward like the back of a spoon?",
+          "options": [
+            "Convex mirror",
+            "Concave mirror",
+            "Plane mirror",
+            "Polished stone"
+          ],
+          "answer": 0,
+          "explanation": "A convex mirror curves outward.",
+          "id": "q1_2"
+        },
+        {
+          "question": "What is the point at the middle of a spherical mirror called?",
+          "options": [
+            "Pole",
+            "Pupil",
+            "Pixel",
+            "Prism"
+          ],
+          "answer": 0,
+          "explanation": "The pole is the centre point of the mirror surface.",
+          "id": "q1_3"
+        },
+        {
+          "question": "What does a concave mirror do to rays parallel to its axis?",
+          "options": [
+            "It can bring them together at the focus",
+            "It always sends them straight through",
+            "It makes them stop",
+            "It turns them into sound"
+          ],
+          "answer": 0,
+          "explanation": "A concave mirror can converge parallel rays.",
+          "id": "q1_4"
+        },
+        {
+          "question": "Why are convex mirrors used as rear-view mirrors?",
+          "options": [
+            "They give a wider field of view",
+            "They make everything huge",
+            "They reverse electricity",
+            "They remove reflections"
+          ],
+          "answer": 0,
+          "explanation": "Convex mirrors help drivers see more behind them.",
+          "id": "q1_5"
+        },
+        {
+          "question": "What does magnification compare?",
+          "options": [
+            "Image height with object height",
+            "Mirror size with room size",
+            "Light speed with sound speed",
+            "Colour with temperature"
+          ],
+          "answer": 0,
+          "explanation": "Magnification is the ratio of image height to object height.",
+          "id": "q1_6"
+        },
+        {
+          "question": "Which mirror usually forms a virtual and smaller image?",
+          "options": [
+            "Convex mirror",
+            "Concave mirror",
+            "Plane mirror",
+            "Water surface"
+          ],
+          "answer": 0,
+          "explanation": "Convex mirrors usually form virtual, erect, diminished images.",
+          "id": "q1_7"
+        },
+        {
+          "question": "In the mirror formula 1/v + 1/u = 1/f, what does f mean?",
+          "options": [
+            "Focal length",
+            "Field length",
+            "Final angle",
+            "Frame size"
+          ],
+          "answer": 0,
+          "explanation": "f stands for focal length.",
+          "id": "q1_8"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "M2: Refraction in Glass",
+      "questions": [
+        {
+          "question": "What is refraction?",
+          "options": [
+            "Bending of light when it enters a new medium",
+            "Light turning into heat only",
+            "Light vanishing completely",
+            "Light stopping at the surface"
+          ],
+          "answer": 0,
+          "explanation": "Refraction is the bending of light at a boundary.",
+          "id": "q2_1"
+        },
+        {
+          "question": "When light goes from air to glass, it usually bends",
+          "options": [
+            "Toward the normal",
+            "Away from the normal",
+            "Into a circle",
+            "It does not bend at all"
+          ],
+          "answer": 0,
+          "explanation": "Air to glass is from rarer to denser, so the ray bends toward the normal.",
+          "id": "q2_2"
+        },
+        {
+          "question": "When light goes from glass to air, it usually bends",
+          "options": [
+            "Away from the normal",
+            "Toward the normal",
+            "Only upward",
+            "Only downward"
+          ],
+          "answer": 0,
+          "explanation": "Glass to air is from denser to rarer, so the ray bends away from the normal.",
+          "id": "q2_3"
+        },
+        {
+          "question": "What does a rectangular glass slab do to the emergent ray?",
+          "options": [
+            "It makes it parallel to the incident ray",
+            "It makes it always perpendicular",
+            "It turns it into a shadow",
+            "It removes the ray"
+          ],
+          "answer": 0,
+          "explanation": "The emergent ray is parallel, but laterally displaced.",
+          "id": "q2_4"
+        },
+        {
+          "question": "Why does a pencil in water look bent?",
+          "options": [
+            "Light from the submerged part changes direction",
+            "The pencil becomes soft",
+            "Water pushes the pencil",
+            "The eye closes one side"
+          ],
+          "answer": 0,
+          "explanation": "Refraction makes the underwater part appear shifted.",
+          "id": "q2_5"
+        },
+        {
+          "question": "What is lateral displacement?",
+          "options": [
+            "A sideways shift of the emergent ray",
+            "A change in colour",
+            "A change in mass",
+            "A change in sound"
+          ],
+          "answer": 0,
+          "explanation": "A glass slab shifts the ray sideways.",
+          "id": "q2_6"
+        },
+        {
+          "question": "What does refractive index help compare?",
+          "options": [
+            "How strongly different media bend light",
+            "How loud different media are",
+            "How hot different media are",
+            "How fast a pencil floats"
+          ],
+          "answer": 0,
+          "explanation": "Refractive index is tied to how much a medium slows light.",
+          "id": "q2_7"
+        },
+        {
+          "question": "Why do different materials bend light by different amounts?",
+          "options": [
+            "Because their refractive indices differ",
+            "Because all light is the same everywhere",
+            "Because mirrors are inside them",
+            "Because temperature is always zero"
+          ],
+          "answer": 0,
+          "explanation": "Different media have different refractive indices.",
+          "id": "q2_8"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "M3: Lenses and Focus",
+      "questions": [
+        {
+          "question": "Which lens type converges light rays?",
+          "options": [
+            "Convex lens",
+            "Concave lens",
+            "Plane glass sheet",
+            "Water puddle"
+          ],
+          "answer": 0,
+          "explanation": "A convex lens brings rays together.",
+          "id": "q3_1"
+        },
+        {
+          "question": "Which lens type diverges light rays?",
+          "options": [
+            "Concave lens",
+            "Convex lens",
+            "Mirror lens",
+            "Pencil lens"
+          ],
+          "answer": 0,
+          "explanation": "A concave lens spreads rays apart.",
+          "id": "q3_2"
+        },
+        {
+          "question": "What is the lens formula given in the chapter?",
+          "options": [
+            "1/v - 1/u = 1/f",
+            "1/u + 1/v = f",
+            "u/v = f",
+            "P = VI"
+          ],
+          "answer": 0,
+          "explanation": "The chapter states the lens formula as 1/v - 1/u = 1/f.",
+          "id": "q3_3"
+        },
+        {
+          "question": "What does lens power measure?",
+          "options": [
+            "How strongly the lens bends light",
+            "How heavy the lens is",
+            "How bright the room is",
+            "How loud the lens is"
+          ],
+          "answer": 0,
+          "explanation": "Power tells the converging or diverging strength of a lens.",
+          "id": "q3_4"
+        },
+        {
+          "question": "What is the SI unit of lens power?",
+          "options": [
+            "Dioptre",
+            "Newton",
+            "Joule",
+            "Metre per second"
+          ],
+          "answer": 0,
+          "explanation": "Lens power is measured in dioptres.",
+          "id": "q3_5"
+        },
+        {
+          "question": "What sign does a convex lens have for power?",
+          "options": [
+            "Positive",
+            "Negative",
+            "Zero always",
+            "No sign is allowed"
+          ],
+          "answer": 0,
+          "explanation": "A convex lens has positive power.",
+          "id": "q3_6"
+        },
+        {
+          "question": "What sign does a concave lens have for power?",
+          "options": [
+            "Negative",
+            "Positive",
+            "Always zero",
+            "No sign"
+          ],
+          "answer": 0,
+          "explanation": "A concave lens has negative power.",
+          "id": "q3_7"
+        },
+        {
+          "question": "Why is a lens with a short focal length considered strong?",
+          "options": [
+            "It bends light through larger angles",
+            "It weighs more",
+            "It is always thicker",
+            "It makes shadows disappear"
+          ],
+          "answer": 0,
+          "explanation": "Short focal length means stronger convergence or divergence.",
+          "id": "q3_8"
+        }
+      ]
+    }
+  ]
+}

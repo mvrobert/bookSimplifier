@@ -1,0 +1,127 @@
+{
+  "title": "Magnetic Effects of Electric Current - Kid-friendly workshop quiz",
+  "version": "1.0",
+  "totalQuestions": 8,
+  "modules": [
+    {
+      "name": "Current and magnetism",
+      "focus": "A wire with current can behave like a magnet.",
+      "questions": [
+        {
+          "id": "j112_1",
+          "question": "What happens when current flows through a wire?",
+          "options": [
+            "It creates a magnetic effect",
+            "It becomes glass",
+            "It stops all movement",
+            "It loses all heat"
+          ],
+          "answer": 0,
+          "explanation": "A current-carrying wire creates a magnetic field around it."
+        },
+        {
+          "id": "j112_2",
+          "question": "Which scientist showed the compass deflection near a wire?",
+          "options": [
+            "Oersted",
+            "Newton",
+            "Curie",
+            "Galileo"
+          ],
+          "answer": 0,
+          "explanation": "Oersted connected electricity and magnetism in the experiment."
+        }
+      ]
+    },
+    {
+      "name": "Magnetic field lines",
+      "focus": "Lines help us picture direction and strength.",
+      "questions": [
+        {
+          "id": "j112_3",
+          "question": "Outside a bar magnet, field lines go from",
+          "options": [
+            "north to south",
+            "south to north",
+            "top to bottom",
+            "middle to edge"
+          ],
+          "answer": 0,
+          "explanation": "That is the direction used outside the magnet."
+        },
+        {
+          "id": "j112_4",
+          "question": "When field lines are crowded together, the field is",
+          "options": [
+            "stronger",
+            "weaker",
+            "gone",
+            "backwards"
+          ],
+          "answer": 0,
+          "explanation": "Crowded lines mean a stronger magnetic field."
+        }
+      ]
+    },
+    {
+      "name": "Wires and coils",
+      "focus": "Wire shape changes the magnetic pattern.",
+      "questions": [
+        {
+          "id": "j112_5",
+          "question": "The field lines around a straight current-carrying wire are",
+          "options": [
+            "concentric circles",
+            "straight stripes",
+            "triangles",
+            "random dots"
+          ],
+          "answer": 0,
+          "explanation": "A straight wire gives circular field lines."
+        },
+        {
+          "id": "j112_6",
+          "question": "An electromagnet is made from a coil around",
+          "options": [
+            "soft iron",
+            "rubber",
+            "wood",
+            "plastic"
+          ],
+          "answer": 0,
+          "explanation": "Soft iron helps the coil become a strong magnet."
+        }
+      ]
+    },
+    {
+      "name": "Safety",
+      "focus": "Protection against shocks, overloads, and short circuits.",
+      "questions": [
+        {
+          "id": "j112_7",
+          "question": "Which part protects a circuit from too much current?",
+          "options": [
+            "A fuse",
+            "A spoon",
+            "A book",
+            "A fan blade"
+          ],
+          "answer": 0,
+          "explanation": "A fuse breaks the circuit when current gets too high."
+        },
+        {
+          "id": "j112_8",
+          "question": "What does the earth wire do?",
+          "options": [
+            "Carries leaking current safely to the ground",
+            "Makes bulbs blue",
+            "Stores food energy",
+            "Changes wire colour"
+          ],
+          "answer": 0,
+          "explanation": "Earthing is a safety path for leakage current."
+        }
+      ]
+    }
+  ]
+}

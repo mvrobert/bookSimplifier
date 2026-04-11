@@ -1,0 +1,751 @@
+{
+  "title": "Chemical Reactions and Equations Workshop - Interactive study deck generated from jesc101.pdf",
+  "version": "1.0",
+  "totalQuestions": 60,
+  "modules": [
+    {
+      "id": 0,
+      "name": "M0: Detecting Chemical Change",
+      "questions": [
+        {
+          "id": "q0_1",
+          "question": "Which observation from the chapter is a clear sign that a chemical reaction has taken place?",
+          "options": [
+            "Evolution of a gas",
+            "A change in the shape of a beaker",
+            "A substance being cut into pieces",
+            "A solid being ground into powder"
+          ],
+          "answer": 0,
+          "explanation": "Page 2 lists gas evolution, colour change, state change, and temperature change as reaction indicators."
+        },
+        {
+          "id": "q0_2",
+          "question": "Why is a magnesium ribbon cleaned before it is burned in air?",
+          "options": [
+            "To remove the oxide layer so magnesium can react properly",
+            "To make it dissolve in water faster",
+            "To increase its mass before burning",
+            "To cool the ribbon down"
+          ],
+          "answer": 0,
+          "explanation": "The chapter asks students to rub the ribbon with sandpaper so the surface oxide layer does not interfere."
+        },
+        {
+          "id": "q0_3",
+          "question": "What is formed when magnesium burns in oxygen?",
+          "options": [
+            "Magnesium oxide",
+            "Magnesium hydroxide",
+            "Magnesium sulphate",
+            "Magnesium chloride"
+          ],
+          "answer": 0,
+          "explanation": "The opening activity states that burning magnesium in oxygen produces magnesium oxide."
+        },
+        {
+          "id": "q0_4",
+          "question": "In the zinc and dilute acid activity, the bubbles indicate the release of which gas?",
+          "options": [
+            "Hydrogen",
+            "Oxygen",
+            "Nitrogen",
+            "Carbon dioxide"
+          ],
+          "answer": 0,
+          "explanation": "On pages 1-2, zinc reacting with dilute acid is used to show gas evolution; the gas formed is hydrogen."
+        },
+        {
+          "id": "q0_5",
+          "question": "What visible result is observed when lead nitrate solution is mixed with potassium iodide solution?",
+          "options": [
+            "A yellow precipitate forms",
+            "A blue gas forms",
+            "The liquid freezes instantly",
+            "No visible change occurs"
+          ],
+          "answer": 0,
+          "explanation": "The lead nitrate and potassium iodide activity is used to show the formation of a yellow precipitate."
+        },
+        {
+          "id": "q0_6",
+          "question": "Which daily-life example in the chapter is used to illustrate chemical change?",
+          "options": [
+            "Fermentation of grapes",
+            "Melting of ice",
+            "Breaking a glass",
+            "Sharpening a pencil"
+          ],
+          "answer": 0,
+          "explanation": "Page 1 lists grape fermentation among the familiar chemical changes."
+        },
+        {
+          "id": "q0_7",
+          "question": "Which statement best distinguishes a chemical change from a physical change in this chapter?",
+          "options": [
+            "The identity of the original substance changes",
+            "Only the size of the substance changes",
+            "The material can always be restored by cooling",
+            "The mass disappears completely"
+          ],
+          "answer": 0,
+          "explanation": "The introduction emphasises that the nature and identity of the initial substance change in a chemical reaction."
+        },
+        {
+          "id": "q0_8",
+          "question": "In a word equation, substances written before the arrow are called",
+          "options": [
+            "reactants",
+            "products",
+            "catalysts",
+            "precipitates"
+          ],
+          "answer": 0,
+          "explanation": "The chapter uses the word-equation format to separate reactants from products."
+        },
+        {
+          "id": "q0_9",
+          "question": "What is the main purpose of converting a reaction description into a word equation first?",
+          "options": [
+            "To make the reaction shorter and easier to analyse",
+            "To avoid naming the products",
+            "To remove the need for formulae later",
+            "To prove that balancing is unnecessary"
+          ],
+          "answer": 0,
+          "explanation": "Page 2 explains that sentence descriptions are long, and word equations provide a shorter, clearer representation."
+        },
+        {
+          "id": "q0_10",
+          "question": "Which of the following is NOT listed as evidence of a chemical reaction on page 2?",
+          "options": [
+            "Change in shape",
+            "Change in colour",
+            "Change in temperature",
+            "Evolution of a gas"
+          ],
+          "answer": 0,
+          "explanation": "The text explicitly lists colour, state, gas evolution, and temperature change, not shape change."
+        },
+        {
+          "id": "q0_11",
+          "question": "Respiration is included in the chapter introduction because it is",
+          "options": [
+            "a chemical reaction occurring inside the body",
+            "a purely physical change",
+            "an example of only volume expansion",
+            "a way to separate mixtures"
+          ],
+          "answer": 0,
+          "explanation": "The first page uses respiration as an everyday example of chemical change."
+        },
+        {
+          "id": "q0_12",
+          "question": "Digestion is treated as a chemical process in the chapter because",
+          "options": [
+            "food is transformed into different substances in the body",
+            "food only changes shape mechanically",
+            "the body cools down during digestion",
+            "digestion is only a filtration process"
+          ],
+          "answer": 0,
+          "explanation": "The introduction groups digestion with other processes where the original substance changes identity."
+        },
+        {
+          "id": "q0_13",
+          "question": "When a reaction vessel becomes warmer during a reaction, the observation mainly indicates",
+          "options": [
+            "a temperature change associated with reaction",
+            "that the vessel has broken",
+            "that the reaction must be physical",
+            "that no new substance is formed"
+          ],
+          "answer": 0,
+          "explanation": "The zinc and acid activity asks students to touch the flask and notice the temperature change."
+        },
+        {
+          "id": "q0_14",
+          "question": "Which pair from the chapter is mixed to demonstrate precipitate formation?",
+          "options": [
+            "Lead nitrate and potassium iodide",
+            "Hydrogen and oxygen",
+            "Sodium and water",
+            "Copper and oxygen"
+          ],
+          "answer": 0,
+          "explanation": "The early activities use lead nitrate solution plus potassium iodide solution to show precipitate formation."
+        },
+        {
+          "id": "q0_15",
+          "question": "Which sequence best matches the textbook's learning flow?",
+          "options": [
+            "Observation -> verbal description -> word equation -> symbolic equation",
+            "Balancing -> precipitation -> corrosion -> observation",
+            "Formula memorisation -> guessing products -> observation",
+            "Redox definition -> gas test -> word equation"
+          ],
+          "answer": 0,
+          "explanation": "The chapter starts from observed changes, then describes them in words, and only after that moves toward symbolic equations."
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "M1: Writing and Balancing Equations",
+      "questions": [
+        {
+          "id": "q1_1",
+          "question": "What does the state symbol (aq) represent in a chemical equation?",
+          "options": [
+            "A substance dissolved in water",
+            "A substance in gaseous form",
+            "A substance in solid crystalline form",
+            "A substance exposed to air"
+          ],
+          "answer": 0,
+          "explanation": "The chapter uses (aq) for aqueous solution, meaning dissolved in water."
+        },
+        {
+          "id": "q1_2",
+          "question": "Which state symbol stands for a gas?",
+          "options": [
+            "(g)",
+            "(s)",
+            "(l)",
+            "(aq)"
+          ],
+          "answer": 0,
+          "explanation": "Pages 3-5 list the standard state symbols used in complete chemical equations."
+        },
+        {
+          "id": "q1_3",
+          "question": "What is the main difference between a skeletal equation and a balanced equation?",
+          "options": [
+            "A balanced equation has equal numbers of each type of atom on both sides",
+            "A skeletal equation always includes heat terms",
+            "A balanced equation never uses formulae",
+            "A skeletal equation contains only products"
+          ],
+          "answer": 0,
+          "explanation": "The chapter explains that balancing makes the atom counts equal on both sides."
+        },
+        {
+          "id": "q1_4",
+          "question": "In balancing equations, what are you allowed to change?",
+          "options": [
+            "Only the coefficients in front of formulae",
+            "Only the subscripts inside formulae",
+            "Only the product names",
+            "Only the state symbols"
+          ],
+          "answer": 0,
+          "explanation": "The balancing method explicitly says not to change anything inside the formula boxes."
+        },
+        {
+          "id": "q1_5",
+          "question": "What is the balanced form of Fe + H2O -> Fe3O4 + H2 shown in the chapter?",
+          "options": [
+            "3Fe + 4H2O -> Fe3O4 + 4H2",
+            "Fe + H2O -> Fe3O4 + H2",
+            "2Fe + 2H2O -> Fe2O3 + 2H2",
+            "4Fe + H2O -> Fe3O4 + H2"
+          ],
+          "answer": 0,
+          "explanation": "Pages 4-5 work this example through and end with 3Fe + 4H2O -> Fe3O4 + 4H2."
+        },
+        {
+          "id": "q1_6",
+          "question": "Why must chemical equations be balanced?",
+          "options": [
+            "Because atoms are conserved during a chemical reaction",
+            "Because products must always outnumber reactants",
+            "Because only balanced equations can include solids",
+            "Because balancing changes the reaction type"
+          ],
+          "answer": 0,
+          "explanation": "The text ties balancing directly to the conservation of mass and unchanged atom counts."
+        },
+        {
+          "id": "q1_7",
+          "question": "Which representation is the first shortened step after a sentence description of a reaction?",
+          "options": [
+            "A word equation",
+            "An ionic equation",
+            "A periodic table entry",
+            "A structural formula diagram"
+          ],
+          "answer": 0,
+          "explanation": "Page 2 introduces the word equation before the symbolic equation."
+        },
+        {
+          "id": "q1_8",
+          "question": "What does the symbol (s) mean in a complete chemical equation?",
+          "options": [
+            "Solid",
+            "Solution",
+            "Suspension",
+            "Steam"
+          ],
+          "answer": 0,
+          "explanation": "The state-symbol table in the chapter uses (s) for solid."
+        },
+        {
+          "id": "q1_9",
+          "question": "If a student changes O2 to O3 while balancing, what has gone wrong?",
+          "options": [
+            "They changed the substance instead of the coefficient",
+            "They correctly balanced oxygen atoms",
+            "They converted a product into a reactant",
+            "They only changed the physical state"
+          ],
+          "answer": 0,
+          "explanation": "The chapter's box method exists to prevent altering subscripts and therefore changing the identity of the substance."
+        },
+        {
+          "id": "q1_10",
+          "question": "Which part of a balanced equation shows how many units of a substance participate?",
+          "options": [
+            "The coefficient written before the formula",
+            "The subscript inside the formula",
+            "The chapter number",
+            "The state symbol in brackets"
+          ],
+          "answer": 0,
+          "explanation": "Balancing uses coefficients outside formulae to adjust atom counts."
+        },
+        {
+          "id": "q1_11",
+          "question": "Which symbol shows a liquid state?",
+          "options": [
+            "(l)",
+            "(g)",
+            "(aq)",
+            "(s)"
+          ],
+          "answer": 0,
+          "explanation": "The chapter lists (l) as the notation for liquid."
+        },
+        {
+          "id": "q1_12",
+          "question": "What should you do immediately after writing formulae for reactants and products in an exam?",
+          "options": [
+            "Balance the equation by checking atom counts",
+            "Rename all products in words again",
+            "Remove the arrow and use an equals sign",
+            "Delete all state symbols"
+          ],
+          "answer": 0,
+          "explanation": "The chapter's method is formulae first, then balancing by counting atoms."
+        },
+        {
+          "id": "q1_13",
+          "question": "Why are state symbols especially useful in precipitation reactions?",
+          "options": [
+            "They show which product is an insoluble solid",
+            "They remove the need to balance the equation",
+            "They prove a reaction is exothermic",
+            "They indicate the mass of each substance"
+          ],
+          "answer": 0,
+          "explanation": "Later in the chapter, precipitation reactions are identified partly by the solid product written with (s)."
+        },
+        {
+          "id": "q1_14",
+          "question": "Which statement about a complete chemical equation is correct?",
+          "options": [
+            "It can show reactants, products, and physical states symbolically",
+            "It only lists the names of products",
+            "It must avoid formulae",
+            "It cannot include gases"
+          ],
+          "answer": 0,
+          "explanation": "The chapter summary on page 14 states this directly."
+        },
+        {
+          "id": "q1_15",
+          "question": "What is the balanced equation for burning magnesium in oxygen?",
+          "options": [
+            "2Mg + O2 -> 2MgO",
+            "Mg + O -> MgO",
+            "Mg + O2 -> MgO2",
+            "2Mg + O -> 2MgO"
+          ],
+          "answer": 0,
+          "explanation": "The magnesium reaction becomes balanced by placing coefficient 2 before Mg and MgO."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "M2: Classifying Reaction Types",
+      "questions": [
+        {
+          "id": "q2_1",
+          "question": "What is the defining feature of a combination reaction?",
+          "options": [
+            "Two or more reactants form a single product",
+            "One compound splits into simpler substances",
+            "A metal loses shine in air",
+            "An insoluble solid dissolves in water"
+          ],
+          "answer": 0,
+          "explanation": "Page 6 defines combination reactions as reactions in which a single product forms from two or more reactants."
+        },
+        {
+          "id": "q2_2",
+          "question": "Which textbook reaction is used to show a combination reaction with heat release?",
+          "options": [
+            "CaO + H2O -> Ca(OH)2 + Heat",
+            "Fe + CuSO4 -> FeSO4 + Cu",
+            "Na2SO4 + BaCl2 -> BaSO4 + 2NaCl",
+            "CuO + H2 -> Cu + H2O"
+          ],
+          "answer": 0,
+          "explanation": "The calcium oxide and water example on page 6 is both a combination and an exothermic reaction."
+        },
+        {
+          "id": "q2_3",
+          "question": "A reaction in which heat is given out along with the products is called",
+          "options": [
+            "exothermic",
+            "endothermic",
+            "displacement",
+            "photolytic"
+          ],
+          "answer": 0,
+          "explanation": "The chapter summary on page 14 defines exothermic reactions this way."
+        },
+        {
+          "id": "q2_4",
+          "question": "Decomposition reactions are described as",
+          "options": [
+            "the opposite of combination reactions",
+            "always displacement reactions",
+            "reactions with no products",
+            "reactions involving only metals"
+          ],
+          "answer": 0,
+          "explanation": "The chapter explicitly calls decomposition the opposite of combination."
+        },
+        {
+          "id": "q2_5",
+          "question": "Which type of energy causes decomposition of silver chloride in the chapter?",
+          "options": [
+            "Light",
+            "Sound",
+            "Magnetism",
+            "Pressure"
+          ],
+          "answer": 0,
+          "explanation": "The silver chloride and silver bromide examples are photochemical decompositions caused by sunlight."
+        },
+        {
+          "id": "q2_6",
+          "question": "What is the volume ratio of gases obtained when water is decomposed by electricity?",
+          "options": [
+            "Hydrogen is collected in double the amount of oxygen",
+            "Oxygen is collected in double the amount of hydrogen",
+            "Equal amounts of nitrogen and oxygen are formed",
+            "Only hydrogen is formed"
+          ],
+          "answer": 0,
+          "explanation": "The chapter asks why one test tube collects double the gas and identifies it as hydrogen."
+        },
+        {
+          "id": "q2_7",
+          "question": "Which reaction type best describes Fe + CuSO4 -> FeSO4 + Cu?",
+          "options": [
+            "Displacement reaction",
+            "Combination reaction",
+            "Neutralisation reaction",
+            "Combustion reaction"
+          ],
+          "answer": 0,
+          "explanation": "Iron displaces copper from copper sulphate, so page 11 identifies it as a displacement reaction."
+        },
+        {
+          "id": "q2_8",
+          "question": "Why can zinc displace copper from copper sulphate solution?",
+          "options": [
+            "Zinc is more reactive than copper",
+            "Copper is more reactive than zinc",
+            "Copper is a gas",
+            "Zinc is always aqueous"
+          ],
+          "answer": 0,
+          "explanation": "The chapter states that zinc and lead are more reactive than copper and can therefore displace it."
+        },
+        {
+          "id": "q2_9",
+          "question": "In a double displacement reaction, what is exchanged between the reactants?",
+          "options": [
+            "Ions or groups of atoms",
+            "Only electrons from one atom",
+            "Only heat energy",
+            "Only state symbols"
+          ],
+          "answer": 0,
+          "explanation": "Page 12 explains that double displacement reactions involve exchange of ions between reactants."
+        },
+        {
+          "id": "q2_10",
+          "question": "Why is Na2SO4 + BaCl2 -> BaSO4 + 2NaCl also called a precipitation reaction?",
+          "options": [
+            "Because insoluble barium sulphate is formed",
+            "Because water evaporates completely",
+            "Because both reactants are metals",
+            "Because light is required"
+          ],
+          "answer": 0,
+          "explanation": "The white insoluble BaSO4 formed in the reaction is a precipitate."
+        },
+        {
+          "id": "q2_11",
+          "question": "Which of the following is a decomposition reaction from the chapter?",
+          "options": [
+            "Heating lead nitrate",
+            "Burning coal in oxygen",
+            "Iron placed in copper sulphate",
+            "Mixing sodium sulphate with barium chloride"
+          ],
+          "answer": 0,
+          "explanation": "Lead nitrate breaks down on heating, so it is a decomposition reaction."
+        },
+        {
+          "id": "q2_12",
+          "question": "Reactions that absorb energy are known as",
+          "options": [
+            "endothermic",
+            "exothermic",
+            "corrosive",
+            "substitution"
+          ],
+          "answer": 0,
+          "explanation": "The chapter notes that decomposition often requires energy and calls such reactions endothermic."
+        },
+        {
+          "id": "q2_13",
+          "question": "Which description matches a displacement reaction pattern?",
+          "options": [
+            "Element + compound -> new compound + new element",
+            "Compound + compound -> single product",
+            "Element + element -> single product only",
+            "Compound -> compound without any change"
+          ],
+          "answer": 0,
+          "explanation": "This is the structural pattern of the iron-copper sulphate example."
+        },
+        {
+          "id": "q2_14",
+          "question": "What is the colour of the precipitate formed in the sodium sulphate and barium chloride activity?",
+          "options": [
+            "White",
+            "Blue",
+            "Green",
+            "Black"
+          ],
+          "answer": 0,
+          "explanation": "Page 11 says the insoluble precipitate formed is white barium sulphate."
+        },
+        {
+          "id": "q2_15",
+          "question": "What kind of reaction is represented by lead nitrate plus potassium iodide forming lead iodide and potassium nitrate?",
+          "options": [
+            "Double displacement reaction",
+            "Combination reaction",
+            "Only a physical change",
+            "Displacement by a free metal"
+          ],
+          "answer": 0,
+          "explanation": "The chapter revisits this yellow precipitate example and points out that it also fits double displacement."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "M3: Redox, Corrosion, and Rancidity",
+      "questions": [
+        {
+          "id": "q3_1",
+          "question": "If a substance gains oxygen during a reaction, it is said to be",
+          "options": [
+            "oxidised",
+            "neutralised",
+            "precipitated",
+            "distilled"
+          ],
+          "answer": 0,
+          "explanation": "Page 12 defines oxidation as gain of oxygen."
+        },
+        {
+          "id": "q3_2",
+          "question": "If a substance loses oxygen during a reaction, it is said to be",
+          "options": [
+            "reduced",
+            "combined",
+            "vaporised",
+            "dissolved"
+          ],
+          "answer": 0,
+          "explanation": "The chapter defines reduction as loss of oxygen."
+        },
+        {
+          "id": "q3_3",
+          "question": "When copper powder is heated in air, what black substance forms?",
+          "options": [
+            "Copper(II) oxide",
+            "Copper sulphate",
+            "Copper chloride",
+            "Copper carbonate"
+          ],
+          "answer": 0,
+          "explanation": "The oxidation activity shows copper becoming coated with black copper oxide."
+        },
+        {
+          "id": "q3_4",
+          "question": "In the reaction CuO + H2 -> Cu + H2O, which substance is reduced?",
+          "options": [
+            "CuO",
+            "H2",
+            "H2O",
+            "Both are only oxidised"
+          ],
+          "answer": 0,
+          "explanation": "Copper(II) oxide loses oxygen and is therefore reduced."
+        },
+        {
+          "id": "q3_5",
+          "question": "In the reaction CuO + H2 -> Cu + H2O, hydrogen is",
+          "options": [
+            "oxidised",
+            "reduced",
+            "precipitated",
+            "unchanged"
+          ],
+          "answer": 0,
+          "explanation": "Hydrogen gains oxygen to form water, so it is oxidised."
+        },
+        {
+          "id": "q3_6",
+          "question": "Why are reactions involving both oxidation and reduction called redox reactions?",
+          "options": [
+            "Because one reactant is oxidised while another is reduced",
+            "Because they always involve red-coloured products",
+            "Because they are restricted to rusting only",
+            "Because they cannot be balanced"
+          ],
+          "answer": 0,
+          "explanation": "Page 12 explicitly states that one reactant is oxidised while the other is reduced."
+        },
+        {
+          "id": "q3_7",
+          "question": "Which statement about ZnO + C -> Zn + CO is correct according to the chapter?",
+          "options": [
+            "Carbon is oxidised and zinc oxide is reduced",
+            "Carbon is reduced and zinc is oxidised",
+            "Both carbon and zinc oxide are oxidised",
+            "No redox change occurs"
+          ],
+          "answer": 0,
+          "explanation": "Page 13 explains that in reaction (1.31), carbon is oxidised to CO and ZnO is reduced to Zn."
+        },
+        {
+          "id": "q3_8",
+          "question": "Corrosion is the process in which",
+          "options": [
+            "a metal is attacked by substances like moisture or acids in its surroundings",
+            "a salt dissolves in water",
+            "a gas forms from every reaction",
+            "food is always heated"
+          ],
+          "answer": 0,
+          "explanation": "Page 13 defines corrosion using attack by moisture, acids, and surrounding substances."
+        },
+        {
+          "id": "q3_9",
+          "question": "What is the common visible sign of rusting iron mentioned in the chapter?",
+          "options": [
+            "A reddish-brown coating",
+            "A white crystalline crust",
+            "A blue solution",
+            "A yellow gas"
+          ],
+          "answer": 0,
+          "explanation": "The text describes rusting as a reddish-brown powdery coating on iron."
+        },
+        {
+          "id": "q3_10",
+          "question": "What kind of coating is mentioned for silver during corrosion?",
+          "options": [
+            "Black",
+            "Green",
+            "Red",
+            "White"
+          ],
+          "answer": 0,
+          "explanation": "The chapter gives black coating on silver as an example of corrosion/tarnishing."
+        },
+        {
+          "id": "q3_11",
+          "question": "What kind of coating is mentioned for copper during corrosion?",
+          "options": [
+            "Green",
+            "Black",
+            "Yellow",
+            "Brown"
+          ],
+          "answer": 0,
+          "explanation": "Page 13 mentions the green coating formed on copper."
+        },
+        {
+          "id": "q3_12",
+          "question": "Rancidity happens when",
+          "options": [
+            "fats and oils get oxidised",
+            "water freezes in food",
+            "food is filtered",
+            "salt precipitates from food"
+          ],
+          "answer": 0,
+          "explanation": "The chapter defines rancidity as oxidation of fats and oils, changing smell and taste."
+        },
+        {
+          "id": "q3_13",
+          "question": "Why do chips manufacturers flush packets with nitrogen according to the chapter?",
+          "options": [
+            "To prevent oxidation of the chips",
+            "To make the chips heavier",
+            "To heat the chips during packing",
+            "To add extra smell"
+          ],
+          "answer": 0,
+          "explanation": "Page 13 says nitrogen is used to reduce oxidation and prevent rancidity."
+        },
+        {
+          "id": "q3_14",
+          "question": "Which storage method helps slow down rancidity?",
+          "options": [
+            "Keeping food in airtight containers",
+            "Leaving food exposed to humid air",
+            "Adding more oxygen to the packet",
+            "Storing oil in open trays"
+          ],
+          "answer": 0,
+          "explanation": "The chapter notes airtight storage as a way to slow oxidation of oils and fats."
+        },
+        {
+          "id": "q3_15",
+          "question": "In the reaction 2PbO + C -> 2Pb + CO2, which statement is correct?",
+          "options": [
+            "Carbon is oxidised and lead oxide is reduced",
+            "Carbon is reduced and lead is oxidised",
+            "Only lead is oxidised",
+            "No oxidation or reduction takes place"
+          ],
+          "answer": 0,
+          "explanation": "The summary exercise on page 14 tests this exact redox interpretation."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,415 @@
+{
+  "title": "The Human Eye and the Colourful World - Kid-friendly science workshop with tiny lessons and quick quizzes",
+  "version": "1.0",
+  "totalQuestions": 32,
+  "modules": [
+    {
+      "id": 0,
+      "name": "M0: Meet the Human Eye",
+      "questions": [
+        {
+          "question": "Which part of the eye receives the image?",
+          "options": [
+            "Retina",
+            "Iris",
+            "Pupil",
+            "Eyelid"
+          ],
+          "answer": 0,
+          "explanation": "The retina is the light-sensitive surface of the eye.",
+          "id": "q0_1"
+        },
+        {
+          "question": "What is the cornea's main job in vision?",
+          "options": [
+            "It bends light entering the eye",
+            "It stores food",
+            "It makes the pupil",
+            "It turns light into sound"
+          ],
+          "answer": 0,
+          "explanation": "The cornea does much of the refraction at the front of the eye.",
+          "id": "q0_2"
+        },
+        {
+          "question": "What does the pupil control?",
+          "options": [
+            "How much light enters the eye",
+            "How tall a person is",
+            "The size of the retina",
+            "The colour of the iris only"
+          ],
+          "answer": 0,
+          "explanation": "The pupil regulates light entering the eye.",
+          "id": "q0_3"
+        },
+        {
+          "question": "What is accommodation?",
+          "options": [
+            "The eye lens changing its focal length",
+            "The eye closing forever",
+            "The retina moving away",
+            "The iris becoming a mirror"
+          ],
+          "answer": 0,
+          "explanation": "Accommodation is the eye's ability to adjust focus.",
+          "id": "q0_4"
+        },
+        {
+          "question": "Which muscle helps change the lens shape?",
+          "options": [
+            "Ciliary muscles",
+            "Biceps",
+            "Heart muscles",
+            "Toe muscles"
+          ],
+          "answer": 0,
+          "explanation": "Ciliary muscles control the lens curvature.",
+          "id": "q0_5"
+        },
+        {
+          "question": "For a normal young eye, the near point is about",
+          "options": [
+            "25 cm",
+            "25 m",
+            "2.5 cm",
+            "2.5 m"
+          ],
+          "answer": 0,
+          "explanation": "The source chapter gives about 25 cm.",
+          "id": "q0_6"
+        },
+        {
+          "question": "Why is the human eye compared to a camera?",
+          "options": [
+            "Both form images on a light-sensitive surface",
+            "Both use fuel",
+            "Both can fly",
+            "Both always magnify"
+          ],
+          "answer": 0,
+          "explanation": "The retina acts like a camera screen.",
+          "id": "q0_7"
+        },
+        {
+          "question": "What happens to signals from the retina?",
+          "options": [
+            "They go to the brain through optic nerves",
+            "They stay in the pupil",
+            "They turn into bones",
+            "They leave as steam"
+          ],
+          "answer": 0,
+          "explanation": "The optic nerves carry signals from eye to brain.",
+          "id": "q0_8"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "M1: Vision Problems and Fixes",
+      "questions": [
+        {
+          "question": "Myopia is also called",
+          "options": [
+            "Near-sightedness",
+            "Far-sightedness",
+            "Colour blindness",
+            "Night blindness"
+          ],
+          "answer": 0,
+          "explanation": "Myopia means nearby objects are seen more clearly than distant ones.",
+          "id": "q1_1"
+        },
+        {
+          "question": "Which lens corrects myopia?",
+          "options": [
+            "Concave lens",
+            "Convex lens",
+            "Plane mirror",
+            "Prism"
+          ],
+          "answer": 0,
+          "explanation": "A concave lens helps the myopic eye focus distant objects on the retina.",
+          "id": "q1_2"
+        },
+        {
+          "question": "Hypermetropia is also called",
+          "options": [
+            "Far-sightedness",
+            "Near-sightedness",
+            "Twinkling",
+            "Dispersion"
+          ],
+          "answer": 0,
+          "explanation": "Hypermetropia means nearby objects are hard to see clearly.",
+          "id": "q1_3"
+        },
+        {
+          "question": "Which lens corrects hypermetropia?",
+          "options": [
+            "Convex lens",
+            "Concave lens",
+            "Flat glass",
+            "Magnet"
+          ],
+          "answer": 0,
+          "explanation": "A convex lens adds the needed convergence.",
+          "id": "q1_4"
+        },
+        {
+          "question": "What is presbyopia?",
+          "options": [
+            "Loss of accommodation with age",
+            "A type of mirror",
+            "A colour in the rainbow",
+            "A kind of battery"
+          ],
+          "answer": 0,
+          "explanation": "Presbyopia is age-related weakening of focusing ability.",
+          "id": "q1_5"
+        },
+        {
+          "question": "What is cataract?",
+          "options": [
+            "Clouding of the eye lens",
+            "A bent pencil in water",
+            "A bright star",
+            "A glass slab"
+          ],
+          "answer": 0,
+          "explanation": "Cataract makes the lens cloudy.",
+          "id": "q1_6"
+        },
+        {
+          "question": "If a student cannot read the blackboard from the last row, which defect may be present?",
+          "options": [
+            "Myopia",
+            "Hypermetropia always",
+            "A prism effect",
+            "A heating effect"
+          ],
+          "answer": 0,
+          "explanation": "Difficulty seeing distant objects points to myopia.",
+          "id": "q1_7"
+        },
+        {
+          "question": "Which part of the eye changes lens curvature?",
+          "options": [
+            "Ciliary muscles",
+            "The pupil",
+            "The retina",
+            "The cornea"
+          ],
+          "answer": 0,
+          "explanation": "Ciliary muscles help adjust focus.",
+          "id": "q1_8"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "M2: Prism Colors and Rainbows",
+      "questions": [
+        {
+          "question": "What is dispersion of light?",
+          "options": [
+            "Splitting white light into colours",
+            "Making light louder",
+            "Turning light into heat",
+            "Stopping the sun"
+          ],
+          "answer": 0,
+          "explanation": "Dispersion is the separation of white light into its component colours.",
+          "id": "q2_1"
+        },
+        {
+          "question": "What device in the chapter is used to show dispersion?",
+          "options": [
+            "Prism",
+            "Lens",
+            "Mirror",
+            "Thermometer"
+          ],
+          "answer": 0,
+          "explanation": "A prism separates white light into a colour band.",
+          "id": "q2_2"
+        },
+        {
+          "question": "What is the angle of deviation?",
+          "options": [
+            "The angle between the original and emergent ray directions",
+            "The colour of the sky",
+            "The size of the prism",
+            "The speed of sound"
+          ],
+          "answer": 0,
+          "explanation": "It measures how much the ray is turned by the prism.",
+          "id": "q2_3"
+        },
+        {
+          "question": "Which effect helps explain a rainbow?",
+          "options": [
+            "Dispersion",
+            "Freezing",
+            "Filtration",
+            "Magnetism"
+          ],
+          "answer": 0,
+          "explanation": "A rainbow is tied to dispersion and refraction.",
+          "id": "q2_4"
+        },
+        {
+          "question": "Why do different colours separate in a prism?",
+          "options": [
+            "They bend by different amounts",
+            "They all have the same speed",
+            "They are different metals",
+            "They are heavier"
+          ],
+          "answer": 0,
+          "explanation": "Different colours refract differently in the prism.",
+          "id": "q2_5"
+        },
+        {
+          "question": "What happens to white light in dispersion?",
+          "options": [
+            "It splits into a band of colours",
+            "It becomes invisible",
+            "It turns into sound",
+            "It freezes into ice"
+          ],
+          "answer": 0,
+          "explanation": "White light separates into its colours.",
+          "id": "q2_6"
+        },
+        {
+          "question": "Which natural scene is often used as a rainbow example?",
+          "options": [
+            "A rainbow in the sky",
+            "A cracked wall",
+            "A metal spoon",
+            "A chalk board"
+          ],
+          "answer": 0,
+          "explanation": "Rainbows are the classic dispersion example.",
+          "id": "q2_7"
+        },
+        {
+          "question": "Which three ideas are linked to colourful sky and rainbow scenes?",
+          "options": [
+            "Refraction, dispersion, and scattering",
+            "Melting, freezing, and boiling",
+            "Force, mass, and speed",
+            "Charging, discharging, and fusing"
+          ],
+          "answer": 0,
+          "explanation": "The chapter connects these light phenomena.",
+          "id": "q2_8"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "M3: Twinkling and Blue Sky",
+      "questions": [
+        {
+          "question": "Why do stars twinkle?",
+          "options": [
+            "Atmospheric refraction changes their apparent brightness and position",
+            "Because stars blink on purpose",
+            "Because the Moon pushes them",
+            "Because they are underwater"
+          ],
+          "answer": 0,
+          "explanation": "Twinkling comes from changing refraction in the atmosphere.",
+          "id": "q3_1"
+        },
+        {
+          "question": "Why do we see the Sun a little before actual sunrise?",
+          "options": [
+            "Atmospheric refraction bends sunlight",
+            "The Earth stops rotating",
+            "The Sun moves faster",
+            "The clouds turn into mirrors"
+          ],
+          "answer": 0,
+          "explanation": "Refraction makes the Sun appear slightly higher than it really is.",
+          "id": "q3_2"
+        },
+        {
+          "question": "Why is the clear sky blue?",
+          "options": [
+            "Blue light is scattered more strongly by air",
+            "Blue paint is in the clouds",
+            "The ocean reflects the sky",
+            "The Sun is blue"
+          ],
+          "answer": 0,
+          "explanation": "Shorter wavelengths are scattered more strongly.",
+          "id": "q3_3"
+        },
+        {
+          "question": "What is the Tyndall effect?",
+          "options": [
+            "Visibility of a light beam due to scattering",
+            "A lens formula",
+            "A mirror law",
+            "A sound wave"
+          ],
+          "answer": 0,
+          "explanation": "Tyndall effect is seen when scattered light makes the beam path visible.",
+          "id": "q3_4"
+        },
+        {
+          "question": "Why are danger signals often red?",
+          "options": [
+            "Red light is scattered less and stays visible farther away",
+            "Red light is the brightest color in all weather",
+            "Red light has no wavelength",
+            "Red light makes fog disappear"
+          ],
+          "answer": 0,
+          "explanation": "Red is least scattered by fog or smoke.",
+          "id": "q3_5"
+        },
+        {
+          "question": "Which phenomenon explains the wavering of hot air above a fire?",
+          "options": [
+            "Atmospheric refraction",
+            "Fusion",
+            "Condensation",
+            "Magnetism"
+          ],
+          "answer": 0,
+          "explanation": "Hot air changes density and bends light differently.",
+          "id": "q3_6"
+        },
+        {
+          "question": "Why do planets not twinkle much?",
+          "options": [
+            "They appear as extended sources, so variations average out",
+            "They make no light at all",
+            "They are closer to the Sun only",
+            "They are made of glass"
+          ],
+          "answer": 0,
+          "explanation": "Planets are not point-like, so twinkling averages away.",
+          "id": "q3_7"
+        },
+        {
+          "question": "If Earth had no atmosphere, the sky would look",
+          "options": [
+            "Dark",
+            "Always green",
+            "Perfectly red",
+            "Exactly white"
+          ],
+          "answer": 0,
+          "explanation": "Without scattering in air, the sky would not appear blue.",
+          "id": "q3_8"
+        }
+      ]
+    }
+  ]
+}

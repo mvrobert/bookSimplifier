@@ -1,0 +1,271 @@
+{
+  "title": "How Do Organisms Reproduce? Workshop - Interactive study deck generated from jesc107.pdf",
+  "version": "1.0",
+  "totalQuestions": 20,
+  "modules": [
+    {
+      "id": 0,
+      "name": "M0: Why Reproduction Matters",
+      "questions": [
+        {
+          "id": "j107_q1",
+          "question": "Why do organisms reproduce?",
+          "options": [
+            "To keep their species going",
+            "To stop all growth",
+            "To turn into rocks",
+            "To erase DNA"
+          ],
+          "answer": 0,
+          "explanation": "Reproduction is needed for the species, even though one individual can stay alive without it."
+        },
+        {
+          "id": "j107_q2",
+          "question": "What is the first basic event in reproduction?",
+          "options": [
+            "DNA copying",
+            "Melting of bones",
+            "Colour change in leaves",
+            "Loss of water from air"
+          ],
+          "answer": 0,
+          "explanation": "The chapter says reproduction starts with a copy of DNA."
+        },
+        {
+          "id": "j107_q3",
+          "question": "What are small differences in copied DNA called?",
+          "options": [
+            "Variations",
+            "Synapses",
+            "Reflexes",
+            "Roots"
+          ],
+          "answer": 0,
+          "explanation": "Small changes during DNA copying are called variations."
+        },
+        {
+          "id": "j107_q4",
+          "question": "Why can variation be useful for a species?",
+          "options": [
+            "It may help some members survive change",
+            "It always destroys the species",
+            "It removes the need for DNA",
+            "It makes all organisms identical"
+          ],
+          "answer": 0,
+          "explanation": "Variation can help a species survive when conditions change."
+        },
+        {
+          "id": "j107_q5",
+          "question": "Do all reproducing organisms make perfect copies?",
+          "options": [
+            "No, small changes can happen",
+            "Yes, every copy is perfect",
+            "Only plants make copies",
+            "Only animals make copies"
+          ],
+          "answer": 0,
+          "explanation": "The chapter explains that DNA copying is never absolutely perfect."
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "M1: Asexual Reproduction",
+      "questions": [
+        {
+          "id": "j107_q6",
+          "question": "Which kind of reproduction uses only one parent?",
+          "options": [
+            "Asexual reproduction",
+            "Sexual reproduction",
+            "Leaf colouring",
+            "Blood circulation"
+          ],
+          "answer": 0,
+          "explanation": "Asexual reproduction needs only one parent."
+        },
+        {
+          "id": "j107_q7",
+          "question": "What happens in fission?",
+          "options": [
+            "One organism divides into two or more parts",
+            "Two adults merge into one",
+            "Seeds turn into metal",
+            "Leaves become water"
+          ],
+          "answer": 0,
+          "explanation": "Fission is simple splitting, common in bacteria and protozoa."
+        },
+        {
+          "id": "j107_q8",
+          "question": "Which organism is famous for budding?",
+          "options": [
+            "Hydra",
+            "Amoeba",
+            "Mango tree",
+            "Human being"
+          ],
+          "answer": 0,
+          "explanation": "Hydra is the classic budding example in the chapter."
+        },
+        {
+          "id": "j107_q9",
+          "question": "What is regeneration?",
+          "options": [
+            "Growing a whole body from a piece",
+            "Stopping all growth",
+            "Mixing pollen with water",
+            "Turning light into heat"
+          ],
+          "answer": 0,
+          "explanation": "Regeneration means a body part or piece can grow into a complete organism."
+        },
+        {
+          "id": "j107_q10",
+          "question": "Which plant method uses roots, stems, or leaves to make new plants?",
+          "options": [
+            "Vegetative propagation",
+            "Reflex action",
+            "Synapse jumping",
+            "Sex determination"
+          ],
+          "answer": 0,
+          "explanation": "Vegetative propagation is asexual reproduction in plants using plant parts."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "M2: Sexual Reproduction in Flowering Plants",
+      "questions": [
+        {
+          "id": "j107_q11",
+          "question": "What is pollination?",
+          "options": [
+            "Transfer of pollen from anther to stigma",
+            "Transfer of water from root to leaf",
+            "Breaking a stem into pieces",
+            "Turning a seed into a fruit"
+          ],
+          "answer": 0,
+          "explanation": "Pollination is the movement of pollen grains from anther to stigma."
+        },
+        {
+          "id": "j107_q12",
+          "question": "What happens after pollination in flowering plants?",
+          "options": [
+            "Fertilisation",
+            "Digestion",
+            "Reflex action",
+            "Spore release only"
+          ],
+          "answer": 0,
+          "explanation": "The next main step after pollination is fertilisation."
+        },
+        {
+          "id": "j107_q13",
+          "question": "Which flower part receives pollen?",
+          "options": [
+            "Stigma",
+            "Root hair",
+            "Petiole",
+            "Stamen only"
+          ],
+          "answer": 0,
+          "explanation": "The stigma is the pollen-receiving part of the flower."
+        },
+        {
+          "id": "j107_q14",
+          "question": "What does the ovule become after fertilisation?",
+          "options": [
+            "Seed",
+            "Leaf",
+            "Stem",
+            "Petal"
+          ],
+          "answer": 0,
+          "explanation": "The chapter explains that the ovule develops into a seed."
+        },
+        {
+          "id": "j107_q15",
+          "question": "Why does sexual reproduction usually create more variation?",
+          "options": [
+            "It combines genetic material from two parents",
+            "It never uses DNA",
+            "It always makes identical copies",
+            "It only happens in one cell"
+          ],
+          "answer": 0,
+          "explanation": "Mixing material from two parents creates more variety in offspring."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "M3: Human Reproduction and Health",
+      "questions": [
+        {
+          "id": "j107_q16",
+          "question": "What is puberty?",
+          "options": [
+            "The stage when the body becomes sexually mature",
+            "A type of spore",
+            "A reflex in plants",
+            "A chemical equation"
+          ],
+          "answer": 0,
+          "explanation": "Puberty is the stage when the body matures for reproduction."
+        },
+        {
+          "id": "j107_q17",
+          "question": "Where does fertilisation usually happen in human beings?",
+          "options": [
+            "Fallopian tube",
+            "Mouth",
+            "Skin",
+            "Stomach"
+          ],
+          "answer": 0,
+          "explanation": "The chapter says fertilisation in humans usually happens in the fallopian tube."
+        },
+        {
+          "id": "j107_q18",
+          "question": "Which organ produces sperms in males?",
+          "options": [
+            "Testes",
+            "Ovary",
+            "Uterus",
+            "Pancreas"
+          ],
+          "answer": 0,
+          "explanation": "The testes are the male reproductive organs that produce sperm."
+        },
+        {
+          "id": "j107_q19",
+          "question": "Which organ produces eggs in females?",
+          "options": [
+            "Ovaries",
+            "Testes",
+            "Vas deferens",
+            "Spinal cord"
+          ],
+          "answer": 0,
+          "explanation": "The ovaries are the female reproductive organs that produce eggs."
+        },
+        {
+          "id": "j107_q20",
+          "question": "What does a copper-T help with?",
+          "options": [
+            "Preventing pregnancy",
+            "Making bones grow",
+            "Turning pollen to fruit",
+            "Speeding up reflexes"
+          ],
+          "answer": 0,
+          "explanation": "The chapter lists copper-T as one of the methods used to avoid pregnancy."
+        }
+      ]
+    }
+  ]
+}

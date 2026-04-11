@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Carbon and its Compounds</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --text: #1a1a2e;
+      --muted: #64748b;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --secondary: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 32%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.10), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    code, pre, .diagram {
+      font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+    }
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      width: 0;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      z-index: 1000;
+    }
+    #app {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 16px 36px;
+    }
+    #header {
+      position: sticky;
+      top: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      z-index: 100;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    }
+    #header .left,
+    #header .center,
+    #header .right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #header .center {
+      justify-content: center;
+      flex: 1;
+    }
+    #header .left {
+      min-width: 220px;
+      font-weight: 600;
+    }
+    #pct {
+      min-width: 46px;
+      text-align: right;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    button {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover {
+      border-color: var(--primary);
+    }
+    #slide {
+      background: var(--surface);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      padding: 40px 48px;
+      min-height: 520px;
+      border: 1px solid rgba(226, 232, 240, 0.85);
+    }
+    #slide h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+    #slide h2 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+    #slide p,
+    #slide li,
+    #slide td,
+    #slide th {
+      line-height: 1.7;
+      font-size: 1.03rem;
+    }
+    #slide pre {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    #slide table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    #slide th,
+    #slide td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    #slide tr:hover td {
+      background: #f8fafc;
+    }
+    .diagram {
+      border: 2px dashed #cbd5e1;
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 16px;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 18px 0;
+    }
+    .note,
+    .tip,
+    .warn,
+    .real {
+      border-left: 5px solid;
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin: 18px 0;
+    }
+    .note { border-color: #2563eb; background: #eff6ff; }
+    .tip { border-color: #22c55e; background: #f0fdf4; }
+    .warn { border-color: #eab308; background: #fefce8; }
+    .real { border-color: #7c3aed; background: #faf5ff; }
+    .quiz-container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .quiz-opt {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 12px;
+      border: 2px solid var(--border);
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .quiz-opt.correct {
+      border-color: var(--good);
+      background: #f0fdf4;
+    }
+    .quiz-opt.wrong {
+      border-color: var(--bad);
+      background: #fef2f2;
+    }
+    .quiz-opt.disabled {
+      pointer-events: none;
+      opacity: 0.78;
+    }
+    .quiz-feedback {
+      display: none;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 16px;
+    }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.pass {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .quiz-feedback.fail {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    #nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    #nav .prev {
+      background: #e2e8f0;
+    }
+    #nav .next {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    #toc {
+      position: fixed;
+      top: 0;
+      left: -360px;
+      width: 350px;
+      height: 100vh;
+      background: #ffffff;
+      border-right: 1px solid var(--border);
+      z-index: 201;
+      transition: left 0.2s ease;
+      padding: 24px 18px;
+      overflow-y: auto;
+      box-shadow: 8px 0 24px rgba(15, 23, 42, 0.1);
+    }
+    #toc.open {
+      left: 0;
+    }
+    #toc-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.32);
+      z-index: 200;
+    }
+    #toc-overlay.open {
+      display: block;
+    }
+    .toc-module {
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .toc-module h3 {
+      margin: 0 0 10px 0;
+      color: var(--secondary);
+    }
+    .toc-link {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 6px;
+      background: #fff;
+    }
+    .toc-link.current {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+    .quiz-meta {
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    @media (max-width: 768px) {
+      #slide { padding: 20px 24px; }
+      #header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      #header .left,
+      #header .center,
+      #header .right {
+        justify-content: space-between;
+        min-width: 0;
+      }
+    }
+    @media print {
+      #header, #nav, #progress-bar, #toc, #toc-overlay { display: none !important; }
+      #slide { box-shadow: none; border: none; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+  <div id="app">
+    <div id="header">
+      <div class="left" id="module-label">Module 0</div>
+      <div class="center" id="slide-counter">1 / 1</div>
+      <div class="right">
+        <button onclick="toggleTOC()" title="Table of Contents (T)">TOC</button>
+        <button onclick="retryFailed()" title="Retry failed quiz questions (R)">Retry</button>
+        <span id="pct">0%</span>
+      </div>
+    </div>
+    <div id="slide"></div>
+    <div id="nav">
+      <button class="prev" onclick="go(-1)">Prev</button>
+      <button class="next" onclick="go(1)">Next</button>
+    </div>
+  </div>
+  <div id="toc-overlay" onclick="toggleTOC(false)"></div>
+  <div id="toc">
+    <h2>Table of Contents</h2>
+    <div id="toc-body"></div>
+  </div>
+
+  <script>
+    const QUIZ_DATA = {"title": "Carbon and its Compounds - Kid-friendly science workshop with tiny lessons and quick quizzes", "version": "1.0", "totalQuestions": 32, "modules": [{"id": 0, "name": "M0: Why Carbon Is Special", "questions": [{"question": "What does tetravalency of carbon mean?", "options": ["Carbon forms four bonds", "Carbon has four colours", "Carbon is always a gas", "Carbon dissolves every metal"], "answer": 0, "explanation": "Tetravalency means carbon has combining capacity of four.", "id": "q0_1"}, {"question": "What does catenation mean?", "options": ["Carbon atoms link to each other", "Carbon turns into oxygen", "Carbon becomes an acid", "Carbon loses all bonds"], "answer": 0, "explanation": "Catenation is the ability to form chains with itself.", "id": "q0_2"}, {"question": "Why can carbon form so many compounds?", "options": ["Because of tetravalency and catenation", "Because it is always molten", "Because it never bonds", "Because it has only one valency"], "answer": 0, "explanation": "Those two features together create huge variety.", "id": "q0_3"}, {"question": "A covalent bond is formed by", "options": ["sharing electrons", "throwing away all electrons", "only transferring neutrons", "breaking the atom completely"], "answer": 0, "explanation": "Covalent bonding involves sharing electrons.", "id": "q0_4"}, {"question": "Many carbon compounds are poor conductors because they are mainly", "options": ["covalent", "metallic", "radio waves", "alloys"], "answer": 0, "explanation": "Covalent compounds generally conduct poorly.", "id": "q0_5"}, {"question": "Which element is central in food, fuels, and many living structures?", "options": ["Carbon", "Helium", "Neon", "Argon"], "answer": 0, "explanation": "Carbon chemistry is everywhere in daily life.", "id": "q0_6"}, {"question": "What kind of shapes can carbon skeletons form?", "options": ["Chains, branches, and rings", "Only squares", "Only triangles", "Only liquids"], "answer": 0, "explanation": "Carbon can build many structural patterns.", "id": "q0_7"}, {"question": "Which type of compounds often has lower melting points than ionic compounds?", "options": ["Many covalent carbon compounds", "All metal oxides", "Alloys only", "Salts only"], "answer": 0, "explanation": "Covalent compounds often melt more easily than ionic ones.", "id": "q0_8"}]}, {"id": 1, "name": "M1: Hydrocarbons and Families", "questions": [{"question": "A hydrocarbon contains only", "options": ["carbon and hydrogen", "carbon and oxygen", "hydrogen and nitrogen", "carbon and iron"], "answer": 0, "explanation": "Hydrocarbons are made only of carbon and hydrogen.", "id": "q1_1"}, {"question": "A saturated hydrocarbon has", "options": ["only single bonds between carbon atoms", "only triple bonds", "only ionic bonds", "no hydrogen atoms"], "answer": 0, "explanation": "Saturated hydrocarbons contain only single carbon-carbon bonds.", "id": "q1_2"}, {"question": "An unsaturated hydrocarbon may contain", "options": ["double or triple bonds", "only sodium", "only oxygen gas", "only single bonds and no carbon"], "answer": 0, "explanation": "Unsaturated hydrocarbons include multiple bonds.", "id": "q1_3"}, {"question": "Which type of hydrocarbon usually undergoes addition reactions more easily?", "options": ["Unsaturated hydrocarbon", "Saturated hydrocarbon", "Noble gas", "Salt crystal"], "answer": 0, "explanation": "Multiple bonds make addition easier.", "id": "q1_4"}, {"question": "What is a homologous series?", "options": ["A family of compounds with similar structures and patterns", "A type of rust", "A pH scale colour", "A metal alloy"], "answer": 0, "explanation": "Homologous series organise compounds into related families.", "id": "q1_5"}, {"question": "Why are homologous series useful?", "options": ["They help you see patterns instead of memorising each compound separately", "They remove all carbon", "They stop reactions", "They make metals softer"], "answer": 0, "explanation": "Pattern recognition is the key benefit.", "id": "q1_6"}, {"question": "Which statement fits saturated compounds best?", "options": ["They are full of single carbon-carbon bonds", "They always contain chlorine", "They are metals", "They never burn"], "answer": 0, "explanation": "Single bonds define saturation.", "id": "q1_7"}, {"question": "Which statement fits unsaturated compounds best?", "options": ["They contain at least one multiple bond", "They contain no carbon", "They are always solids", "They always have pH 7"], "answer": 0, "explanation": "Multiple bonds define unsaturation.", "id": "q1_8"}]}, {"id": 2, "name": "M2: Useful Reactions of Carbon Compounds", "questions": [{"question": "What is combustion?", "options": ["Burning of a substance in oxygen", "Freezing of a liquid", "Mixing salt with water", "Only dissolving sugar"], "answer": 0, "explanation": "Combustion means burning.", "id": "q2_1"}, {"question": "A clean blue flame usually suggests", "options": ["more complete burning", "no burning at all", "only water formation", "a magnetic reaction"], "answer": 0, "explanation": "Blue flames usually indicate better combustion.", "id": "q2_2"}, {"question": "A smoky yellow flame suggests", "options": ["incomplete combustion", "neutralisation", "electrolysis", "no carbon present"], "answer": 0, "explanation": "Soot and smoke indicate incomplete combustion.", "id": "q2_3"}, {"question": "What does oxidation often involve?", "options": ["Gain of oxygen or loss of hydrogen", "Gain of sand", "Loss of all atoms", "Only turning into a metal"], "answer": 0, "explanation": "Oxidation changes substances through oxygen or hydrogen changes.", "id": "q2_4"}, {"question": "Which type of compound often undergoes addition reactions?", "options": ["Unsaturated compound", "Noble gas", "Salt only", "Pure metal"], "answer": 0, "explanation": "Multiple bonds support addition reactions.", "id": "q2_5"}, {"question": "What happens in a substitution reaction?", "options": ["One atom or group is replaced by another", "All atoms vanish", "Only heat is removed", "The substance becomes a planet"], "answer": 0, "explanation": "Substitution means replacement.", "id": "q2_6"}, {"question": "Why does bond type matter in carbon chemistry?", "options": ["It affects how compounds react", "It changes gravity", "It removes carbon", "It stops all burning"], "answer": 0, "explanation": "Structure controls reactivity.", "id": "q2_7"}, {"question": "Which reaction type best matches “new atoms join across a multiple bond”?", "options": ["Addition", "Rusting", "Neutralisation", "Filtration"], "answer": 0, "explanation": "That is the idea of an addition reaction.", "id": "q2_8"}]}, {"id": 3, "name": "M3: Ethanol, Ethanoic Acid and Soap", "questions": [{"question": "Which carbon compound is related to vinegar in dilute form?", "options": ["Ethanoic acid", "Methane", "Carbon dioxide", "Graphite"], "answer": 0, "explanation": "Vinegar contains dilute ethanoic acid.", "id": "q3_1"}, {"question": "Which statement about ethanol is correct?", "options": ["It is flammable", "It is a metal", "It cannot burn", "It is always solid"], "answer": 0, "explanation": "Ethanol is flammable and must be handled carefully.", "id": "q3_2"}, {"question": "Why is safe handling important even for useful chemicals?", "options": ["Because usefulness does not remove risk", "Because useful chemicals can never react", "Because all chemicals are sweet", "Because risk only exists in space"], "answer": 0, "explanation": "Safety remains important for all chemicals.", "id": "q3_3"}, {"question": "Why can soap remove oily dirt better than plain water?", "options": ["Soap interacts with both water and oil", "Soap turns oil into metal", "Soap removes all oxygen", "Soap freezes water instantly"], "answer": 0, "explanation": "Soap molecules have two different helpful ends.", "id": "q3_4"}, {"question": "What is a micelle?", "options": ["A tiny droplet structure that traps oily dirt", "A type of metal wire", "A pH paper", "A salt crystal"], "answer": 0, "explanation": "Soap forms micelles around oily dirt.", "id": "q3_5"}, {"question": "Which part of soap helps connect to oil?", "options": ["The oil-loving end of the soap molecule", "Only the water-loving end", "The QR code", "The indicator colour"], "answer": 0, "explanation": "Soap has one end that is attracted to oil.", "id": "q3_6"}, {"question": "What makes soap a great example in science?", "options": ["Its cleaning action is explained by molecular structure", "It never mixes with water", "It removes all atoms", "It behaves like a noble gas"], "answer": 0, "explanation": "Soap links molecular design with visible effects.", "id": "q3_7"}, {"question": "Ethanoic acid belongs to which broad class of substances in this workshop?", "options": ["Carbon compounds", "Metals", "Noble gases", "Salts only"], "answer": 0, "explanation": "Ethanoic acid is an important carbon compound.", "id": "q3_8"}]}]};
+    const SLIDES = [{"m": 0, "t": "The Tiny Builder Element", "c": "<p>Carbon is special because it can form a huge variety of compounds. A big reason is tetravalency, which means one carbon atom can form four bonds. Another reason is catenation, which means carbon atoms can join to other carbon atoms to make chains, branches, and rings.</p>\n<p>That is why carbon shows up everywhere: food, fuels, fibres, medicines, plastics, and living bodies all rely on carbon chemistry.</p>\n<ul><li>Carbon can form four bonds.</li><li>Carbon atoms can join with one another.</li><li>Huge numbers of compounds become possible.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0001.png\" alt=\"The opening source page introduces carbon as a versatile element used in many daily-life materials.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The opening source page introduces carbon as a versatile element used in many daily-life materials.</p></div>\n<div class=\"tip\"><strong>Think of carbon like a smart connector toy:</strong> four joining points and lots of ways to build.</div>"}, {"m": 0, "t": "Covalent Bonds and Their Style", "c": "<p>In many carbon compounds, atoms share electrons instead of transferring them. That shared connection is called a covalent bond. Because of this bonding style, many carbon compounds have lower melting and boiling points than ionic compounds and usually do not conduct electricity.</p>\n<p>That difference in bonding explains a big difference in behaviour. Structure and properties are linked.</p>\n<ul><li>Covalent bonding involves sharing electrons.</li><li>Many carbon compounds are poor conductors.</li><li>Bonding helps explain properties.</li></ul>\n<div class=\"note\"><strong>Science shortcut:</strong> If you know the bonding style, you can often predict some properties.</div>"}, {"m": 0, "t": "Quiz: M0: Why Carbon Is Special", "q": true}, {"m": 1, "t": "Saturated and Unsaturated Friends", "c": "<p>Hydrocarbons are compounds made of only carbon and hydrogen. If all carbon-carbon bonds are single, the compound is saturated. If double or triple bonds appear, the compound is unsaturated.</p>\n<p>That one change makes a big difference in reactivity. Unsaturated compounds can take part in addition reactions more easily.</p>\n<ul><li>Single bonds only -> saturated</li><li>Double or triple bonds -> unsaturated</li><li>Structure affects reactivity</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0010.png\" alt=\"The source pages group hydrocarbons into families and compare their formulas.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The source pages group hydrocarbons into families and compare their formulas.</p></div>\n<div class=\"tip\"><strong>Quick image:</strong> Saturated means “full” of single bonds. Unsaturated leaves room for extra joining.</div>"}, {"m": 1, "t": "Homologous Series Make Patterns Easy", "c": "<p>Chemists love patterns, and homologous series are a great example. Members of a homologous series have similar structures and similar chemical behaviour. Each next member differs by a small repeating unit.</p>\n<p>This means you do not need to memorise every compound separately. Once you understand the family pattern, many names and formulas make more sense.</p>\n<ul><li>Members of a homologous series show a pattern.</li><li>Similar structure often means similar chemical properties.</li><li>A repeating unit helps organise the family.</li></ul>\n<div class=\"note\"><strong>Pattern power:</strong> Science gets easier when you spot families instead of isolated facts.</div>"}, {"m": 1, "t": "Quiz: M1: Hydrocarbons and Families", "q": true}, {"m": 2, "t": "Burning, Oxidation and Clean Flames", "c": "<p>Carbon compounds can burn to produce carbon dioxide, water, heat, and often light. A clean blue flame usually suggests more complete burning, while a yellow smoky flame suggests incomplete burning and soot formation.</p>\n<p>Some substances can also add oxygen to carbon compounds. That process is oxidation, and it changes one substance into another with different properties.</p>\n<ul><li>Combustion releases heat.</li><li>Oxidation adds oxygen or removes hydrogen in many cases.</li><li>Flame colour can hint at how complete the burning is.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0014.png\" alt=\"The middle source pages discuss oxidation and other reactions of carbon compounds.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The middle source pages discuss oxidation and other reactions of carbon compounds.</p></div>\n<div class=\"real\"><strong>Kitchen clue:</strong> A steady blue flame is usually a sign of better burning than a smoky yellow one.</div>"}, {"m": 2, "t": "Addition and Substitution", "c": "<p>Unsaturated compounds can undergo addition reactions because their multiple bonds can open up and attach new atoms. Saturated compounds, especially under special conditions, often show substitution reactions instead, where one atom is replaced by another.</p>\n<p>These reaction types help us compare families of carbon compounds and predict what kind of changes they can undergo.</p>\n<ul><li>Addition is linked strongly with unsaturation.</li><li>Substitution is common in some saturated compounds.</li><li>Bond type influences reaction type.</li></ul>\n<div class=\"tip\"><strong>Memory trick:</strong> Addition fills an open spot. Substitution swaps one partner for another.</div>"}, {"m": 2, "t": "Quiz: M2: Useful Reactions of Carbon Compounds", "q": true}, {"m": 3, "t": "From Useful Liquids to Useful Acids", "c": "<p>Ethanol is a familiar carbon compound with many uses, but it must be handled responsibly because it is flammable and can be harmful when misused. Ethanoic acid is another important compound and is linked with vinegar in dilute form.</p>\n<p>These two examples help children see that carbon chemistry is not just about formulas. It is about real materials with real uses, real benefits, and real safety rules.</p>\n<ul><li>Ethanol is flammable.</li><li>Ethanoic acid is related to vinegar.</li><li>Useful chemicals also need safe handling.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0018.png\" alt=\"The later source pages connect carbon compounds with alcohols, acids, soap, and cleaning action.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The later source pages connect carbon compounds with alcohols, acids, soap, and cleaning action.</p></div>\n<div class=\"warn\"><strong>Safety reminder:</strong> Useful does not mean harmless. Science always combines knowledge with care.</div>"}, {"m": 3, "t": "Why Soap Can Clean Oily Dirt", "c": "<p>Water alone cannot remove oily dirt well, but soap molecules are clever. One end of a soap molecule is attracted to water, and the other end is attracted to oil. That helps break greasy dirt into tiny droplets that water can wash away.</p>\n<p>Detergents are also cleaning agents, but soaps are a beautiful example of how molecular structure explains a common daily-life effect.</p>\n<ul><li>Soap works because it can connect with both water and oil.</li><li>Grease gets trapped in tiny droplets called micelles.</li><li>Cleaning action is really a story about molecular design.</li></ul>\n<div class=\"note\"><strong>Big idea:</strong> Tiny molecules can create big changes that you can see with your eyes.</div>"}, {"m": 3, "t": "Quiz: M3: Ethanol, Ethanoic Acid and Soap", "q": true}];
+    const MODULE_NAMES = ["M0: Why Carbon Is Special", "M1: Hydrocarbons and Families", "M2: Useful Reactions of Carbon Compounds", "M3: Ethanol, Ethanoic Acid and Soap"];
+    const STORE_KEY = 'jesc104_workshop';
+
+    let cur = 0;
+    let quizState = {};
+    let failedQs = [];
+
+    function save() {
+      const data = { cur, quizState, failedQs, ts: Date.now() };
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
+      try { document.cookie = STORE_KEY + '=' + cur + ';max-age=31536000;path=/'; } catch (e) {}
+    }
+
+    function load() {
+      try {
+        const data = JSON.parse(localStorage.getItem(STORE_KEY));
+        if (data) {
+          cur = data.cur || 0;
+          quizState = data.quizState || {};
+          failedQs = data.failedQs || [];
+        }
+      } catch (e) {}
+    }
+
+    function esc(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function hashSeed(seed) {
+      let h = 2166136261;
+      for (let i = 0; i < seed.length; i += 1) {
+        h ^= seed.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return h >>> 0;
+    }
+
+    function shuffleOpts(opts, seed) {
+      const items = opts.map((text, index) => ({ text, correct: index === 0 }));
+      let state = hashSeed(seed) || 1;
+      for (let i = items.length - 1; i > 0; i -= 1) {
+        state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+        const j = state % (i + 1);
+        const tmp = items[i];
+        items[i] = items[j];
+        items[j] = tmp;
+      }
+      return items;
+    }
+
+    function getModule(moduleId) {
+      return QUIZ_DATA.modules.find((module) => module.id === moduleId);
+    }
+
+    function ensureQuizState(moduleId) {
+      const module = getModule(moduleId);
+      if (!quizState[moduleId]) {
+        quizState[moduleId] = { answers: {}, score: 0, total: module.questions.length, done: false };
+      }
+      return quizState[moduleId];
+    }
+
+    function renderQuiz(moduleId) {
+      const module = getModule(moduleId);
+      const state = ensureQuizState(moduleId);
+      state.total = module.questions.length;
+      state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+
+      const nextQuestion = module.questions.find((question) => !state.answers[question.id]);
+      if (!nextQuestion) {
+        state.done = true;
+        const pct = Math.round((state.score / state.total) * 100);
+        return `
+          <div class="quiz-container">
+            <h1>${esc(module.name)} Quiz</h1>
+            <p class="quiz-meta">You completed ${state.total} questions for this module.</p>
+            <div class="${pct >= 70 ? 'quiz-feedback pass show' : 'quiz-feedback fail show'}">
+              Score: ${state.score} / ${state.total} (${pct}%).
+              Use Retry to revisit questions answered incorrectly.
+            </div>
+          </div>
+        `;
+      }
+
+      const questionIndex = module.questions.findIndex((question) => question.id === nextQuestion.id);
+      const options = shuffleOpts(nextQuestion.options, nextQuestion.id);
+
+      return `
+        <div class="quiz-container">
+          <h1>${esc(module.name)} Quiz</h1>
+          <p class="quiz-meta">Question ${questionIndex + 1} of ${module.questions.length}</p>
+          <h2>${esc(nextQuestion.question)}</h2>
+          ${options.map((option, index) => `
+            <button class="quiz-opt" id="opt-${index}" onclick="answerQuiz(${moduleId}, '${nextQuestion.id}', ${index})">${esc(option.text)}</button>
+          `).join('')}
+          <div class="quiz-feedback" id="quiz-feedback"></div>
+        </div>
+      `;
+    }
+
+    function answerQuiz(moduleId, questionId, chosenIndex) {
+      const module = getModule(moduleId);
+      const state = ensureQuizState(moduleId);
+      if (state.answers[questionId]) {
+        return;
+      }
+
+      const question = module.questions.find((item) => item.id === questionId);
+      const options = shuffleOpts(question.options, question.id);
+      const chosen = options[chosenIndex];
+      const isCorrect = !!chosen.correct;
+
+      state.answers[questionId] = { chosen: chosen.text, correct: isCorrect };
+      state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+
+      if (!isCorrect && !failedQs.some((item) => item.moduleId === moduleId && item.qId === questionId)) {
+        failedQs.push({ moduleId, qId: questionId });
+      }
+      if (Object.keys(state.answers).length === module.questions.length) {
+        state.done = true;
+      }
+
+      options.forEach((option, index) => {
+        const button = document.getElementById(`opt-${index}`);
+        if (!button) return;
+        button.classList.add('disabled');
+        if (option.correct) {
+          button.classList.add('correct');
+        } else if (index === chosenIndex) {
+          button.classList.add('wrong');
+        }
+      });
+
+      const feedback = document.getElementById('quiz-feedback');
+      if (feedback) {
+        feedback.className = `quiz-feedback show ${isCorrect ? 'pass' : 'fail'}`;
+        feedback.innerHTML = `<strong>${isCorrect ? 'Correct.' : 'Not quite.'}</strong> ${esc(question.explanation)}`;
+      }
+
+      save();
+      setTimeout(render, isCorrect ? 1200 : 3000);
+    }
+
+    function retryFailed() {
+      if (!failedQs.length) {
+        alert('No failed quiz questions are currently tracked.');
+        return;
+      }
+
+      const retryItems = failedQs.slice();
+      retryItems.forEach((item) => {
+        const state = ensureQuizState(item.moduleId);
+        delete state.answers[item.qId];
+        state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+        state.done = false;
+      });
+
+      const first = retryItems[0];
+      failedQs = [];
+      cur = SLIDES.findIndex((slide) => slide.q && slide.m === first.moduleId);
+      render();
+    }
+
+    function go(dir) {
+      cur = Math.max(0, Math.min(SLIDES.length - 1, cur + dir));
+      render();
+    }
+
+    function jump(index) {
+      cur = index;
+      render();
+      toggleTOC(false);
+    }
+
+    function toggleTOC(force) {
+      const toc = document.getElementById('toc');
+      const overlay = document.getElementById('toc-overlay');
+      const shouldOpen = typeof force === 'boolean' ? force : !toc.classList.contains('open');
+      toc.classList.toggle('open', shouldOpen);
+      overlay.classList.toggle('open', shouldOpen);
+    }
+
+    function buildTOC() {
+      const tocBody = document.getElementById('toc-body');
+      const html = MODULE_NAMES.map((moduleName, moduleIndex) => {
+        const links = SLIDES.map((slide, slideIndex) => ({ slide, slideIndex }))
+          .filter((entry) => entry.slide.m === moduleIndex)
+          .map((entry) => `
+            <button class="toc-link ${entry.slideIndex === cur ? 'current' : ''}" onclick="jump(${entry.slideIndex})">
+              ${entry.slide.q ? 'Quiz' : esc(entry.slide.t)}
+            </button>
+          `)
+          .join('');
+        return `<div class="toc-module"><h3>${esc(moduleName)}</h3>${links}</div>`;
+      }).join('');
+      tocBody.innerHTML = html;
+    }
+
+    function render() {
+      const slide = SLIDES[cur];
+      const progress = Math.round(((cur + 1) / SLIDES.length) * 100);
+      document.getElementById('progress-bar').style.width = progress + '%';
+      document.getElementById('pct').textContent = progress + '%';
+      document.getElementById('slide-counter').textContent = `${cur + 1} / ${SLIDES.length}`;
+      document.getElementById('module-label').textContent = MODULE_NAMES[slide.m];
+      document.getElementById('slide').innerHTML = slide.q ? renderQuiz(slide.m) : `<h1>${esc(slide.t)}</h1>${slide.c}`;
+      save();
+      buildTOC();
+    }
+
+    document.addEventListener('keydown', (event) => {
+      const tag = (event.target && event.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') {
+        return;
+      }
+      if (event.key === ' ' && !event.shiftKey) {
+        event.preventDefault();
+        go(1);
+      } else if ((event.key === ' ' && event.shiftKey) || event.key === 'ArrowLeft') {
+        event.preventDefault();
+        go(-1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        go(1);
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        cur = 0;
+        render();
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        cur = SLIDES.length - 1;
+        render();
+      } else if (event.key === 't' || event.key === 'T') {
+        event.preventDefault();
+        toggleTOC();
+      } else if (event.key === 'r' || event.key === 'R') {
+        event.preventDefault();
+        retryFailed();
+      }
+    });
+
+    load();
+    render();
+  </script>
+</body>
+</html>

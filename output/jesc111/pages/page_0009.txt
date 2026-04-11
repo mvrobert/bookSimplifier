@@ -1,0 +1,70 @@
+Electricity
+179
+have very low resistivity in the  range of 10–8 Ω m to  10–6 Ω m. They are
+good conductors of electricity. Insulators like rubber and glass have
+resistivity of the order of 1012 to 1017 Ω m. Both the resistance and
+resistivity of a material vary with temperature.
+Table 11.2 reveals that the resistivity of an alloy is generally higher
+than that of its constituent metals. Alloys do not oxidise (burn) readily
+at high temperatures. For this reason, they are commonly used in
+electrical heating devices, like electric iron, toasters etc. Tungsten is used
+almost exclusively for filaments of electric bulbs, whereas copper and
+aluminium are generally used for electrical transmission lines.
+Table 11.2 Electrical resistivity* of some substances at 20°C
+Material
+Resistivity (Ω m)
+Conductors
+Silver
+1.60 × 10–8
+Copper
+1.62 × 10–8
+Aluminium
+2.63 × 10–8
+Tungsten
+5.20 × 10–8
+Nickel
+6.84 × 10–8
+Iron
+10.0 × 10–8
+Chromium
+12.9 × 10–8
+Mercury
+94.0 × 10–8
+Manganese
+1.84 × 10–6
+Alloys
+Constantan
+49 × 10–6
+(alloy of Cu and Ni)
+Manganin
+44 × 10–6
+(alloy of Cu, Mn and Ni)
+Nichrome
+100 × 10–6
+(alloy of Ni, Cr, Mn and Fe)
+Insulators
+Glass
+1010 – 1014
+Hard rubber
+1013 – 1016
+Ebonite
+1015 – 1017
+Diamond
+1012 - 1013
+Paper (dry)
+1012
+* You need not memorise these values. You can use these values for solving numerical
+problems.
+Example 11.3
+(a) How much current will an electric bulb draw from a 220 V source,
+if the resistance of the bulb filament is 1200 Ω? (b) How much
+current will an electric heater coil draw from a 220 V source, if
+the resistance of the heater coil is 100 Ω?
+Solution
+(a) We are given V = 220 V; R = 1200 Ω.
+From Eq. (12.6), we have the current I = 220 V/1200 Ω = 0.18 A.
+(b) We are given, V = 220 V, R = 100 Ω.
+From Eq. (11.6), we have the current I = 220 V/100 Ω = 2.2 A.
+Note the difference of current drawn by an electric bulb and electric
+heater from the same 220 V source!
+Reprint 2026-27

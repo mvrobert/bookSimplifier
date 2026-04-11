@@ -1,0 +1,415 @@
+{
+  "title": "Electricity - Kid-friendly science workshop with tiny lessons and quick quizzes",
+  "version": "1.0",
+  "totalQuestions": 32,
+  "modules": [
+    {
+      "id": 0,
+      "name": "M0: Current and Circuits",
+      "questions": [
+        {
+          "question": "What is electric current?",
+          "options": [
+            "Flow of electric charge",
+            "A type of light bulb",
+            "A kind of magnet",
+            "A sound signal"
+          ],
+          "answer": 0,
+          "explanation": "Current is the rate of flow of charge.",
+          "id": "q0_1"
+        },
+        {
+          "question": "What is needed for current to flow in a simple circuit?",
+          "options": [
+            "A closed path",
+            "An open gap",
+            "A painted wire",
+            "A warm desk"
+          ],
+          "answer": 0,
+          "explanation": "Current flows only when the circuit is complete.",
+          "id": "q0_2"
+        },
+        {
+          "question": "Which device measures current?",
+          "options": [
+            "Ammeter",
+            "Voltmeter",
+            "Thermometer",
+            "Barometer"
+          ],
+          "answer": 0,
+          "explanation": "An ammeter measures electric current.",
+          "id": "q0_3"
+        },
+        {
+          "question": "How is an ammeter connected?",
+          "options": [
+            "In series",
+            "In parallel only",
+            "Not connected at all",
+            "Inside the battery"
+          ],
+          "answer": 0,
+          "explanation": "The ammeter must be in series with the circuit.",
+          "id": "q0_4"
+        },
+        {
+          "question": "Which device measures potential difference?",
+          "options": [
+            "Voltmeter",
+            "Ammeter",
+            "Ruler",
+            "Compass"
+          ],
+          "answer": 0,
+          "explanation": "A voltmeter measures potential difference.",
+          "id": "q0_5"
+        },
+        {
+          "question": "How is a voltmeter connected?",
+          "options": [
+            "In parallel",
+            "In series only",
+            "Not connected at all",
+            "Across the sky"
+          ],
+          "answer": 0,
+          "explanation": "A voltmeter is connected in parallel across the points.",
+          "id": "q0_6"
+        },
+        {
+          "question": "What does a cell or battery provide in a circuit?",
+          "options": [
+            "Potential difference",
+            "Only colour",
+            "Only resistance",
+            "Only sound"
+          ],
+          "answer": 0,
+          "explanation": "The battery provides the push that moves charges.",
+          "id": "q0_7"
+        },
+        {
+          "question": "What happens when the circuit is broken?",
+          "options": [
+            "Current stops flowing",
+            "Current gets faster",
+            "Voltage becomes sound",
+            "The wire turns into glass"
+          ],
+          "answer": 0,
+          "explanation": "A broken circuit cannot carry current.",
+          "id": "q0_8"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "M1: Ohm's Law and Resistance",
+      "questions": [
+        {
+          "question": "What does Ohm's law say?",
+          "options": [
+            "Voltage is directly proportional to current at constant temperature",
+            "Current is always zero",
+            "Resistance equals voltage squared",
+            "Power is the same as charge"
+          ],
+          "answer": 0,
+          "explanation": "The chapter states V is directly proportional to I when temperature stays the same.",
+          "id": "q1_1"
+        },
+        {
+          "question": "What is the formula for Ohm's law?",
+          "options": [
+            "V = IR",
+            "V = I/R",
+            "R = VI",
+            "P = I/t"
+          ],
+          "answer": 0,
+          "explanation": "Ohm's law is written V = IR.",
+          "id": "q1_2"
+        },
+        {
+          "question": "What is resistance?",
+          "options": [
+            "Opposition to the flow of current",
+            "A kind of battery",
+            "A type of wire color",
+            "A form of light"
+          ],
+          "answer": 0,
+          "explanation": "Resistance resists the flow of charges.",
+          "id": "q1_3"
+        },
+        {
+          "question": "Which wire usually has greater resistance?",
+          "options": [
+            "A longer wire",
+            "A shorter wire",
+            "A thicker wire only",
+            "A wet paper strip"
+          ],
+          "answer": 0,
+          "explanation": "Resistance increases with length.",
+          "id": "q1_4"
+        },
+        {
+          "question": "Which wire usually has less resistance?",
+          "options": [
+            "A thicker wire",
+            "A thinner wire",
+            "A longer wire",
+            "A broken wire"
+          ],
+          "answer": 0,
+          "explanation": "Greater area of cross-section lowers resistance.",
+          "id": "q1_5"
+        },
+        {
+          "question": "What is resistivity?",
+          "options": [
+            "A material property related to resistance",
+            "The voltage of a battery",
+            "The speed of electrons in a bulb",
+            "The colour of a wire"
+          ],
+          "answer": 0,
+          "explanation": "Resistivity helps compare materials.",
+          "id": "q1_6"
+        },
+        {
+          "question": "Why is a V-I graph useful?",
+          "options": [
+            "It shows whether V and I are proportional",
+            "It tells the weather",
+            "It removes resistance",
+            "It makes a circuit open"
+          ],
+          "answer": 0,
+          "explanation": "A straight V-I line is evidence of Ohm's law.",
+          "id": "q1_7"
+        },
+        {
+          "question": "If resistance increases and voltage stays fixed, current usually",
+          "options": [
+            "Decreases",
+            "Increases",
+            "Becomes light",
+            "Stops being measured"
+          ],
+          "answer": 0,
+          "explanation": "From V = IR, larger R gives smaller I for fixed V.",
+          "id": "q1_8"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "M2: Series and Parallel Resistors",
+      "questions": [
+        {
+          "question": "What happens to resistances in series?",
+          "options": [
+            "They add up",
+            "They cancel out",
+            "They become zero",
+            "They turn into voltage"
+          ],
+          "answer": 0,
+          "explanation": "In series, equivalent resistance is the sum of all resistances.",
+          "id": "q2_1"
+        },
+        {
+          "question": "In a series circuit, the current through each resistor is",
+          "options": [
+            "The same",
+            "Always different",
+            "Always zero",
+            "Not measurable"
+          ],
+          "answer": 0,
+          "explanation": "The same current flows through the whole series path.",
+          "id": "q2_2"
+        },
+        {
+          "question": "What happens to current in a parallel circuit?",
+          "options": [
+            "It splits among branches",
+            "It disappears",
+            "It becomes negative",
+            "It always stays in one wire"
+          ],
+          "answer": 0,
+          "explanation": "Parallel paths divide the current.",
+          "id": "q2_3"
+        },
+        {
+          "question": "Why is home wiring done in parallel?",
+          "options": [
+            "Each appliance can work independently",
+            "Because parallel circuits have no current",
+            "Because resistors become infinite",
+            "Because switches are removed"
+          ],
+          "answer": 0,
+          "explanation": "Parallel wiring gives separate control to each device.",
+          "id": "q2_4"
+        },
+        {
+          "question": "What is the equivalent resistance of resistors in series?",
+          "options": [
+            "Sum of the individual resistances",
+            "Product of the resistances",
+            "Always the smallest resistance",
+            "Always zero"
+          ],
+          "answer": 0,
+          "explanation": "Series resistance adds directly.",
+          "id": "q2_5"
+        },
+        {
+          "question": "How does equivalent resistance in parallel compare with the smallest branch resistance?",
+          "options": [
+            "It is smaller",
+            "It is always larger",
+            "It is equal to the largest",
+            "It becomes infinite"
+          ],
+          "answer": 0,
+          "explanation": "Parallel combinations reduce total resistance.",
+          "id": "q2_6"
+        },
+        {
+          "question": "What happens if one device fails in a series circuit?",
+          "options": [
+            "The whole circuit can stop",
+            "All other devices get brighter",
+            "Resistance disappears",
+            "The battery vanishes"
+          ],
+          "answer": 0,
+          "explanation": "A break in a series path stops current everywhere.",
+          "id": "q2_7"
+        },
+        {
+          "question": "Which connection gives multiple paths for current?",
+          "options": [
+            "Parallel",
+            "Series",
+            "No connection",
+            "Open switch only"
+          ],
+          "answer": 0,
+          "explanation": "Parallel circuits provide more than one path.",
+          "id": "q2_8"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "M3: Heating Effect and Power",
+      "questions": [
+        {
+          "question": "What is the heating effect of electric current?",
+          "options": [
+            "Electrical energy changing into heat",
+            "Heat turning into light only",
+            "A battery making water",
+            "A magnet becoming charged"
+          ],
+          "answer": 0,
+          "explanation": "Current through a resistor can dissipate energy as heat.",
+          "id": "q3_1"
+        },
+        {
+          "question": "What is Joule's law of heating?",
+          "options": [
+            "H = I2Rt",
+            "H = V/I",
+            "H = R/I",
+            "H = P/t"
+          ],
+          "answer": 0,
+          "explanation": "The chapter states heat produced is proportional to I2, R, and t.",
+          "id": "q3_2"
+        },
+        {
+          "question": "What does electric power tell us?",
+          "options": [
+            "How fast electrical energy is used",
+            "How long a wire is",
+            "How heavy a bulb is",
+            "How red the current looks"
+          ],
+          "answer": 0,
+          "explanation": "Power is the rate of energy consumption.",
+          "id": "q3_3"
+        },
+        {
+          "question": "What is the formula for electric power?",
+          "options": [
+            "P = VI",
+            "P = I/R",
+            "P = V + I",
+            "P = Rt"
+          ],
+          "answer": 0,
+          "explanation": "The chapter gives P = VI.",
+          "id": "q3_4"
+        },
+        {
+          "question": "Which unit is used for power?",
+          "options": [
+            "Watt",
+            "Volt",
+            "Ohm",
+            "Coulomb"
+          ],
+          "answer": 0,
+          "explanation": "Power is measured in watts.",
+          "id": "q3_5"
+        },
+        {
+          "question": "What is 1 kWh?",
+          "options": [
+            "Energy used by 1 kW for 1 hour",
+            "Current in one wire",
+            "Voltage in one cell",
+            "Resistance of one bulb"
+          ],
+          "answer": 0,
+          "explanation": "Kilowatt-hour is the commercial unit of energy.",
+          "id": "q3_6"
+        },
+        {
+          "question": "Which appliance is a good example of the heating effect?",
+          "options": [
+            "Electric iron",
+            "Paper clip",
+            "Pencil eraser",
+            "Glass marble"
+          ],
+          "answer": 0,
+          "explanation": "An iron uses heating effect on purpose.",
+          "id": "q3_7"
+        },
+        {
+          "question": "If current increases in a resistor, the heat produced usually",
+          "options": [
+            "Increases",
+            "Decreases to zero",
+            "Cannot be measured",
+            "Changes into sound only"
+          ],
+          "answer": 0,
+          "explanation": "From H = I2Rt, more current means more heat.",
+          "id": "q3_8"
+        }
+      ]
+    }
+  ]
+}

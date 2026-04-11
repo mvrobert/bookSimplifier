@@ -1,0 +1,415 @@
+{
+  "title": "Acids, Bases and Salts - Kid-friendly science workshop with tiny lessons and quick quizzes",
+  "version": "1.0",
+  "totalQuestions": 32,
+  "modules": [
+    {
+      "id": 0,
+      "name": "M0: Colour Clues and Safe Clues",
+      "questions": [
+        {
+          "question": "Which kind of substance is usually linked with a sour taste?",
+          "options": [
+            "Acid",
+            "Base",
+            "Salt",
+            "Metal"
+          ],
+          "answer": 0,
+          "explanation": "Sour taste is one common everyday clue for acids.",
+          "id": "q0_1"
+        },
+        {
+          "question": "Which safe tool helps you identify acids and bases without tasting them?",
+          "options": [
+            "Indicator",
+            "Magnet",
+            "Thermometer",
+            "Pulley"
+          ],
+          "answer": 0,
+          "explanation": "Indicators change colour to reveal acidic or basic nature.",
+          "id": "q0_2"
+        },
+        {
+          "question": "What happens to blue litmus paper in an acidic solution?",
+          "options": [
+            "It turns red",
+            "It turns green",
+            "It turns blue again",
+            "It becomes colourless"
+          ],
+          "answer": 0,
+          "explanation": "Blue litmus turning red is a classic acid test.",
+          "id": "q0_3"
+        },
+        {
+          "question": "What happens to red litmus paper in a basic solution?",
+          "options": [
+            "It turns blue",
+            "It turns yellow",
+            "It stays permanently red",
+            "It melts"
+          ],
+          "answer": 0,
+          "explanation": "Bases turn red litmus blue.",
+          "id": "q0_4"
+        },
+        {
+          "question": "Which kitchen material can act as a natural indicator?",
+          "options": [
+            "Turmeric",
+            "Sand",
+            "Salt crystals",
+            "Charcoal"
+          ],
+          "answer": 0,
+          "explanation": "Turmeric is a natural indicator mentioned in the source material.",
+          "id": "q0_5"
+        },
+        {
+          "question": "Why should you not taste an unknown laboratory liquid?",
+          "options": [
+            "Because it may be harmful",
+            "Because it always tastes sweet",
+            "Because tasting changes its pH",
+            "Because it becomes a gas"
+          ],
+          "answer": 0,
+          "explanation": "Safety comes first. Unknown chemicals should never be tasted.",
+          "id": "q0_6"
+        },
+        {
+          "question": "Which indicator is especially helpful for comparing the strength of acids and bases?",
+          "options": [
+            "Universal indicator",
+            "Iron filings",
+            "Copper wire",
+            "Filter paper"
+          ],
+          "answer": 0,
+          "explanation": "Universal indicator gives a colour range linked with pH.",
+          "id": "q0_7"
+        },
+        {
+          "question": "A soap solution is most likely to be",
+          "options": [
+            "basic",
+            "acidic",
+            "neutral gas",
+            "metallic"
+          ],
+          "answer": 0,
+          "explanation": "Soap solution is commonly basic.",
+          "id": "q0_8"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "M1: Reactions and Neutralisation",
+      "questions": [
+        {
+          "question": "When an acid reacts with a metal, which gas is usually released?",
+          "options": [
+            "Hydrogen",
+            "Nitrogen",
+            "Helium",
+            "Chlorine"
+          ],
+          "answer": 0,
+          "explanation": "Acid-metal reactions commonly produce hydrogen gas.",
+          "id": "q1_1"
+        },
+        {
+          "question": "When an acid reacts with a carbonate, which gas is released?",
+          "options": [
+            "Carbon dioxide",
+            "Oxygen",
+            "Hydrogen",
+            "Argon"
+          ],
+          "answer": 0,
+          "explanation": "Acids reacting with carbonates release carbon dioxide.",
+          "id": "q1_2"
+        },
+        {
+          "question": "What are the products of a neutralisation reaction?",
+          "options": [
+            "Salt and water",
+            "Metal and oxygen",
+            "Only gas",
+            "Only water"
+          ],
+          "answer": 0,
+          "explanation": "Neutralisation is the reaction between an acid and a base to form salt and water.",
+          "id": "q1_3"
+        },
+        {
+          "question": "Which kind of oxide usually behaves like a base?",
+          "options": [
+            "Metal oxide",
+            "Non-metal oxide",
+            "Noble gas oxide",
+            "Water only"
+          ],
+          "answer": 0,
+          "explanation": "Metal oxides generally show basic behaviour.",
+          "id": "q1_4"
+        },
+        {
+          "question": "Which kind of oxide often behaves like an acid?",
+          "options": [
+            "Non-metal oxide",
+            "Metal oxide",
+            "Plastic oxide",
+            "Glass oxide"
+          ],
+          "answer": 0,
+          "explanation": "Non-metal oxides often show acidic behaviour.",
+          "id": "q1_5"
+        },
+        {
+          "question": "Why do antacids help a person with too much stomach acid?",
+          "options": [
+            "They contain basic substances that neutralise acid",
+            "They increase the acid quickly",
+            "They freeze the stomach",
+            "They remove all water from the stomach"
+          ],
+          "answer": 0,
+          "explanation": "Antacids work through neutralisation.",
+          "id": "q1_6"
+        },
+        {
+          "question": "Which observation may suggest that a carbonate is reacting with an acid?",
+          "options": [
+            "Fizzing or bubbling",
+            "The liquid becomes magnetic",
+            "The beaker disappears",
+            "The solution always turns black"
+          ],
+          "answer": 0,
+          "explanation": "Carbon dioxide gas causes fizzing in acid-carbonate reactions.",
+          "id": "q1_7"
+        },
+        {
+          "question": "Which word best describes a reaction in which acid and base cancel each other's effect?",
+          "options": [
+            "Neutralisation",
+            "Rusting",
+            "Distillation",
+            "Filtration"
+          ],
+          "answer": 0,
+          "explanation": "Neutralisation is the correct scientific term.",
+          "id": "q1_8"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "M2: The pH Scale",
+      "questions": [
+        {
+          "question": "What pH value is considered neutral?",
+          "options": [
+            "7",
+            "0",
+            "3",
+            "14"
+          ],
+          "answer": 0,
+          "explanation": "A neutral solution has pH 7.",
+          "id": "q2_1"
+        },
+        {
+          "question": "A solution with pH 3 is",
+          "options": [
+            "acidic",
+            "basic",
+            "metallic",
+            "neutral gas"
+          ],
+          "answer": 0,
+          "explanation": "Any pH below 7 is acidic.",
+          "id": "q2_2"
+        },
+        {
+          "question": "A solution with pH 11 is",
+          "options": [
+            "basic",
+            "acidic",
+            "neutral",
+            "salt only"
+          ],
+          "answer": 0,
+          "explanation": "Any pH above 7 is basic.",
+          "id": "q2_3"
+        },
+        {
+          "question": "Which direction on the pH scale shows stronger acidity?",
+          "options": [
+            "Toward 0",
+            "Toward 14",
+            "Toward 7 from both sides equally",
+            "There is no pattern"
+          ],
+          "answer": 0,
+          "explanation": "Lower pH values mean stronger acidity.",
+          "id": "q2_4"
+        },
+        {
+          "question": "Which direction on the pH scale shows stronger basicity?",
+          "options": [
+            "Toward 14",
+            "Toward 0",
+            "Toward 7 only",
+            "Toward 1"
+          ],
+          "answer": 0,
+          "explanation": "Higher pH values mean stronger basicity.",
+          "id": "q2_5"
+        },
+        {
+          "question": "Why is pH useful in farming?",
+          "options": [
+            "Because soil pH affects plant growth",
+            "Because it turns plants into metals",
+            "Because it removes sunlight",
+            "Because it measures wind speed"
+          ],
+          "answer": 0,
+          "explanation": "The right soil pH helps crops grow well.",
+          "id": "q2_6"
+        },
+        {
+          "question": "Why is very low pH harmful to tooth enamel?",
+          "options": [
+            "Strong acidity can damage it",
+            "It makes teeth magnetic",
+            "It turns teeth into salt",
+            "It increases chlorophyll"
+          ],
+          "answer": 0,
+          "explanation": "Acidic conditions can erode tooth enamel.",
+          "id": "q2_7"
+        },
+        {
+          "question": "Which tool is commonly used to estimate pH through colour change?",
+          "options": [
+            "Universal indicator",
+            "Compass",
+            "Ruler",
+            "Spring balance"
+          ],
+          "answer": 0,
+          "explanation": "Universal indicator links colour shades to pH values.",
+          "id": "q2_8"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "M3: Helpful Salts in Daily Life",
+      "questions": [
+        {
+          "question": "Which familiar substance is an important raw material for making many useful chemicals?",
+          "options": [
+            "Common salt",
+            "Sand only",
+            "Coal only",
+            "Plastic only"
+          ],
+          "answer": 0,
+          "explanation": "Common salt is a major raw material in this topic.",
+          "id": "q3_1"
+        },
+        {
+          "question": "Which substance is commonly used in baking and some antacids?",
+          "options": [
+            "Baking soda",
+            "Copper sulphate",
+            "Iron rust",
+            "Graphite"
+          ],
+          "answer": 0,
+          "explanation": "Baking soda has both kitchen and health-related uses.",
+          "id": "q3_2"
+        },
+        {
+          "question": "Which substance is useful for cleaning and softening hard water?",
+          "options": [
+            "Washing soda",
+            "Lime water",
+            "Hydrogen gas",
+            "Nitrogen gas"
+          ],
+          "answer": 0,
+          "explanation": "Washing soda is used in cleaning and water treatment.",
+          "id": "q3_3"
+        },
+        {
+          "question": "What does POP stand for?",
+          "options": [
+            "Plaster of Paris",
+            "Power of Pressure",
+            "Point of pH",
+            "Part of Plastic"
+          ],
+          "answer": 0,
+          "explanation": "POP is the short form of Plaster of Paris.",
+          "id": "q3_4"
+        },
+        {
+          "question": "Plaster of Paris is useful for making",
+          "options": [
+            "casts and moulds",
+            "electric current",
+            "rainbows",
+            "oxygen cylinders"
+          ],
+          "answer": 0,
+          "explanation": "POP is widely used for casts, moulds, and decorative items.",
+          "id": "q3_5"
+        },
+        {
+          "question": "Which product is often used for sanitation and disinfection?",
+          "options": [
+            "Bleaching powder",
+            "Sugar",
+            "Iron nails",
+            "Chalk dust"
+          ],
+          "answer": 0,
+          "explanation": "Bleaching powder is used in sanitation-related work.",
+          "id": "q3_6"
+        },
+        {
+          "question": "What is one reason salts are interesting in science?",
+          "options": [
+            "They can have very different uses in daily life",
+            "They never react",
+            "They only exist in gases",
+            "They always taste sweet"
+          ],
+          "answer": 0,
+          "explanation": "Different salts have very different properties and uses.",
+          "id": "q3_7"
+        },
+        {
+          "question": "Which gas can be released from baking soda in some reactions?",
+          "options": [
+            "Carbon dioxide",
+            "Hydrogen",
+            "Neon",
+            "Helium"
+          ],
+          "answer": 0,
+          "explanation": "Baking soda can release carbon dioxide in suitable reactions.",
+          "id": "q3_8"
+        }
+      ]
+    }
+  ]
+}

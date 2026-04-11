@@ -1,0 +1,102 @@
+Science
+66
+bonds with other elements such as halogens, oxygen, nitrogen and sulphur.
+In a hydrocarbon chain, one or more hydrogens can be replaced by these
+elements, such that the valency of carbon remains satisfied. In such
+compounds, the element replacing hydrogen is referred to as a heteroatom.
+These heteroatoms are also present in some groups as given in Table 4.3.
+These heteroatoms and
+the group containing
+these confer specific
+properties 
+to 
+the
+compound, regardless
+of the length and nature
+of the carbon chain and
+hence 
+are 
+called
+functional groups. Some
+important functional
+groups are given in the
+Table 4.3. Free valency or
+valencies of the group
+are shown by the single
+line. The functional group
+is attached to the carbon
+chain through this
+valency by replacing one
+hydrogen   atom or
+atoms.
+4.2.4 Homologous Series
+You have seen that carbon atoms can be linked together to form chains
+of varying lengths. These chains can be branched also. In addition,
+hydrogen atom or other atoms on these carbon chains can be replaced
+by any of the functional groups that we saw above. The presence of a
+functional group such as alcohol decides the properties of the carbon
+compound, regardless of the length of the carbon chain. For example,
+the chemical properties of CH3OH, C2H5OH, C3H7OH and C4H9OH are all
+very similar. Hence, such a series of compounds in which the same
+functional group substitutes for hydrogen in a carbon chain is called a
+homologous series.
+Let us look at the homologous series that we saw earlier in Table
+4.2. If we look at the formulae of successive compounds, say –
+CH4 and C2H6
+—
+these differ by a –CH2- unit
+C2H6 and C3H8
+—
+these differ by a –CH2- unit
+What is the difference between the next pair – propane and butane (C4H10)?
+Can you find out the difference in molecular masses between these
+pairs (the atomic mass of carbon is 12 u and the atomic mass of hydrogen
+is 1 u)?
+Similarly, take the homologous series for alkenes. The first member
+of the series is ethene which we have already come across in
+Section 4.2.1. What is the formula for ethene? The succeeding members
+have the formula C3H6, C4H8 and C5H10. Do these also differ by a –CH2–
+Table 4.3 Some functional groups in carbon compounds
+Hetero
+Hetero
+Hetero
+Hetero
+Hetero
+Class of
+Class of
+Class of
+Class of
+Class of
+Formula of
+Formula of
+Formula of
+Formula of
+Formula of
+atom
+atom
+atom
+atom
+atom
+compounds
+compounds
+compounds
+compounds
+compounds
+functional group
+functional group
+functional group
+functional group
+functional group
+Cl/Br
+Halo- (Chloro/bromo)
+—Cl, —Br
+alkane
+(substitutes for
+hydrogen atom)
+Oxygen
+1. Alcohol
+—OH
+2. Aldehyde
+3. Ketone
+4. Carboxylic acid
+Reprint 2026-27

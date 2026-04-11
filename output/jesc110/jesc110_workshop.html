@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Human Eye and the Colourful World</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --text: #1a1a2e;
+      --muted: #64748b;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --secondary: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 32%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.10), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    code, pre, .diagram {
+      font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+    }
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      width: 0;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      z-index: 1000;
+    }
+    #app {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 16px 36px;
+    }
+    #header {
+      position: sticky;
+      top: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      z-index: 100;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    }
+    #header .left,
+    #header .center,
+    #header .right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #header .center {
+      justify-content: center;
+      flex: 1;
+    }
+    #header .left {
+      min-width: 220px;
+      font-weight: 600;
+    }
+    #pct {
+      min-width: 46px;
+      text-align: right;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    button {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover {
+      border-color: var(--primary);
+    }
+    #slide {
+      background: var(--surface);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      padding: 40px 48px;
+      min-height: 520px;
+      border: 1px solid rgba(226, 232, 240, 0.85);
+    }
+    #slide h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+    #slide h2 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+    #slide p,
+    #slide li,
+    #slide td,
+    #slide th {
+      line-height: 1.7;
+      font-size: 1.03rem;
+    }
+    #slide pre {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    #slide table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    #slide th,
+    #slide td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    #slide tr:hover td {
+      background: #f8fafc;
+    }
+    .diagram {
+      border: 2px dashed #cbd5e1;
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 16px;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 18px 0;
+    }
+    .note,
+    .tip,
+    .warn,
+    .real {
+      border-left: 5px solid;
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin: 18px 0;
+    }
+    .note { border-color: #2563eb; background: #eff6ff; }
+    .tip { border-color: #22c55e; background: #f0fdf4; }
+    .warn { border-color: #eab308; background: #fefce8; }
+    .real { border-color: #7c3aed; background: #faf5ff; }
+    .quiz-container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .quiz-opt {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 12px;
+      border: 2px solid var(--border);
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .quiz-opt.correct {
+      border-color: var(--good);
+      background: #f0fdf4;
+    }
+    .quiz-opt.wrong {
+      border-color: var(--bad);
+      background: #fef2f2;
+    }
+    .quiz-opt.disabled {
+      pointer-events: none;
+      opacity: 0.78;
+    }
+    .quiz-feedback {
+      display: none;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 16px;
+    }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.pass {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .quiz-feedback.fail {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    #nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    #nav .prev {
+      background: #e2e8f0;
+    }
+    #nav .next {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    #toc {
+      position: fixed;
+      top: 0;
+      left: -360px;
+      width: 350px;
+      height: 100vh;
+      background: #ffffff;
+      border-right: 1px solid var(--border);
+      z-index: 201;
+      transition: left 0.2s ease;
+      padding: 24px 18px;
+      overflow-y: auto;
+      box-shadow: 8px 0 24px rgba(15, 23, 42, 0.1);
+    }
+    #toc.open {
+      left: 0;
+    }
+    #toc-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.32);
+      z-index: 200;
+    }
+    #toc-overlay.open {
+      display: block;
+    }
+    .toc-module {
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .toc-module h3 {
+      margin: 0 0 10px 0;
+      color: var(--secondary);
+    }
+    .toc-link {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 6px;
+      background: #fff;
+    }
+    .toc-link.current {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+    .quiz-meta {
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    @media (max-width: 768px) {
+      #slide { padding: 20px 24px; }
+      #header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      #header .left,
+      #header .center,
+      #header .right {
+        justify-content: space-between;
+        min-width: 0;
+      }
+    }
+    @media print {
+      #header, #nav, #progress-bar, #toc, #toc-overlay { display: none !important; }
+      #slide { box-shadow: none; border: none; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+  <div id="app">
+    <div id="header">
+      <div class="left" id="module-label">Module 0</div>
+      <div class="center" id="slide-counter">1 / 1</div>
+      <div class="right">
+        <button onclick="toggleTOC()" title="Table of Contents (T)">TOC</button>
+        <button onclick="retryFailed()" title="Retry failed quiz questions (R)">Retry</button>
+        <span id="pct">0%</span>
+      </div>
+    </div>
+    <div id="slide"></div>
+    <div id="nav">
+      <button class="prev" onclick="go(-1)">Prev</button>
+      <button class="next" onclick="go(1)">Next</button>
+    </div>
+  </div>
+  <div id="toc-overlay" onclick="toggleTOC(false)"></div>
+  <div id="toc">
+    <h2>Table of Contents</h2>
+    <div id="toc-body"></div>
+  </div>
+
+  <script>
+    const QUIZ_DATA = {"title": "The Human Eye and the Colourful World - Kid-friendly science workshop with tiny lessons and quick quizzes", "version": "1.0", "totalQuestions": 32, "modules": [{"id": 0, "name": "M0: Meet the Human Eye", "questions": [{"question": "Which part of the eye receives the image?", "options": ["Retina", "Iris", "Pupil", "Eyelid"], "answer": 0, "explanation": "The retina is the light-sensitive surface of the eye.", "id": "q0_1"}, {"question": "What is the cornea's main job in vision?", "options": ["It bends light entering the eye", "It stores food", "It makes the pupil", "It turns light into sound"], "answer": 0, "explanation": "The cornea does much of the refraction at the front of the eye.", "id": "q0_2"}, {"question": "What does the pupil control?", "options": ["How much light enters the eye", "How tall a person is", "The size of the retina", "The colour of the iris only"], "answer": 0, "explanation": "The pupil regulates light entering the eye.", "id": "q0_3"}, {"question": "What is accommodation?", "options": ["The eye lens changing its focal length", "The eye closing forever", "The retina moving away", "The iris becoming a mirror"], "answer": 0, "explanation": "Accommodation is the eye's ability to adjust focus.", "id": "q0_4"}, {"question": "Which muscle helps change the lens shape?", "options": ["Ciliary muscles", "Biceps", "Heart muscles", "Toe muscles"], "answer": 0, "explanation": "Ciliary muscles control the lens curvature.", "id": "q0_5"}, {"question": "For a normal young eye, the near point is about", "options": ["25 cm", "25 m", "2.5 cm", "2.5 m"], "answer": 0, "explanation": "The source chapter gives about 25 cm.", "id": "q0_6"}, {"question": "Why is the human eye compared to a camera?", "options": ["Both form images on a light-sensitive surface", "Both use fuel", "Both can fly", "Both always magnify"], "answer": 0, "explanation": "The retina acts like a camera screen.", "id": "q0_7"}, {"question": "What happens to signals from the retina?", "options": ["They go to the brain through optic nerves", "They stay in the pupil", "They turn into bones", "They leave as steam"], "answer": 0, "explanation": "The optic nerves carry signals from eye to brain.", "id": "q0_8"}]}, {"id": 1, "name": "M1: Vision Problems and Fixes", "questions": [{"question": "Myopia is also called", "options": ["Near-sightedness", "Far-sightedness", "Colour blindness", "Night blindness"], "answer": 0, "explanation": "Myopia means nearby objects are seen more clearly than distant ones.", "id": "q1_1"}, {"question": "Which lens corrects myopia?", "options": ["Concave lens", "Convex lens", "Plane mirror", "Prism"], "answer": 0, "explanation": "A concave lens helps the myopic eye focus distant objects on the retina.", "id": "q1_2"}, {"question": "Hypermetropia is also called", "options": ["Far-sightedness", "Near-sightedness", "Twinkling", "Dispersion"], "answer": 0, "explanation": "Hypermetropia means nearby objects are hard to see clearly.", "id": "q1_3"}, {"question": "Which lens corrects hypermetropia?", "options": ["Convex lens", "Concave lens", "Flat glass", "Magnet"], "answer": 0, "explanation": "A convex lens adds the needed convergence.", "id": "q1_4"}, {"question": "What is presbyopia?", "options": ["Loss of accommodation with age", "A type of mirror", "A colour in the rainbow", "A kind of battery"], "answer": 0, "explanation": "Presbyopia is age-related weakening of focusing ability.", "id": "q1_5"}, {"question": "What is cataract?", "options": ["Clouding of the eye lens", "A bent pencil in water", "A bright star", "A glass slab"], "answer": 0, "explanation": "Cataract makes the lens cloudy.", "id": "q1_6"}, {"question": "If a student cannot read the blackboard from the last row, which defect may be present?", "options": ["Myopia", "Hypermetropia always", "A prism effect", "A heating effect"], "answer": 0, "explanation": "Difficulty seeing distant objects points to myopia.", "id": "q1_7"}, {"question": "Which part of the eye changes lens curvature?", "options": ["Ciliary muscles", "The pupil", "The retina", "The cornea"], "answer": 0, "explanation": "Ciliary muscles help adjust focus.", "id": "q1_8"}]}, {"id": 2, "name": "M2: Prism Colors and Rainbows", "questions": [{"question": "What is dispersion of light?", "options": ["Splitting white light into colours", "Making light louder", "Turning light into heat", "Stopping the sun"], "answer": 0, "explanation": "Dispersion is the separation of white light into its component colours.", "id": "q2_1"}, {"question": "What device in the chapter is used to show dispersion?", "options": ["Prism", "Lens", "Mirror", "Thermometer"], "answer": 0, "explanation": "A prism separates white light into a colour band.", "id": "q2_2"}, {"question": "What is the angle of deviation?", "options": ["The angle between the original and emergent ray directions", "The colour of the sky", "The size of the prism", "The speed of sound"], "answer": 0, "explanation": "It measures how much the ray is turned by the prism.", "id": "q2_3"}, {"question": "Which effect helps explain a rainbow?", "options": ["Dispersion", "Freezing", "Filtration", "Magnetism"], "answer": 0, "explanation": "A rainbow is tied to dispersion and refraction.", "id": "q2_4"}, {"question": "Why do different colours separate in a prism?", "options": ["They bend by different amounts", "They all have the same speed", "They are different metals", "They are heavier"], "answer": 0, "explanation": "Different colours refract differently in the prism.", "id": "q2_5"}, {"question": "What happens to white light in dispersion?", "options": ["It splits into a band of colours", "It becomes invisible", "It turns into sound", "It freezes into ice"], "answer": 0, "explanation": "White light separates into its colours.", "id": "q2_6"}, {"question": "Which natural scene is often used as a rainbow example?", "options": ["A rainbow in the sky", "A cracked wall", "A metal spoon", "A chalk board"], "answer": 0, "explanation": "Rainbows are the classic dispersion example.", "id": "q2_7"}, {"question": "Which three ideas are linked to colourful sky and rainbow scenes?", "options": ["Refraction, dispersion, and scattering", "Melting, freezing, and boiling", "Force, mass, and speed", "Charging, discharging, and fusing"], "answer": 0, "explanation": "The chapter connects these light phenomena.", "id": "q2_8"}]}, {"id": 3, "name": "M3: Twinkling and Blue Sky", "questions": [{"question": "Why do stars twinkle?", "options": ["Atmospheric refraction changes their apparent brightness and position", "Because stars blink on purpose", "Because the Moon pushes them", "Because they are underwater"], "answer": 0, "explanation": "Twinkling comes from changing refraction in the atmosphere.", "id": "q3_1"}, {"question": "Why do we see the Sun a little before actual sunrise?", "options": ["Atmospheric refraction bends sunlight", "The Earth stops rotating", "The Sun moves faster", "The clouds turn into mirrors"], "answer": 0, "explanation": "Refraction makes the Sun appear slightly higher than it really is.", "id": "q3_2"}, {"question": "Why is the clear sky blue?", "options": ["Blue light is scattered more strongly by air", "Blue paint is in the clouds", "The ocean reflects the sky", "The Sun is blue"], "answer": 0, "explanation": "Shorter wavelengths are scattered more strongly.", "id": "q3_3"}, {"question": "What is the Tyndall effect?", "options": ["Visibility of a light beam due to scattering", "A lens formula", "A mirror law", "A sound wave"], "answer": 0, "explanation": "Tyndall effect is seen when scattered light makes the beam path visible.", "id": "q3_4"}, {"question": "Why are danger signals often red?", "options": ["Red light is scattered less and stays visible farther away", "Red light is the brightest color in all weather", "Red light has no wavelength", "Red light makes fog disappear"], "answer": 0, "explanation": "Red is least scattered by fog or smoke.", "id": "q3_5"}, {"question": "Which phenomenon explains the wavering of hot air above a fire?", "options": ["Atmospheric refraction", "Fusion", "Condensation", "Magnetism"], "answer": 0, "explanation": "Hot air changes density and bends light differently.", "id": "q3_6"}, {"question": "Why do planets not twinkle much?", "options": ["They appear as extended sources, so variations average out", "They make no light at all", "They are closer to the Sun only", "They are made of glass"], "answer": 0, "explanation": "Planets are not point-like, so twinkling averages away.", "id": "q3_7"}, {"question": "If Earth had no atmosphere, the sky would look", "options": ["Dark", "Always green", "Perfectly red", "Exactly white"], "answer": 0, "explanation": "Without scattering in air, the sky would not appear blue.", "id": "q3_8"}]}]};
+    const SLIDES = [{"m": 0, "t": "A Living Camera", "c": "<p>The human eye helps us see the world by focusing light on the retina. The cornea does the first bending, the lens makes fine adjustments, and the brain reads the signals.</p>\n<p>The chapter compares the eye with a camera because both form an image on a light-sensitive surface. In the eye, that surface is the retina.</p>\n<ul><li>Cornea and lens bend light.</li><li>The pupil controls how much light enters.</li><li>The retina receives the image and sends signals onward.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0001.png\" alt=\"The opening pages introduce the human eye as a light-focusing system that forms images on the retina.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The opening pages introduce the human eye as a light-focusing system that forms images on the retina.</p></div>\n<div class=\"note\"><strong>Big idea:</strong> seeing is a teamwork job between the eye and the brain.</div>"}, {"m": 0, "t": "How the Eye Adjusts Focus", "c": "<p>The eye can focus on both near and far objects because the lens changes shape. This ability is called accommodation.</p>\n<p>A normal young eye can see clearly from about 25 cm to far away. That nearest clear distance is called the near point or least distance of distinct vision.</p>\n<ul><li>Accommodation means changing focal length.</li><li>The near point is about 25 cm for a normal young eye.</li><li>Ciliary muscles help the lens change shape.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0002.png\" alt=\"The next source pages explain accommodation and the near point of a normal eye.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The next source pages explain accommodation and the near point of a normal eye.</p></div>\n<div class=\"tip\"><strong>Memory shortcut:</strong> near objects need a stronger bend, far objects need a gentler bend.</div>"}, {"m": 0, "t": "Quiz: M0: Meet the Human Eye", "q": true}, {"m": 1, "t": "Myopia and Hypermetropia", "c": "<p>Myopia, or near-sightedness, means distant objects look blurry while nearby ones look clear. Hypermetropia, or far-sightedness, means nearby objects look blurry while distant ones look clear.</p>\n<p>The chapter shows that myopia is corrected with a concave lens, and hypermetropia is corrected with a convex lens.</p>\n<ul><li>Myopia affects distant vision.</li><li>Hypermetropia affects near vision.</li><li>Concave and convex lenses can correct these defects.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0003.png\" alt=\"The defect-of-vision pages compare myopia and hypermetropia and show how spectacles correct them.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The defect-of-vision pages compare myopia and hypermetropia and show how spectacles correct them.</p></div>\n<div class=\"real\"><strong>Kid clue:</strong> if the blackboard looks fuzzy from the back row, the eye may need a different lens shape.</div>"}, {"m": 1, "t": "Presbyopia and Cataract", "c": "<p>As people age, the eye can lose some of its accommodation power. That age-related problem is called presbyopia. Another condition mentioned in the chapter is cataract, where the lens becomes cloudy and vision becomes impaired.</p>\n<p>The important lesson is that good vision depends on healthy focusing parts. When one part changes, a suitable lens or surgery may be needed to help again.</p>\n<ul><li>Presbyopia is age-related loss of accommodation.</li><li>Cataract makes the lens cloudy.</li><li>Eye care can include lenses or surgery depending on the problem.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0004.png\" alt=\"The source pages continue with presbyopia, near point changes, and cataract.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The source pages continue with presbyopia, near point changes, and cataract.</p></div>\n<div class=\"tip\"><strong>Friendly reminder:</strong> normal vision is not the same as perfect vision forever. Eyes can change with age.</div>"}, {"m": 1, "t": "Quiz: M1: Vision Problems and Fixes", "q": true}, {"m": 2, "t": "White Light Has Many Colours", "c": "<p>A prism can spread white light into a band of colours. The chapter calls this dispersion.</p>\n<p>It also explains that the angle of deviation is the amount by which the emergent ray turns away from the original direction.</p>\n<ul><li>Dispersion means splitting white light into colours.</li><li>A prism bends different colours by different amounts.</li><li>The angle of deviation measures the turn in the ray.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0005.png\" alt=\"The prism activity shows how white light can split into a colourful band.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The prism activity shows how white light can split into a colourful band.</p></div>\n<div class=\"note\"><strong>Picture to keep:</strong> a prism is like a colour sorter for light.</div>"}, {"m": 2, "t": "Rainbows and Colour in Nature", "c": "<p>The chapter uses the same physics to explain rainbows and other colour effects. Sunlight can split into colours, and the atmosphere can also bend or scatter light so that the sky looks different at different times of day.</p>\n<p>The important habit is to link the colourful scene back to light behaviour: refraction, dispersion, and scattering all play a part.</p>\n<ul><li>Rainbows are linked with dispersion and refraction.</li><li>The atmosphere can also change the look of light.</li><li>Colour patterns in nature have physical reasons.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0006.png\" alt=\"Later pages connect dispersion with rainbow formation and colour effects in nature.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Later pages connect dispersion with rainbow formation and colour effects in nature.</p></div>\n<div class=\"real\"><strong>Nature clue:</strong> a rainbow is not paint in the sky. It is sunlight being split and bent.</div>"}, {"m": 2, "t": "Quiz: M2: Prism Colors and Rainbows", "q": true}, {"m": 3, "t": "Atmospheric Refraction in Real Life", "c": "<p>The Earth's atmosphere bends light because it is not perfectly uniform. That is why stars twinkle and the Sun can seem to rise a little early and set a little late.</p>\n<p>The chapter explains this as atmospheric refraction. The air changes density, light bends repeatedly, and the apparent position of objects can shift a little.</p>\n<ul><li>Twinkling of stars is due to atmospheric refraction.</li><li>Sunrise appears a bit early and sunset a bit late.</li><li>The air is not perfectly steady, so the bending changes slightly.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0008.png\" alt=\"The atmosphere pages explain twinkling, advanced sunrise, and delayed sunset.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The atmosphere pages explain twinkling, advanced sunrise, and delayed sunset.</p></div>\n<div class=\"tip\"><strong>Friendly image:</strong> the atmosphere is like a moving lens around Earth.</div>"}, {"m": 3, "t": "Scattering Makes the Sky Blue", "c": "<p>Tiny particles in air scatter shorter wavelengths of light more strongly, so blue light reaches our eyes from many directions. That is why the clear sky looks blue.</p>\n<p>The same scattering idea explains the Tyndall effect, the red colour of warning signals in fog, and the glowing path of a beam of light in a smoky room.</p>\n<ul><li>Scattering is the spreading of light by tiny particles.</li><li>Blue light is scattered more strongly than red light.</li><li>Red warning lights are useful because red is scattered less.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0009.png\" alt=\"The final source pages explain scattering, the blue sky, and why red signals stay visible.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The final source pages explain scattering, the blue sky, and why red signals stay visible.</p></div>\n<div class=\"note\"><strong>Big idea:</strong> the sky's colour is not paint. It is scattered sunlight.</div>"}, {"m": 3, "t": "Quiz: M3: Twinkling and Blue Sky", "q": true}];
+    const MODULE_NAMES = ["M0: Meet the Human Eye", "M1: Vision Problems and Fixes", "M2: Prism Colors and Rainbows", "M3: Twinkling and Blue Sky"];
+    const STORE_KEY = 'jesc110_workshop';
+
+    let cur = 0;
+    let quizState = {};
+    let failedQs = [];
+
+    function save() {
+      const data = { cur, quizState, failedQs, ts: Date.now() };
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
+      try { document.cookie = STORE_KEY + '=' + cur + ';max-age=31536000;path=/'; } catch (e) {}
+    }
+
+    function load() {
+      try {
+        const data = JSON.parse(localStorage.getItem(STORE_KEY));
+        if (data) {
+          cur = data.cur || 0;
+          quizState = data.quizState || {};
+          failedQs = data.failedQs || [];
+        }
+      } catch (e) {}
+    }
+
+    function esc(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function hashSeed(seed) {
+      let h = 2166136261;
+      for (let i = 0; i < seed.length; i += 1) {
+        h ^= seed.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return h >>> 0;
+    }
+
+    function shuffleOpts(opts, seed) {
+      const items = opts.map((text, index) => ({ text, correct: index === 0 }));
+      let state = hashSeed(seed) || 1;
+      for (let i = items.length - 1; i > 0; i -= 1) {
+        state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+        const j = state % (i + 1);
+        const tmp = items[i];
+        items[i] = items[j];
+        items[j] = tmp;
+      }
+      return items;
+    }
+
+    function getModule(moduleId) {
+      return QUIZ_DATA.modules.find((module) => module.id === moduleId);
+    }
+
+    function ensureQuizState(moduleId) {
+      const module = getModule(moduleId);
+      if (!quizState[moduleId]) {
+        quizState[moduleId] = { answers: {}, score: 0, total: module.questions.length, done: false };
+      }
+      return quizState[moduleId];
+    }
+
+    function renderQuiz(moduleId) {
+      const module = getModule(moduleId);
+      const state = ensureQuizState(moduleId);
+      state.total = module.questions.length;
+      state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+
+      const nextQuestion = module.questions.find((question) => !state.answers[question.id]);
+      if (!nextQuestion) {
+        state.done = true;
+        const pct = Math.round((state.score / state.total) * 100);
+        return `
+          <div class="quiz-container">
+            <h1>${esc(module.name)} Quiz</h1>
+            <p class="quiz-meta">You completed ${state.total} questions for this module.</p>
+            <div class="${pct >= 70 ? 'quiz-feedback pass show' : 'quiz-feedback fail show'}">
+              Score: ${state.score} / ${state.total} (${pct}%).
+              Use Retry to revisit questions answered incorrectly.
+            </div>
+          </div>
+        `;
+      }
+
+      const questionIndex = module.questions.findIndex((question) => question.id === nextQuestion.id);
+      const options = shuffleOpts(nextQuestion.options, nextQuestion.id);
+
+      return `
+        <div class="quiz-container">
+          <h1>${esc(module.name)} Quiz</h1>
+          <p class="quiz-meta">Question ${questionIndex + 1} of ${module.questions.length}</p>
+          <h2>${esc(nextQuestion.question)}</h2>
+          ${options.map((option, index) => `
+            <button class="quiz-opt" id="opt-${index}" onclick="answerQuiz(${moduleId}, '${nextQuestion.id}', ${index})">${esc(option.text)}</button>
+          `).join('')}
+          <div class="quiz-feedback" id="quiz-feedback"></div>
+        </div>
+      `;
+    }
+
+    function answerQuiz(moduleId, questionId, chosenIndex) {
+      const module = getModule(moduleId);
+      const state = ensureQuizState(moduleId);
+      if (state.answers[questionId]) {
+        return;
+      }
+
+      const question = module.questions.find((item) => item.id === questionId);
+      const options = shuffleOpts(question.options, question.id);
+      const chosen = options[chosenIndex];
+      const isCorrect = !!chosen.correct;
+
+      state.answers[questionId] = { chosen: chosen.text, correct: isCorrect };
+      state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+
+      if (!isCorrect && !failedQs.some((item) => item.moduleId === moduleId && item.qId === questionId)) {
+        failedQs.push({ moduleId, qId: questionId });
+      }
+      if (Object.keys(state.answers).length === module.questions.length) {
+        state.done = true;
+      }
+
+      options.forEach((option, index) => {
+        const button = document.getElementById(`opt-${index}`);
+        if (!button) return;
+        button.classList.add('disabled');
+        if (option.correct) {
+          button.classList.add('correct');
+        } else if (index === chosenIndex) {
+          button.classList.add('wrong');
+        }
+      });
+
+      const feedback = document.getElementById('quiz-feedback');
+      if (feedback) {
+        feedback.className = `quiz-feedback show ${isCorrect ? 'pass' : 'fail'}`;
+        feedback.innerHTML = `<strong>${isCorrect ? 'Correct.' : 'Not quite.'}</strong> ${esc(question.explanation)}`;
+      }
+
+      save();
+      setTimeout(render, isCorrect ? 1200 : 3000);
+    }
+
+    function retryFailed() {
+      if (!failedQs.length) {
+        alert('No failed quiz questions are currently tracked.');
+        return;
+      }
+
+      const retryItems = failedQs.slice();
+      retryItems.forEach((item) => {
+        const state = ensureQuizState(item.moduleId);
+        delete state.answers[item.qId];
+        state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+        state.done = false;
+      });
+
+      const first = retryItems[0];
+      failedQs = [];
+      cur = SLIDES.findIndex((slide) => slide.q && slide.m === first.moduleId);
+      render();
+    }
+
+    function go(dir) {
+      cur = Math.max(0, Math.min(SLIDES.length - 1, cur + dir));
+      render();
+    }
+
+    function jump(index) {
+      cur = index;
+      render();
+      toggleTOC(false);
+    }
+
+    function toggleTOC(force) {
+      const toc = document.getElementById('toc');
+      const overlay = document.getElementById('toc-overlay');
+      const shouldOpen = typeof force === 'boolean' ? force : !toc.classList.contains('open');
+      toc.classList.toggle('open', shouldOpen);
+      overlay.classList.toggle('open', shouldOpen);
+    }
+
+    function buildTOC() {
+      const tocBody = document.getElementById('toc-body');
+      const html = MODULE_NAMES.map((moduleName, moduleIndex) => {
+        const links = SLIDES.map((slide, slideIndex) => ({ slide, slideIndex }))
+          .filter((entry) => entry.slide.m === moduleIndex)
+          .map((entry) => `
+            <button class="toc-link ${entry.slideIndex === cur ? 'current' : ''}" onclick="jump(${entry.slideIndex})">
+              ${entry.slide.q ? 'Quiz' : esc(entry.slide.t)}
+            </button>
+          `)
+          .join('');
+        return `<div class="toc-module"><h3>${esc(moduleName)}</h3>${links}</div>`;
+      }).join('');
+      tocBody.innerHTML = html;
+    }
+
+    function render() {
+      const slide = SLIDES[cur];
+      const progress = Math.round(((cur + 1) / SLIDES.length) * 100);
+      document.getElementById('progress-bar').style.width = progress + '%';
+      document.getElementById('pct').textContent = progress + '%';
+      document.getElementById('slide-counter').textContent = `${cur + 1} / ${SLIDES.length}`;
+      document.getElementById('module-label').textContent = MODULE_NAMES[slide.m];
+      document.getElementById('slide').innerHTML = slide.q ? renderQuiz(slide.m) : `<h1>${esc(slide.t)}</h1>${slide.c}`;
+      save();
+      buildTOC();
+    }
+
+    document.addEventListener('keydown', (event) => {
+      const tag = (event.target && event.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') {
+        return;
+      }
+      if (event.key === ' ' && !event.shiftKey) {
+        event.preventDefault();
+        go(1);
+      } else if ((event.key === ' ' && event.shiftKey) || event.key === 'ArrowLeft') {
+        event.preventDefault();
+        go(-1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        go(1);
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        cur = 0;
+        render();
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        cur = SLIDES.length - 1;
+        render();
+      } else if (event.key === 't' || event.key === 'T') {
+        event.preventDefault();
+        toggleTOC();
+      } else if (event.key === 'r' || event.key === 'R') {
+        event.preventDefault();
+        retryFailed();
+      }
+    });
+
+    load();
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How Do Organisms Reproduce? Workshop</title>
+  <style>
+    :root {
+      --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#5c6a82;--line:#d7e0ea;
+      --accent:#1d4ed8;--accent2:#ea580c;--good:#15803d;--bad:#dc2626;
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:Segoe UI,system-ui,sans-serif;color:var(--text);background:
+      radial-gradient(circle at top left,rgba(29,78,216,.08),transparent 28%),
+      radial-gradient(circle at top right,rgba(234,88,12,.10),transparent 26%),var(--bg)}
+    button{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#fff;color:var(--text);font-weight:700;cursor:pointer}
+    button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    #progress{position:fixed;inset:0 auto auto 0;height:4px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:200}
+    #app{max-width:1200px;margin:0 auto;padding:16px}
+    #header{position:sticky;top:10px;z-index:120;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border:1px solid rgba(215,224,234,.95);border-radius:18px;box-shadow:0 10px 28px rgba(15,23,42,.08)}
+    #header .meta{min-width:180px} #header .meta strong{display:block} #header .center{flex:1;text-align:center;color:var(--muted);font-weight:700}
+    #header .actions{display:flex;gap:8px;flex-wrap:wrap}
+    #layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;margin-top:16px}
+    #toc{position:sticky;top:92px;align-self:start;background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 24px rgba(15,23,42,.06);padding:14px;max-height:calc(100vh - 120px);overflow:auto}
+    #toc h2{margin:0 0 10px;font-size:1rem}
+    .toc-module{margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)} .toc-module:last-child{border-bottom:0;padding-bottom:0;margin-bottom:0}
+    .toc-module h3{margin:0 0 8px;font-size:.97rem} .toc-list{display:grid;gap:8px}
+    .toc-list button{width:100%;text-align:left;background:#f8fbff;border-color:#e4edf7} .toc-list button.current{background:#e0ecff;border-color:#a7c5ff}
+    main{min-width:0}
+    .module{display:none;background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:22px;box-shadow:0 14px 36px rgba(15,23,42,.07);overflow:hidden}
+    .module.active{display:block} .module-header{padding:20px 20px 0} .module-header h2{margin:0;font-size:clamp(1.4rem,2.1vw,2rem)} .module-summary{margin:6px 0 0;color:var(--muted)}
+    .slides{padding:8px 20px 20px} .slide{display:none;padding-top:14px} .slide.active{display:block} .slide h3{margin:0 0 12px;color:var(--accent);font-size:1.35rem} .slide p,.slide li{line-height:1.7;font-size:1rem} .slide ul{margin:12px 0 16px 20px}
+    .preview{margin:18px 0 0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#f8fbff} .preview img{display:block;width:100%;max-height:380px;object-fit:contain;background:#f8fbff} .preview figcaption{padding:10px 12px;color:var(--muted);font-size:.95rem}
+    .note,.tip,.warn,.real{border-left:5px solid;border-radius:14px;padding:14px 16px;margin:16px 0} .note{border-color:var(--accent);background:#eff6ff} .tip{border-color:#16a34a;background:#f0fdf4} .warn{border-color:#eab308;background:#fefce8} .real{border-color:var(--accent2);background:#fff7ed}
+    .quiz-panel{display:none;padding:10px 20px 22px;border-top:1px solid var(--line);background:linear-gradient(180deg,#fff,#f8fbff)} .quiz-panel.active{display:block}
+    .quiz-panel-head{display:grid;gap:8px;margin-bottom:16px} .quiz-panel-head h3{margin:0;font-size:1.25rem} .quiz-meta,.quiz-score{margin:0;color:var(--muted)} .quiz-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .questions{display:grid;gap:14px} .question-card{border:1px solid var(--line);border-radius:18px;padding:16px;background:#fff} .question-text{margin-top:0;font-weight:800} .choices{display:grid;gap:10px}
+    .choice{width:100%;text-align:left;border-width:2px;background:#f8fbff} .choice.correct{border-color:var(--good);background:#f0fdf4} .choice.wrong{border-color:var(--bad);background:#fef2f2} .choice.locked{pointer-events:none;opacity:.82}
+    .question-feedback{display:none;margin-top:10px;padding:10px 12px;border-radius:12px;font-weight:700} .question-feedback.show{display:block} .question-feedback.pass{background:#dcfce7;color:#166534} .question-feedback.fail{background:#fee2e2;color:#991b1b}
+    .question-explanation{display:none;margin-top:10px;color:var(--muted)} .question-explanation.show{display:block}
+    #overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.34);z-index:110}
+    @media(max-width:920px){#layout{grid-template-columns:1fr}#toc{position:fixed;left:-320px;top:10px;width:min(320px,calc(100vw - 20px));height:calc(100vh - 20px);max-height:none;z-index:130;transition:left .2s ease}#toc.open{left:10px}}
+    @media(max-width:700px){#header{flex-direction:column;align-items:stretch}#header .center{text-align:left}#header .actions button{flex:1 1 45%}.slides,.quiz-panel,.module-header{padding-left:14px;padding-right:14px}}
+  </style>
+</head>
+<body>
+  <div id="progress"></div>
+  <div id="overlay" onclick="toggleToc(false)"></div>
+  <div id="app">
+    <header id="header">
+      <div class="meta"><strong id="module-label"></strong><span id="mode-label"></span></div>
+      <div class="center" id="counter"></div>
+      <div class="actions">
+        <button type="button" onclick="toggleToc()">TOC</button>
+        <button type="button" onclick="step(-1)">Prev</button>
+        <button type="button" class="primary" id="next-btn" onclick="step(1)">Next</button>
+      </div>
+    </header>
+    <div id="layout">
+      <aside id="toc"><h2>Contents</h2><div class="toc-module">
+  <h3>M0: Why Reproduction Matters</h3>
+  <div class="toc-list"><button type="button" data-jump="1" data-module="0" data-slide="0" onclick="jump(0,0,'slides')">Why Organisms Reproduce</button><button type="button" data-jump="1" data-module="0" data-slide="1" onclick="jump(0,1,'slides')">DNA Copying Creates Variation</button><button type="button" data-jump="1" data-module="0" data-mode="quiz" onclick="jump(0,0,'quiz')">Quiz</button></div>
+</div>
+<div class="toc-module">
+  <h3>M1: Asexual Reproduction</h3>
+  <div class="toc-list"><button type="button" data-jump="1" data-module="1" data-slide="0" onclick="jump(1,0,'slides')">One Parent, Many Ways</button><button type="button" data-jump="1" data-module="1" data-slide="1" onclick="jump(1,1,'slides')">Fragments, Buds, and Spores</button><button type="button" data-jump="1" data-module="1" data-mode="quiz" onclick="jump(1,0,'quiz')">Quiz</button></div>
+</div>
+<div class="toc-module">
+  <h3>M2: Sexual Reproduction in Flowering Plants</h3>
+  <div class="toc-list"><button type="button" data-jump="1" data-module="2" data-slide="0" onclick="jump(2,0,'slides')">Pollination Comes First</button><button type="button" data-jump="1" data-module="2" data-slide="1" onclick="jump(2,1,'slides')">Fertilisation Makes a New Beginning</button><button type="button" data-jump="1" data-module="2" data-mode="quiz" onclick="jump(2,0,'quiz')">Quiz</button></div>
+</div>
+<div class="toc-module">
+  <h3>M3: Human Reproduction and Health</h3>
+  <div class="toc-list"><button type="button" data-jump="1" data-module="3" data-slide="0" onclick="jump(3,0,'slides')">Puberty Means the Body Is Maturing</button><button type="button" data-jump="1" data-module="3" data-slide="1" onclick="jump(3,1,'slides')">Fertilisation, Embryo, and Health</button><button type="button" data-jump="1" data-module="3" data-mode="quiz" onclick="jump(3,0,'quiz')">Quiz</button></div>
+</div></aside>
+      <main id="main"><section class="module" data-module-index="0">
+          <div class="module-header">
+            <h2>M0: Why Reproduction Matters</h2>
+            <p class="module-summary">Read, look, then check yourself.</p>
+          </div>
+          <div class="slides"><article class="slide" data-slide-index="0">
+          <h3>Why Organisms Reproduce</h3>
+          <p>Reproduction is not needed for one individual to stay alive, but it is needed for a species to continue.</p>
+<p>New individuals look like their parents, so the species keeps its body design from one generation to the next.</p>
+<ul><li>Reproduction keeps a species going.</li><li>New individuals look like their parents.</li><li>A species is easier to notice when many members exist.</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0001.png" alt="The chapter opens by asking why living things reproduce at all.">
+  <figcaption>The chapter opens by asking why living things reproduce at all.</figcaption>
+</figure>
+        </article>
+<article class="slide" data-slide-index="1">
+          <h3>DNA Copying Creates Variation</h3>
+          <p>Reproduction begins with copying DNA. That copy is usually close to the original, but not always perfect.</p>
+<p>Small changes create variation, and variation can help some members survive when the world changes.</p>
+<ul><li>DNA copying starts reproduction.</li><li>Small copy errors create variation.</li><li>Variation can help survival.</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0002.png" alt="Pages explain how DNA copying and variation happen during reproduction.">
+  <figcaption>Pages explain how DNA copying and variation happen during reproduction.</figcaption>
+</figure>
+        </article></div>
+          <section class="quiz-panel">
+            <div class="quiz-panel-head">
+              <h3>Quick Check</h3>
+              <p class="quiz-meta">Your answers are saved in this browser.</p>
+              <div class="quiz-actions">
+                <button type="button" onclick="retryMissed()">Retry missed</button>
+                <button type="button" class="primary" onclick="startNextModule()">Next module</button>
+              </div>
+              <div class="quiz-score"></div>
+            </div>
+            <div class="questions"><section class="question-card" data-qid="j107_q1">
+  <p class="question-text">Why do organisms reproduce?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q1',0)">To keep their species going</button><button class="choice" type="button" onclick="answerQuestion('j107_q1',1)">To stop all growth</button><button class="choice" type="button" onclick="answerQuestion('j107_q1',2)">To turn into rocks</button><button class="choice" type="button" onclick="answerQuestion('j107_q1',3)">To erase DNA</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Reproduction is needed for the species, even though one individual can stay alive without it.</div>
+</section>
+<section class="question-card" data-qid="j107_q2">
+  <p class="question-text">What is the first basic event in reproduction?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q2',0)">DNA copying</button><button class="choice" type="button" onclick="answerQuestion('j107_q2',1)">Melting of bones</button><button class="choice" type="button" onclick="answerQuestion('j107_q2',2)">Colour change in leaves</button><button class="choice" type="button" onclick="answerQuestion('j107_q2',3)">Loss of water from air</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The chapter says reproduction starts with a copy of DNA.</div>
+</section>
+<section class="question-card" data-qid="j107_q3">
+  <p class="question-text">What are small differences in copied DNA called?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q3',0)">Variations</button><button class="choice" type="button" onclick="answerQuestion('j107_q3',1)">Synapses</button><button class="choice" type="button" onclick="answerQuestion('j107_q3',2)">Reflexes</button><button class="choice" type="button" onclick="answerQuestion('j107_q3',3)">Roots</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Small changes during DNA copying are called variations.</div>
+</section>
+<section class="question-card" data-qid="j107_q4">
+  <p class="question-text">Why can variation be useful for a species?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q4',0)">It may help some members survive change</button><button class="choice" type="button" onclick="answerQuestion('j107_q4',1)">It always destroys the species</button><button class="choice" type="button" onclick="answerQuestion('j107_q4',2)">It removes the need for DNA</button><button class="choice" type="button" onclick="answerQuestion('j107_q4',3)">It makes all organisms identical</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Variation can help a species survive when conditions change.</div>
+</section>
+<section class="question-card" data-qid="j107_q5">
+  <p class="question-text">Do all reproducing organisms make perfect copies?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q5',0)">No, small changes can happen</button><button class="choice" type="button" onclick="answerQuestion('j107_q5',1)">Yes, every copy is perfect</button><button class="choice" type="button" onclick="answerQuestion('j107_q5',2)">Only plants make copies</button><button class="choice" type="button" onclick="answerQuestion('j107_q5',3)">Only animals make copies</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The chapter explains that DNA copying is never absolutely perfect.</div>
+</section></div>
+          </section>
+        </section>
+<section class="module" data-module-index="1">
+          <div class="module-header">
+            <h2>M1: Asexual Reproduction</h2>
+            <p class="module-summary">Read, look, then check yourself.</p>
+          </div>
+          <div class="slides"><article class="slide" data-slide-index="0">
+          <h3>One Parent, Many Ways</h3>
+          <p>Asexual reproduction uses one parent. The new individual comes from a single organism, so the process is often simple and fast.</p>
+<p>The chapter covers fission, fragmentation, regeneration, budding, vegetative propagation, and spore formation.</p>
+<ul><li>Fission splits one cell into two or more cells.</li><li>Budding forms a small outgrowth.</li><li>Vegetative propagation uses roots, stems, or leaves.</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0003.png" alt="The source pages show several asexual methods in simple organisms and plants.">
+  <figcaption>The source pages show several asexual methods in simple organisms and plants.</figcaption>
+</figure>
+        </article>
+<article class="slide" data-slide-index="1">
+          <h3>Fragments, Buds, and Spores</h3>
+          <p>Hydra can grow a bud that becomes a new individual. Some organisms can regenerate lost parts. Fungi and some plants use spores, which are tiny units that can spread easily.</p>
+<p>Vegetative propagation is useful in plants because a root, stem, or leaf can grow into a new plant that keeps the same useful traits.</p>
+<ul><li>Hydra shows budding.</li><li>Planaria shows regeneration.</li><li>Spores help organisms spread widely.</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0006.png" alt="Later pages focus on regeneration, budding, and spore formation.">
+  <figcaption>Later pages focus on regeneration, budding, and spore formation.</figcaption>
+</figure>
+        </article></div>
+          <section class="quiz-panel">
+            <div class="quiz-panel-head">
+              <h3>Quick Check</h3>
+              <p class="quiz-meta">Your answers are saved in this browser.</p>
+              <div class="quiz-actions">
+                <button type="button" onclick="retryMissed()">Retry missed</button>
+                <button type="button" class="primary" onclick="startNextModule()">Next module</button>
+              </div>
+              <div class="quiz-score"></div>
+            </div>
+            <div class="questions"><section class="question-card" data-qid="j107_q6">
+  <p class="question-text">Which kind of reproduction uses only one parent?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q6',0)">Asexual reproduction</button><button class="choice" type="button" onclick="answerQuestion('j107_q6',1)">Sexual reproduction</button><button class="choice" type="button" onclick="answerQuestion('j107_q6',2)">Leaf colouring</button><button class="choice" type="button" onclick="answerQuestion('j107_q6',3)">Blood circulation</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Asexual reproduction needs only one parent.</div>
+</section>
+<section class="question-card" data-qid="j107_q7">
+  <p class="question-text">What happens in fission?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q7',0)">One organism divides into two or more parts</button><button class="choice" type="button" onclick="answerQuestion('j107_q7',1)">Two adults merge into one</button><button class="choice" type="button" onclick="answerQuestion('j107_q7',2)">Seeds turn into metal</button><button class="choice" type="button" onclick="answerQuestion('j107_q7',3)">Leaves become water</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Fission is simple splitting, common in bacteria and protozoa.</div>
+</section>
+<section class="question-card" data-qid="j107_q8">
+  <p class="question-text">Which organism is famous for budding?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q8',0)">Hydra</button><button class="choice" type="button" onclick="answerQuestion('j107_q8',1)">Amoeba</button><button class="choice" type="button" onclick="answerQuestion('j107_q8',2)">Mango tree</button><button class="choice" type="button" onclick="answerQuestion('j107_q8',3)">Human being</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Hydra is the classic budding example in the chapter.</div>
+</section>
+<section class="question-card" data-qid="j107_q9">
+  <p class="question-text">What is regeneration?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q9',0)">Growing a whole body from a piece</button><button class="choice" type="button" onclick="answerQuestion('j107_q9',1)">Stopping all growth</button><button class="choice" type="button" onclick="answerQuestion('j107_q9',2)">Mixing pollen with water</button><button class="choice" type="button" onclick="answerQuestion('j107_q9',3)">Turning light into heat</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Regeneration means a body part or piece can grow into a complete organism.</div>
+</section>
+<section class="question-card" data-qid="j107_q10">
+  <p class="question-text">Which plant method uses roots, stems, or leaves to make new plants?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q10',0)">Vegetative propagation</button><button class="choice" type="button" onclick="answerQuestion('j107_q10',1)">Reflex action</button><button class="choice" type="button" onclick="answerQuestion('j107_q10',2)">Synapse jumping</button><button class="choice" type="button" onclick="answerQuestion('j107_q10',3)">Sex determination</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Vegetative propagation is asexual reproduction in plants using plant parts.</div>
+</section></div>
+          </section>
+        </section>
+<section class="module" data-module-index="2">
+          <div class="module-header">
+            <h2>M2: Sexual Reproduction in Flowering Plants</h2>
+            <p class="module-summary">Read, look, then check yourself.</p>
+          </div>
+          <div class="slides"><article class="slide" data-slide-index="0">
+          <h3>Pollination Comes First</h3>
+          <p>Sexual reproduction in flowering plants begins with pollination, which is the transfer of pollen grains from the anther to the stigma.</p>
+<p>The chapter uses the flower diagram to help you see where pollen starts, where it lands, and how the next steps create seeds and fruits.</p>
+<ul><li>Anther makes pollen grains.</li><li>Stigma receives pollen.</li><li>Fertilisation happens after pollination.</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0009.png" alt="The source pages show flower parts and the movement of pollen grains.">
+  <figcaption>The source pages show flower parts and the movement of pollen grains.</figcaption>
+</figure>
+        </article>
+<article class="slide" data-slide-index="1">
+          <h3>Fertilisation Makes a New Beginning</h3>
+          <p>After fertilisation, the ovule develops into a seed and the ovary develops into a fruit.</p>
+<p>Because sexual reproduction mixes genetic material from two parents, the offspring can show more variation than asexual offspring.</p>
+<ul><li>Pollination moves pollen.</li><li>Fertilisation joins the gametes.</li><li>Seeds carry the embryo of the next plant.</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0010.png" alt="Later pages connect pollen, ovule, seed, and fruit in a simple sequence.">
+  <figcaption>Later pages connect pollen, ovule, seed, and fruit in a simple sequence.</figcaption>
+</figure>
+        </article></div>
+          <section class="quiz-panel">
+            <div class="quiz-panel-head">
+              <h3>Quick Check</h3>
+              <p class="quiz-meta">Your answers are saved in this browser.</p>
+              <div class="quiz-actions">
+                <button type="button" onclick="retryMissed()">Retry missed</button>
+                <button type="button" class="primary" onclick="startNextModule()">Next module</button>
+              </div>
+              <div class="quiz-score"></div>
+            </div>
+            <div class="questions"><section class="question-card" data-qid="j107_q11">
+  <p class="question-text">What is pollination?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q11',0)">Transfer of pollen from anther to stigma</button><button class="choice" type="button" onclick="answerQuestion('j107_q11',1)">Transfer of water from root to leaf</button><button class="choice" type="button" onclick="answerQuestion('j107_q11',2)">Breaking a stem into pieces</button><button class="choice" type="button" onclick="answerQuestion('j107_q11',3)">Turning a seed into a fruit</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Pollination is the movement of pollen grains from anther to stigma.</div>
+</section>
+<section class="question-card" data-qid="j107_q12">
+  <p class="question-text">What happens after pollination in flowering plants?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q12',0)">Fertilisation</button><button class="choice" type="button" onclick="answerQuestion('j107_q12',1)">Digestion</button><button class="choice" type="button" onclick="answerQuestion('j107_q12',2)">Reflex action</button><button class="choice" type="button" onclick="answerQuestion('j107_q12',3)">Spore release only</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The next main step after pollination is fertilisation.</div>
+</section>
+<section class="question-card" data-qid="j107_q13">
+  <p class="question-text">Which flower part receives pollen?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q13',0)">Stigma</button><button class="choice" type="button" onclick="answerQuestion('j107_q13',1)">Root hair</button><button class="choice" type="button" onclick="answerQuestion('j107_q13',2)">Petiole</button><button class="choice" type="button" onclick="answerQuestion('j107_q13',3)">Stamen only</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The stigma is the pollen-receiving part of the flower.</div>
+</section>
+<section class="question-card" data-qid="j107_q14">
+  <p class="question-text">What does the ovule become after fertilisation?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q14',0)">Seed</button><button class="choice" type="button" onclick="answerQuestion('j107_q14',1)">Leaf</button><button class="choice" type="button" onclick="answerQuestion('j107_q14',2)">Stem</button><button class="choice" type="button" onclick="answerQuestion('j107_q14',3)">Petal</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The chapter explains that the ovule develops into a seed.</div>
+</section>
+<section class="question-card" data-qid="j107_q15">
+  <p class="question-text">Why does sexual reproduction usually create more variation?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q15',0)">It combines genetic material from two parents</button><button class="choice" type="button" onclick="answerQuestion('j107_q15',1)">It never uses DNA</button><button class="choice" type="button" onclick="answerQuestion('j107_q15',2)">It always makes identical copies</button><button class="choice" type="button" onclick="answerQuestion('j107_q15',3)">It only happens in one cell</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Mixing material from two parents creates more variety in offspring.</div>
+</section></div>
+          </section>
+        </section>
+<section class="module" data-module-index="3">
+          <div class="module-header">
+            <h2>M3: Human Reproduction and Health</h2>
+            <p class="module-summary">Read, look, then check yourself.</p>
+          </div>
+          <div class="slides"><article class="slide" data-slide-index="0">
+          <h3>Puberty Means the Body Is Maturing</h3>
+          <p>Puberty is the time when the body becomes able to reproduce. Girls and boys both go through changes.</p>
+<p>The male reproductive system includes testes, vas deferens, seminal vesicles, prostate gland, urethra, and penis. The female reproductive system includes ovaries, fallopian tubes, uterus, and vagina.</p>
+<figure class="preview">
+  <img src="page_previews/page_0011.png" alt="The chapter uses body changes at puberty as a sign of sexual maturation.">
+  <figcaption>The chapter uses body changes at puberty as a sign of sexual maturation.</figcaption>
+</figure>
+        </article>
+<article class="slide" data-slide-index="1">
+          <h3>Fertilisation, Embryo, and Health</h3>
+          <p>In human beings, fertilisation usually happens in the fallopian tube. The embryo gets nourishment from the mother through the placenta.</p>
+<p>The chapter also talks about reproductive health and contraception. Condoms, oral pills, and copper-T are examples of methods used to avoid pregnancy.</p>
+<ul><li>Sperm is introduced into the vagina.</li><li>Fertilisation happens in the fallopian tube.</li><li>Reproductive health includes safe choices and protection.</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0014.png" alt="The later pages explain fertilisation, the embryo, and ways to avoid pregnancy.">
+  <figcaption>The later pages explain fertilisation, the embryo, and ways to avoid pregnancy.</figcaption>
+</figure>
+        </article></div>
+          <section class="quiz-panel">
+            <div class="quiz-panel-head">
+              <h3>Quick Check</h3>
+              <p class="quiz-meta">Your answers are saved in this browser.</p>
+              <div class="quiz-actions">
+                <button type="button" onclick="retryMissed()">Retry missed</button>
+                <button type="button" class="primary" onclick="startNextModule()">Next module</button>
+              </div>
+              <div class="quiz-score"></div>
+            </div>
+            <div class="questions"><section class="question-card" data-qid="j107_q16">
+  <p class="question-text">What is puberty?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q16',0)">The stage when the body becomes sexually mature</button><button class="choice" type="button" onclick="answerQuestion('j107_q16',1)">A type of spore</button><button class="choice" type="button" onclick="answerQuestion('j107_q16',2)">A reflex in plants</button><button class="choice" type="button" onclick="answerQuestion('j107_q16',3)">A chemical equation</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Puberty is the stage when the body matures for reproduction.</div>
+</section>
+<section class="question-card" data-qid="j107_q17">
+  <p class="question-text">Where does fertilisation usually happen in human beings?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q17',0)">Fallopian tube</button><button class="choice" type="button" onclick="answerQuestion('j107_q17',1)">Mouth</button><button class="choice" type="button" onclick="answerQuestion('j107_q17',2)">Skin</button><button class="choice" type="button" onclick="answerQuestion('j107_q17',3)">Stomach</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The chapter says fertilisation in humans usually happens in the fallopian tube.</div>
+</section>
+<section class="question-card" data-qid="j107_q18">
+  <p class="question-text">Which organ produces sperms in males?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q18',0)">Testes</button><button class="choice" type="button" onclick="answerQuestion('j107_q18',1)">Ovary</button><button class="choice" type="button" onclick="answerQuestion('j107_q18',2)">Uterus</button><button class="choice" type="button" onclick="answerQuestion('j107_q18',3)">Pancreas</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The testes are the male reproductive organs that produce sperm.</div>
+</section>
+<section class="question-card" data-qid="j107_q19">
+  <p class="question-text">Which organ produces eggs in females?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q19',0)">Ovaries</button><button class="choice" type="button" onclick="answerQuestion('j107_q19',1)">Testes</button><button class="choice" type="button" onclick="answerQuestion('j107_q19',2)">Vas deferens</button><button class="choice" type="button" onclick="answerQuestion('j107_q19',3)">Spinal cord</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The ovaries are the female reproductive organs that produce eggs.</div>
+</section>
+<section class="question-card" data-qid="j107_q20">
+  <p class="question-text">What does a copper-T help with?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j107_q20',0)">Preventing pregnancy</button><button class="choice" type="button" onclick="answerQuestion('j107_q20',1)">Making bones grow</button><button class="choice" type="button" onclick="answerQuestion('j107_q20',2)">Turning pollen to fruit</button><button class="choice" type="button" onclick="answerQuestion('j107_q20',3)">Speeding up reflexes</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The chapter lists copper-T as one of the methods used to avoid pregnancy.</div>
+</section></div>
+          </section>
+        </section></main>
+    </div>
+  </div>
+  <script>
+    window.WORKSHOP_INDEX = {"modules": [{"id": 0, "name": "M0: Why Reproduction Matters", "slides": 2, "questions": 5}, {"id": 1, "name": "M1: Asexual Reproduction", "slides": 2, "questions": 5}, {"id": 2, "name": "M2: Sexual Reproduction in Flowering Plants", "slides": 2, "questions": 5}, {"id": 3, "name": "M3: Human Reproduction and Health", "slides": 2, "questions": 5}], "answers": {"j107_q1": 0, "j107_q2": 0, "j107_q3": 0, "j107_q4": 0, "j107_q5": 0, "j107_q6": 0, "j107_q7": 0, "j107_q8": 0, "j107_q9": 0, "j107_q10": 0, "j107_q11": 0, "j107_q12": 0, "j107_q13": 0, "j107_q14": 0, "j107_q15": 0, "j107_q16": 0, "j107_q17": 0, "j107_q18": 0, "j107_q19": 0, "j107_q20": 0}};
+    const STORAGE_KEY = "jesc107_workshop_state";
+    const modules = Array.from(document.querySelectorAll('.module'));
+    const tocButtons = Array.from(document.querySelectorAll('[data-jump]'));
+    const overlay = document.getElementById('overlay');
+    const moduleLabel = document.getElementById('module-label');
+    const modeLabel = document.getElementById('mode-label');
+    const counter = document.getElementById('counter');
+    const progress = document.getElementById('progress');
+    const nextButton = document.getElementById('next-btn');
+    const defaultState = {module:0, slide:0, mode:'slides', answers:{}};
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? Object.assign({}, defaultState, JSON.parse(raw)) : structuredClone(defaultState);
+      } catch (err) { return structuredClone(defaultState); }
+    }
+    function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    function currentModuleData() { return window.WORKSHOP_INDEX.modules[state.module]; }
+    function currentSlideCount() { return currentModuleData().slides; }
+    function clampState() {
+      state.module = Math.max(0, Math.min(state.module, modules.length - 1));
+      state.slide = Math.max(0, Math.min(state.slide, currentSlideCount() - 1));
+      if (!['slides', 'quiz'].includes(state.mode)) state.mode = 'slides';
+    }
+    function jump(moduleIndex, slideIndex = 0, mode = 'slides') { state.module = moduleIndex; state.slide = slideIndex; state.mode = mode; saveState(); render(); toggleToc(false); }
+    function startNextModule() { if (state.module < modules.length - 1) jump(state.module + 1, 0, 'slides'); }
+    function currentModuleQuestions(moduleIndex) { return Array.from(modules[moduleIndex].querySelectorAll('.question-card')).map(card => card.dataset.qid); }
+    function retryMissed() {
+      for (const qid of currentModuleQuestions(state.module)) {
+        const correct = window.WORKSHOP_INDEX.answers[qid];
+        if (state.answers[qid] !== undefined && state.answers[qid] !== correct) delete state.answers[qid];
+      }
+      state.mode = 'quiz'; saveState(); render();
+    }
+    function answerQuestion(qid, choiceIndex) { state.answers[qid] = choiceIndex; saveState(); renderQuizPanel(state.module); }
+    function renderSlide(moduleIndex, slideIndex) {
+      const moduleEl = modules[moduleIndex];
+      Array.from(moduleEl.querySelectorAll('.slide')).forEach((slide, index) => slide.classList.toggle('active', index === slideIndex));
+      moduleEl.querySelector('.quiz-panel').classList.toggle('active', state.mode === 'quiz');
+    }
+    function renderQuizPanel(moduleIndex) {
+      const moduleEl = modules[moduleIndex];
+      const questions = Array.from(moduleEl.querySelectorAll('.question-card'));
+      let correct = 0, answered = 0, missed = [];
+      questions.forEach(card => {
+        const qid = card.dataset.qid;
+        const correctIndex = window.WORKSHOP_INDEX.answers[qid];
+        const chosen = state.answers[qid];
+        const feedback = card.querySelector('.question-feedback');
+        const explanation = card.querySelector('.question-explanation');
+        const buttons = Array.from(card.querySelectorAll('.choice'));
+        buttons.forEach((button, choiceIndex) => {
+          button.classList.remove('correct', 'wrong', 'locked');
+          button.disabled = false;
+          if (chosen !== undefined) {
+            button.classList.add('locked');
+            button.disabled = true;
+            if (choiceIndex === correctIndex) button.classList.add('correct');
+            if (choiceIndex === chosen && chosen !== correctIndex) button.classList.add('wrong');
+          }
+        });
+        if (chosen !== undefined) {
+          answered++;
+          if (chosen === correctIndex) {
+            correct++;
+            feedback.textContent = 'Correct';
+            feedback.className = 'question-feedback show pass';
+          } else {
+            missed.push(qid);
+            feedback.textContent = 'Try again';
+            feedback.className = 'question-feedback show fail';
+          }
+          explanation.classList.add('show');
+        } else {
+          feedback.className = 'question-feedback';
+          feedback.textContent = '';
+          explanation.classList.remove('show');
+        }
+      });
+      moduleEl.querySelector('.quiz-score').textContent = 'Score: ' + correct + '/' + questions.length + ' correct. ' + answered + '/' + questions.length + ' answered.';
+      const retryButton = moduleEl.querySelector('.quiz-actions button');
+      retryButton.disabled = missed.length === 0;
+      retryButton.textContent = missed.length ? 'Retry missed (' + missed.length + ')' : 'Retry missed';
+      nextButton.textContent = state.module < modules.length - 1 ? 'Next' : 'Finish';
+    }
+    function updateToc() {
+      tocButtons.forEach(button => {
+        const moduleIndex = Number(button.dataset.module);
+        const slideIndex = button.dataset.slide !== undefined ? Number(button.dataset.slide) : 0;
+        const isQuiz = button.dataset.mode === 'quiz';
+        button.classList.toggle('current', moduleIndex === state.module && ((isQuiz && state.mode === 'quiz') || (!isQuiz && state.mode !== 'quiz' && slideIndex === state.slide)));
+      });
+    }
+    function render() {
+      clampState();
+      modules.forEach((moduleEl, index) => {
+        const active = index === state.module;
+        moduleEl.classList.toggle('active', active);
+        if (active) {
+          renderSlide(state.module, state.slide);
+          renderQuizPanel(state.module);
+        } else {
+          moduleEl.querySelector('.quiz-panel').classList.remove('active');
+        }
+      });
+      const data = currentModuleData();
+      moduleLabel.textContent = data.name;
+      modeLabel.textContent = state.mode === 'quiz' ? 'Quiz mode' : 'Slide mode';
+      const totalSteps = currentSlideCount() + 1;
+      const currentStep = state.mode === 'quiz' ? totalSteps : state.slide + 1;
+      counter.textContent = 'Module ' + (state.module + 1) + ' of ' + modules.length + ' - Step ' + currentStep + ' of ' + totalSteps;
+      progress.style.width = Math.round((currentStep / totalSteps) * 100) + '%';
+      nextButton.textContent = state.mode === 'quiz' ? (state.module < modules.length - 1 ? 'Next' : 'Finish') : (state.slide < currentSlideCount() - 1 ? 'Next' : 'Quiz');
+      updateToc();
+    }
+    function step(delta) {
+      if (state.mode === 'quiz') {
+        if (delta < 0) {
+          state.mode = 'slides';
+          state.slide = Math.max(0, currentSlideCount() - 1);
+          saveState();
+          render();
+        } else if (state.module < modules.length - 1) {
+          jump(state.module + 1, 0, 'slides');
+        }
+        return;
+      }
+      if (delta > 0) {
+        if (state.slide < currentSlideCount() - 1) state.slide++;
+        else state.mode = 'quiz';
+      } else if (delta < 0) {
+        if (state.slide > 0) state.slide--;
+        else if (state.module > 0) {
+          state.module--;
+          state.slide = window.WORKSHOP_INDEX.modules[state.module].slides - 1;
+        }
+      }
+      saveState();
+      render();
+    }
+    function toggleToc(force) {
+      if (!window.matchMedia('(max-width: 920px)').matches) return;
+      const toc = document.getElementById('toc');
+      const shouldOpen = typeof force === 'boolean' ? force : !toc.classList.contains('open');
+      toc.classList.toggle('open', shouldOpen);
+      overlay.style.display = shouldOpen ? 'block' : 'none';
+    }
+    function handleKeydown(event) {
+      if (event.key === 't' || event.key === 'T') return toggleToc();
+      if (event.key === 'ArrowRight' || event.key === ' ') { if (!(event.key === ' ' && event.shiftKey)) step(1); else step(-1); event.preventDefault(); return; }
+      if (event.key === 'ArrowLeft') return step(-1);
+      if (event.key === 'Home') return jump(0, 0, 'slides');
+      if (event.key === 'End') { const last = modules.length - 1; return jump(last, window.WORKSHOP_INDEX.modules[last].slides - 1, 'quiz'); }
+    }
+    document.addEventListener('keydown', handleKeydown);
+    saveState();
+    render();
+  </script>
+</body>
+</html>

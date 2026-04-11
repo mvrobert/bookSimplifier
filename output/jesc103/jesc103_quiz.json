@@ -1,0 +1,415 @@
+{
+  "title": "Metals and Non-metals - Kid-friendly science workshop with tiny lessons and quick quizzes",
+  "version": "1.0",
+  "totalQuestions": 32,
+  "modules": [
+    {
+      "id": 0,
+      "name": "M0: Spotting Metals",
+      "questions": [
+        {
+          "question": "What does metallic lustre mean?",
+          "options": [
+            "A shiny surface",
+            "A rough surface",
+            "A sour taste",
+            "A gas bubble"
+          ],
+          "answer": 0,
+          "explanation": "Lustre means shine.",
+          "id": "q0_1"
+        },
+        {
+          "question": "Which property allows a metal to be hammered into sheets?",
+          "options": [
+            "Malleability",
+            "Brittleness",
+            "Acidity",
+            "Neutrality"
+          ],
+          "answer": 0,
+          "explanation": "Malleability is the ability to form sheets.",
+          "id": "q0_2"
+        },
+        {
+          "question": "Which property allows a metal to be drawn into wires?",
+          "options": [
+            "Ductility",
+            "Rusting",
+            "Softness",
+            "Transparency"
+          ],
+          "answer": 0,
+          "explanation": "Ductility is needed for making wires.",
+          "id": "q0_3"
+        },
+        {
+          "question": "Why is copper widely used in electrical wiring?",
+          "options": [
+            "It conducts electricity well",
+            "It is a gas",
+            "It is always colourless",
+            "It is softer than wax"
+          ],
+          "answer": 0,
+          "explanation": "Copper is an excellent conductor.",
+          "id": "q0_4"
+        },
+        {
+          "question": "Which metal is liquid at room temperature?",
+          "options": [
+            "Mercury",
+            "Iron",
+            "Copper",
+            "Magnesium"
+          ],
+          "answer": 0,
+          "explanation": "Mercury is the common liquid metal.",
+          "id": "q0_5"
+        },
+        {
+          "question": "Which metal is soft enough to cut with a knife?",
+          "options": [
+            "Sodium",
+            "Gold",
+            "Iron",
+            "Zinc"
+          ],
+          "answer": 0,
+          "explanation": "Sodium is unusually soft for a metal.",
+          "id": "q0_6"
+        },
+        {
+          "question": "What does sonorous mean?",
+          "options": [
+            "Makes a ringing sound when struck",
+            "Turns litmus red",
+            "Breaks into powder in water",
+            "Always floats"
+          ],
+          "answer": 0,
+          "explanation": "Metals such as bells are described as sonorous.",
+          "id": "q0_7"
+        },
+        {
+          "question": "Which non-metal is a well-known conductor exception?",
+          "options": [
+            "Graphite",
+            "Sulphur",
+            "Phosphorus",
+            "Iodine"
+          ],
+          "answer": 0,
+          "explanation": "Graphite conducts electricity even though it is a non-metal.",
+          "id": "q0_8"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "M1: Reactions of Metals and Non-metals",
+      "questions": [
+        {
+          "question": "When a metal reacts with oxygen, what is commonly formed?",
+          "options": [
+            "Metal oxide",
+            "Metal chloride only",
+            "Sugar",
+            "Soap"
+          ],
+          "answer": 0,
+          "explanation": "Metal + oxygen usually forms a metal oxide.",
+          "id": "q1_1"
+        },
+        {
+          "question": "What gas is often produced when a metal reacts with an acid?",
+          "options": [
+            "Hydrogen",
+            "Neon",
+            "Oxygen only",
+            "Carbon monoxide"
+          ],
+          "answer": 0,
+          "explanation": "Metal-acid reactions commonly release hydrogen.",
+          "id": "q1_2"
+        },
+        {
+          "question": "Which pair of metals is stored carefully because it reacts very strongly?",
+          "options": [
+            "Sodium and potassium",
+            "Gold and silver",
+            "Copper and iron",
+            "Lead and tin"
+          ],
+          "answer": 0,
+          "explanation": "Sodium and potassium are highly reactive.",
+          "id": "q1_3"
+        },
+        {
+          "question": "Many metal oxides are",
+          "options": [
+            "basic",
+            "always neutral",
+            "always acidic",
+            "living"
+          ],
+          "answer": 0,
+          "explanation": "Metal oxides often show basic character.",
+          "id": "q1_4"
+        },
+        {
+          "question": "Many non-metal oxides are",
+          "options": [
+            "acidic",
+            "always metallic",
+            "always neutral",
+            "always liquid"
+          ],
+          "answer": 0,
+          "explanation": "Non-metal oxides commonly show acidic character.",
+          "id": "q1_5"
+        },
+        {
+          "question": "An oxide that reacts with both acids and bases is called",
+          "options": [
+            "amphoteric",
+            "neutral only",
+            "inert",
+            "radioactive"
+          ],
+          "answer": 0,
+          "explanation": "Aluminium oxide and zinc oxide are common amphoteric examples.",
+          "id": "q1_6"
+        },
+        {
+          "question": "Why do metals show different speeds of reaction?",
+          "options": [
+            "Because they have different reactivities",
+            "Because they all have the same reactivity",
+            "Because oxygen changes into metal",
+            "Because acids disappear"
+          ],
+          "answer": 0,
+          "explanation": "Reactivity differences explain reaction speed.",
+          "id": "q1_7"
+        },
+        {
+          "question": "Which metal reaction clue may show that hydrogen is being produced?",
+          "options": [
+            "Bubbling or fizzing",
+            "The metal becomes invisible",
+            "The beaker becomes magnetic",
+            "Everything freezes instantly"
+          ],
+          "answer": 0,
+          "explanation": "Gas release is often seen as fizzing.",
+          "id": "q1_8"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "M2: Reactivity and Ionic Compounds",
+      "questions": [
+        {
+          "question": "What can a more reactive metal do to a less reactive metal in a compound?",
+          "options": [
+            "Displace it",
+            "Turn it into water",
+            "Make it disappear completely",
+            "Always freeze it"
+          ],
+          "answer": 0,
+          "explanation": "Displacement depends on reactivity order.",
+          "id": "q2_1"
+        },
+        {
+          "question": "Highly reactive metals are usually found in nature as",
+          "options": [
+            "compounds",
+            "free shining pieces",
+            "gases only",
+            "plants"
+          ],
+          "answer": 0,
+          "explanation": "Highly reactive metals usually combine with other substances.",
+          "id": "q2_2"
+        },
+        {
+          "question": "Less reactive metals may sometimes be found",
+          "options": [
+            "in free state",
+            "only in acids",
+            "only in water",
+            "inside indicators"
+          ],
+          "answer": 0,
+          "explanation": "Gold and similar metals can occur free in nature.",
+          "id": "q2_3"
+        },
+        {
+          "question": "What type of compound often forms when metals react with non-metals?",
+          "options": [
+            "Ionic compound",
+            "Only organic compound",
+            "Protein",
+            "Plastic"
+          ],
+          "answer": 0,
+          "explanation": "Metal-non-metal reactions often produce ionic compounds.",
+          "id": "q2_4"
+        },
+        {
+          "question": "Ionic compounds usually have",
+          "options": [
+            "high melting points",
+            "very low melting points like ice cream",
+            "no solid form",
+            "no charged particles"
+          ],
+          "answer": 0,
+          "explanation": "Strong ionic attraction gives high melting points.",
+          "id": "q2_5"
+        },
+        {
+          "question": "When do ionic compounds conduct electricity well?",
+          "options": [
+            "When molten or dissolved in water",
+            "Only as solid blocks",
+            "Only when frozen",
+            "Never"
+          ],
+          "answer": 0,
+          "explanation": "Ions need freedom to move in order to conduct.",
+          "id": "q2_6"
+        },
+        {
+          "question": "Why do solid ionic compounds conduct poorly?",
+          "options": [
+            "Their ions cannot move freely",
+            "They have no charges at all",
+            "They become wood",
+            "They lose all atoms"
+          ],
+          "answer": 0,
+          "explanation": "In the solid state the ions are fixed in place.",
+          "id": "q2_7"
+        },
+        {
+          "question": "Which idea helps explain both metal extraction and displacement reactions?",
+          "options": [
+            "Reactivity",
+            "Colour alone",
+            "Taste alone",
+            "Shape alone"
+          ],
+          "answer": 0,
+          "explanation": "Reactivity is the connecting idea.",
+          "id": "q2_8"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "M3: Corrosion, Alloys and Uses",
+      "questions": [
+        {
+          "question": "What is rusting?",
+          "options": [
+            "Corrosion of iron",
+            "Melting of copper",
+            "Freezing of mercury",
+            "A neutralisation reaction"
+          ],
+          "answer": 0,
+          "explanation": "Rusting is the corrosion of iron.",
+          "id": "q3_1"
+        },
+        {
+          "question": "Which two things are important for rusting iron?",
+          "options": [
+            "Oxygen and moisture",
+            "Sunlight and sand",
+            "Only nitrogen",
+            "Only carbon dioxide"
+          ],
+          "answer": 0,
+          "explanation": "Rusting needs both oxygen and moisture.",
+          "id": "q3_2"
+        },
+        {
+          "question": "Which method can help protect iron from rusting?",
+          "options": [
+            "Painting or galvanising",
+            "Cutting it into smaller pieces",
+            "Adding sugar",
+            "Heating it every hour"
+          ],
+          "answer": 0,
+          "explanation": "Protective coatings reduce contact with air and water.",
+          "id": "q3_3"
+        },
+        {
+          "question": "What is an alloy?",
+          "options": [
+            "A mixture made to improve metal properties",
+            "A single pure metal only",
+            "A type of gas",
+            "A kind of acid"
+          ],
+          "answer": 0,
+          "explanation": "Alloys are designed mixtures.",
+          "id": "q3_4"
+        },
+        {
+          "question": "Why is pure gold often mixed with other metals?",
+          "options": [
+            "To make it harder",
+            "To turn it into a gas",
+            "To make it sour",
+            "To remove shine"
+          ],
+          "answer": 0,
+          "explanation": "Pure gold is soft, so jewellery uses harder mixtures.",
+          "id": "q3_5"
+        },
+        {
+          "question": "Which material is an alloy widely used for strength?",
+          "options": [
+            "Steel",
+            "Oxygen",
+            "Graphite",
+            "Chlorophyll"
+          ],
+          "answer": 0,
+          "explanation": "Steel is a useful strong alloy.",
+          "id": "q3_6"
+        },
+        {
+          "question": "Why do engineers use alloys?",
+          "options": [
+            "To get better properties than pure metals",
+            "To remove all atoms",
+            "To stop metals from existing",
+            "To make everything acidic"
+          ],
+          "answer": 0,
+          "explanation": "Alloys can be stronger or more corrosion-resistant.",
+          "id": "q3_7"
+        },
+        {
+          "question": "Corrosion is a problem because it",
+          "options": [
+            "damages useful metal objects",
+            "always improves strength",
+            "creates food",
+            "turns metal into plants"
+          ],
+          "answer": 0,
+          "explanation": "Corrosion weakens and damages metal structures.",
+          "id": "q3_8"
+        }
+      ]
+    }
+  ]
+}

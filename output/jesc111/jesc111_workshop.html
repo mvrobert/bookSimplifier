@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Electricity</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --text: #1a1a2e;
+      --muted: #64748b;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --secondary: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 32%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.10), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    code, pre, .diagram {
+      font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+    }
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      width: 0;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      z-index: 1000;
+    }
+    #app {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 16px 36px;
+    }
+    #header {
+      position: sticky;
+      top: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      z-index: 100;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    }
+    #header .left,
+    #header .center,
+    #header .right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #header .center {
+      justify-content: center;
+      flex: 1;
+    }
+    #header .left {
+      min-width: 220px;
+      font-weight: 600;
+    }
+    #pct {
+      min-width: 46px;
+      text-align: right;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    button {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover {
+      border-color: var(--primary);
+    }
+    #slide {
+      background: var(--surface);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      padding: 40px 48px;
+      min-height: 520px;
+      border: 1px solid rgba(226, 232, 240, 0.85);
+    }
+    #slide h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+    #slide h2 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+    #slide p,
+    #slide li,
+    #slide td,
+    #slide th {
+      line-height: 1.7;
+      font-size: 1.03rem;
+    }
+    #slide pre {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    #slide table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    #slide th,
+    #slide td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    #slide tr:hover td {
+      background: #f8fafc;
+    }
+    .diagram {
+      border: 2px dashed #cbd5e1;
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 16px;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 18px 0;
+    }
+    .note,
+    .tip,
+    .warn,
+    .real {
+      border-left: 5px solid;
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin: 18px 0;
+    }
+    .note { border-color: #2563eb; background: #eff6ff; }
+    .tip { border-color: #22c55e; background: #f0fdf4; }
+    .warn { border-color: #eab308; background: #fefce8; }
+    .real { border-color: #7c3aed; background: #faf5ff; }
+    .quiz-container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .quiz-opt {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 12px;
+      border: 2px solid var(--border);
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .quiz-opt.correct {
+      border-color: var(--good);
+      background: #f0fdf4;
+    }
+    .quiz-opt.wrong {
+      border-color: var(--bad);
+      background: #fef2f2;
+    }
+    .quiz-opt.disabled {
+      pointer-events: none;
+      opacity: 0.78;
+    }
+    .quiz-feedback {
+      display: none;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 16px;
+    }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.pass {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .quiz-feedback.fail {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    #nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    #nav .prev {
+      background: #e2e8f0;
+    }
+    #nav .next {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    #toc {
+      position: fixed;
+      top: 0;
+      left: -360px;
+      width: 350px;
+      height: 100vh;
+      background: #ffffff;
+      border-right: 1px solid var(--border);
+      z-index: 201;
+      transition: left 0.2s ease;
+      padding: 24px 18px;
+      overflow-y: auto;
+      box-shadow: 8px 0 24px rgba(15, 23, 42, 0.1);
+    }
+    #toc.open {
+      left: 0;
+    }
+    #toc-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.32);
+      z-index: 200;
+    }
+    #toc-overlay.open {
+      display: block;
+    }
+    .toc-module {
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .toc-module h3 {
+      margin: 0 0 10px 0;
+      color: var(--secondary);
+    }
+    .toc-link {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 6px;
+      background: #fff;
+    }
+    .toc-link.current {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+    .quiz-meta {
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    @media (max-width: 768px) {
+      #slide { padding: 20px 24px; }
+      #header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      #header .left,
+      #header .center,
+      #header .right {
+        justify-content: space-between;
+        min-width: 0;
+      }
+    }
+    @media print {
+      #header, #nav, #progress-bar, #toc, #toc-overlay { display: none !important; }
+      #slide { box-shadow: none; border: none; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+  <div id="app">
+    <div id="header">
+      <div class="left" id="module-label">Module 0</div>
+      <div class="center" id="slide-counter">1 / 1</div>
+      <div class="right">
+        <button onclick="toggleTOC()" title="Table of Contents (T)">TOC</button>
+        <button onclick="retryFailed()" title="Retry failed quiz questions (R)">Retry</button>
+        <span id="pct">0%</span>
+      </div>
+    </div>
+    <div id="slide"></div>
+    <div id="nav">
+      <button class="prev" onclick="go(-1)">Prev</button>
+      <button class="next" onclick="go(1)">Next</button>
+    </div>
+  </div>
+  <div id="toc-overlay" onclick="toggleTOC(false)"></div>
+  <div id="toc">
+    <h2>Table of Contents</h2>
+    <div id="toc-body"></div>
+  </div>
+
+  <script>
+    const QUIZ_DATA = {"title": "Electricity - Kid-friendly science workshop with tiny lessons and quick quizzes", "version": "1.0", "totalQuestions": 32, "modules": [{"id": 0, "name": "M0: Current and Circuits", "questions": [{"question": "What is electric current?", "options": ["Flow of electric charge", "A type of light bulb", "A kind of magnet", "A sound signal"], "answer": 0, "explanation": "Current is the rate of flow of charge.", "id": "q0_1"}, {"question": "What is needed for current to flow in a simple circuit?", "options": ["A closed path", "An open gap", "A painted wire", "A warm desk"], "answer": 0, "explanation": "Current flows only when the circuit is complete.", "id": "q0_2"}, {"question": "Which device measures current?", "options": ["Ammeter", "Voltmeter", "Thermometer", "Barometer"], "answer": 0, "explanation": "An ammeter measures electric current.", "id": "q0_3"}, {"question": "How is an ammeter connected?", "options": ["In series", "In parallel only", "Not connected at all", "Inside the battery"], "answer": 0, "explanation": "The ammeter must be in series with the circuit.", "id": "q0_4"}, {"question": "Which device measures potential difference?", "options": ["Voltmeter", "Ammeter", "Ruler", "Compass"], "answer": 0, "explanation": "A voltmeter measures potential difference.", "id": "q0_5"}, {"question": "How is a voltmeter connected?", "options": ["In parallel", "In series only", "Not connected at all", "Across the sky"], "answer": 0, "explanation": "A voltmeter is connected in parallel across the points.", "id": "q0_6"}, {"question": "What does a cell or battery provide in a circuit?", "options": ["Potential difference", "Only colour", "Only resistance", "Only sound"], "answer": 0, "explanation": "The battery provides the push that moves charges.", "id": "q0_7"}, {"question": "What happens when the circuit is broken?", "options": ["Current stops flowing", "Current gets faster", "Voltage becomes sound", "The wire turns into glass"], "answer": 0, "explanation": "A broken circuit cannot carry current.", "id": "q0_8"}]}, {"id": 1, "name": "M1: Ohm's Law and Resistance", "questions": [{"question": "What does Ohm's law say?", "options": ["Voltage is directly proportional to current at constant temperature", "Current is always zero", "Resistance equals voltage squared", "Power is the same as charge"], "answer": 0, "explanation": "The chapter states V is directly proportional to I when temperature stays the same.", "id": "q1_1"}, {"question": "What is the formula for Ohm's law?", "options": ["V = IR", "V = I/R", "R = VI", "P = I/t"], "answer": 0, "explanation": "Ohm's law is written V = IR.", "id": "q1_2"}, {"question": "What is resistance?", "options": ["Opposition to the flow of current", "A kind of battery", "A type of wire color", "A form of light"], "answer": 0, "explanation": "Resistance resists the flow of charges.", "id": "q1_3"}, {"question": "Which wire usually has greater resistance?", "options": ["A longer wire", "A shorter wire", "A thicker wire only", "A wet paper strip"], "answer": 0, "explanation": "Resistance increases with length.", "id": "q1_4"}, {"question": "Which wire usually has less resistance?", "options": ["A thicker wire", "A thinner wire", "A longer wire", "A broken wire"], "answer": 0, "explanation": "Greater area of cross-section lowers resistance.", "id": "q1_5"}, {"question": "What is resistivity?", "options": ["A material property related to resistance", "The voltage of a battery", "The speed of electrons in a bulb", "The colour of a wire"], "answer": 0, "explanation": "Resistivity helps compare materials.", "id": "q1_6"}, {"question": "Why is a V-I graph useful?", "options": ["It shows whether V and I are proportional", "It tells the weather", "It removes resistance", "It makes a circuit open"], "answer": 0, "explanation": "A straight V-I line is evidence of Ohm's law.", "id": "q1_7"}, {"question": "If resistance increases and voltage stays fixed, current usually", "options": ["Decreases", "Increases", "Becomes light", "Stops being measured"], "answer": 0, "explanation": "From V = IR, larger R gives smaller I for fixed V.", "id": "q1_8"}]}, {"id": 2, "name": "M2: Series and Parallel Resistors", "questions": [{"question": "What happens to resistances in series?", "options": ["They add up", "They cancel out", "They become zero", "They turn into voltage"], "answer": 0, "explanation": "In series, equivalent resistance is the sum of all resistances.", "id": "q2_1"}, {"question": "In a series circuit, the current through each resistor is", "options": ["The same", "Always different", "Always zero", "Not measurable"], "answer": 0, "explanation": "The same current flows through the whole series path.", "id": "q2_2"}, {"question": "What happens to current in a parallel circuit?", "options": ["It splits among branches", "It disappears", "It becomes negative", "It always stays in one wire"], "answer": 0, "explanation": "Parallel paths divide the current.", "id": "q2_3"}, {"question": "Why is home wiring done in parallel?", "options": ["Each appliance can work independently", "Because parallel circuits have no current", "Because resistors become infinite", "Because switches are removed"], "answer": 0, "explanation": "Parallel wiring gives separate control to each device.", "id": "q2_4"}, {"question": "What is the equivalent resistance of resistors in series?", "options": ["Sum of the individual resistances", "Product of the resistances", "Always the smallest resistance", "Always zero"], "answer": 0, "explanation": "Series resistance adds directly.", "id": "q2_5"}, {"question": "How does equivalent resistance in parallel compare with the smallest branch resistance?", "options": ["It is smaller", "It is always larger", "It is equal to the largest", "It becomes infinite"], "answer": 0, "explanation": "Parallel combinations reduce total resistance.", "id": "q2_6"}, {"question": "What happens if one device fails in a series circuit?", "options": ["The whole circuit can stop", "All other devices get brighter", "Resistance disappears", "The battery vanishes"], "answer": 0, "explanation": "A break in a series path stops current everywhere.", "id": "q2_7"}, {"question": "Which connection gives multiple paths for current?", "options": ["Parallel", "Series", "No connection", "Open switch only"], "answer": 0, "explanation": "Parallel circuits provide more than one path.", "id": "q2_8"}]}, {"id": 3, "name": "M3: Heating Effect and Power", "questions": [{"question": "What is the heating effect of electric current?", "options": ["Electrical energy changing into heat", "Heat turning into light only", "A battery making water", "A magnet becoming charged"], "answer": 0, "explanation": "Current through a resistor can dissipate energy as heat.", "id": "q3_1"}, {"question": "What is Joule's law of heating?", "options": ["H = I2Rt", "H = V/I", "H = R/I", "H = P/t"], "answer": 0, "explanation": "The chapter states heat produced is proportional to I2, R, and t.", "id": "q3_2"}, {"question": "What does electric power tell us?", "options": ["How fast electrical energy is used", "How long a wire is", "How heavy a bulb is", "How red the current looks"], "answer": 0, "explanation": "Power is the rate of energy consumption.", "id": "q3_3"}, {"question": "What is the formula for electric power?", "options": ["P = VI", "P = I/R", "P = V + I", "P = Rt"], "answer": 0, "explanation": "The chapter gives P = VI.", "id": "q3_4"}, {"question": "Which unit is used for power?", "options": ["Watt", "Volt", "Ohm", "Coulomb"], "answer": 0, "explanation": "Power is measured in watts.", "id": "q3_5"}, {"question": "What is 1 kWh?", "options": ["Energy used by 1 kW for 1 hour", "Current in one wire", "Voltage in one cell", "Resistance of one bulb"], "answer": 0, "explanation": "Kilowatt-hour is the commercial unit of energy.", "id": "q3_6"}, {"question": "Which appliance is a good example of the heating effect?", "options": ["Electric iron", "Paper clip", "Pencil eraser", "Glass marble"], "answer": 0, "explanation": "An iron uses heating effect on purpose.", "id": "q3_7"}, {"question": "If current increases in a resistor, the heat produced usually", "options": ["Increases", "Decreases to zero", "Cannot be measured", "Changes into sound only"], "answer": 0, "explanation": "From H = I2Rt, more current means more heat.", "id": "q3_8"}]}]};
+    const SLIDES = [{"m": 0, "t": "A Circuit Needs a Closed Path", "c": "<p>Electric current is the flow of charge through a conductor. The chapter begins by showing that a battery, wire, bulb, and switch must make a closed loop before current can flow.</p>\n<p>If the circuit is broken, the current stops. So the switch simply opens or closes the path that charges can travel through.</p>\n<ul><li>Current is flow of charge.</li><li>A circuit must be closed for current to flow.</li><li>A switch opens or closes the path.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0001.png\" alt=\"The opening pages introduce current as flowing charge and explain why a circuit must be closed.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The opening pages introduce current as flowing charge and explain why a circuit must be closed.</p></div>\n<div class=\"note\"><strong>Simple picture:</strong> no path, no current.</div>"}, {"m": 0, "t": "Potential Difference Pushes Charges", "c": "<p>Charges do not move on their own in a wire. A cell or battery creates a potential difference, which is like an electric push that keeps charges moving.</p>\n<p>The chapter also introduces the ammeter and voltmeter. An ammeter measures current and is connected in series. A voltmeter measures potential difference and is connected in parallel.</p>\n<ul><li>Potential difference is measured in volts.</li><li>Current is measured in amperes.</li><li>Ammeter is in series; voltmeter is in parallel.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0002.png\" alt=\"The source pages define current, charge, and potential difference, then show the basic circuit symbols.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The source pages define current, charge, and potential difference, then show the basic circuit symbols.</p></div>\n<div class=\"tip\"><strong>Kid analogy:</strong> voltage is the push, current is the flow.</div>"}, {"m": 0, "t": "Quiz: M0: Current and Circuits", "q": true}, {"m": 1, "t": "V and I Move Together", "c": "<p>The chapter studies how potential difference and current are related using a nichrome wire. When the graph of V against I is a straight line through the origin, it shows that V is directly proportional to I.</p>\n<p>That is Ohm's law: V = IR. Here R is resistance, the property that opposes current flow.</p>\n<ul><li>Ohm's law says V is proportional to I.</li><li>The equation is V = IR.</li><li>Resistance controls how much current flows.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0004.png\" alt=\"The Ohm's law section shows a straight-line V-I graph for a nichrome wire.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The Ohm's law section shows a straight-line V-I graph for a nichrome wire.</p></div>\n<div class=\"real\"><strong>Graph clue:</strong> a straight line through the origin means the ratio V/I stays constant.</div>"}, {"m": 1, "t": "What Changes Resistance", "c": "<p>Resistance depends on the length, thickness, and material of a wire. A longer wire offers more resistance. A thicker wire offers less.</p>\n<p>The chapter also introduces resistivity, which is a material property. It helps compare materials fairly, not just wires of different shapes.</p>\n<ul><li>Longer wire -> more resistance.</li><li>Thicker wire -> less resistance.</li><li>Resistivity helps compare materials themselves.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0005.png\" alt=\"The source pages discuss resistance, resistivity, and the factors that affect current flow.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The source pages discuss resistance, resistivity, and the factors that affect current flow.</p></div>\n<div class=\"tip\"><strong>Easy memory:</strong> long path, hard trip. Wide path, easier trip.</div>"}, {"m": 1, "t": "Quiz: M1: Ohm's Law and Resistance", "q": true}, {"m": 2, "t": "Resistors in Series", "c": "<p>In a series connection, resistors are joined end to end. The same current flows through each one, and the total resistance is the sum of the individual resistances.</p>\n<p>The chapter points out a practical issue too: if one part of a series circuit breaks, the whole circuit stops.</p>\n<ul><li>Series connection means one path.</li><li>Equivalent resistance adds up.</li><li>A break anywhere can stop the whole circuit.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0007.png\" alt=\"The series-resistor section shows that resistances add and the same current passes through each resistor.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The series-resistor section shows that resistances add and the same current passes through each resistor.</p></div>\n<div class=\"note\"><strong>Remember:</strong> series is like a single-file line.</div>"}, {"m": 2, "t": "Resistors in Parallel", "c": "<p>In a parallel connection, each branch gets the same potential difference. The current splits between the branches, and the equivalent resistance becomes smaller than any one branch resistance.</p>\n<p>That is why homes use parallel wiring. One appliance can be switched off without shutting down every other appliance in the house.</p>\n<ul><li>Parallel connection gives multiple paths.</li><li>Equivalent resistance becomes smaller.</li><li>Devices can work independently in parallel.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0008.png\" alt=\"The parallel-resistor section explains how current splits and why home wiring is done in parallel.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The parallel-resistor section explains how current splits and why home wiring is done in parallel.</p></div>\n<div class=\"real\"><strong>Household clue:</strong> parallel wiring lets your fan and lamp work separately.</div>"}, {"m": 2, "t": "Quiz: M2: Series and Parallel Resistors", "q": true}, {"m": 3, "t": "Current Can Turn Into Heat", "c": "<p>When current flows through a resistor, some electrical energy turns into heat. This is the heating effect of electric current. Devices like heaters, irons, and kettles use that effect on purpose.</p>\n<p>The chapter gives Joule's law of heating: H = I2Rt. That means more current, more resistance, or more time can all increase the heat produced.</p>\n<ul><li>Heating effect means electrical energy becomes heat.</li><li>Joule's law: H = I2Rt.</li><li>Heaters and irons use this effect.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0010.png\" alt=\"The heating-effect pages show how electrical energy turns into heat in a resistor.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The heating-effect pages show how electrical energy turns into heat in a resistor.</p></div>\n<div class=\"tip\"><strong>Think it through:</strong> a wire can do work or become warm, depending on the circuit.</div>"}, {"m": 3, "t": "Power and Energy Use", "c": "<p>Electric power tells how fast electrical energy is used. The chapter writes power as P = VI, and also as P = I2R or P = V2/R. The unit is watt, and commercial energy is counted in kilowatt-hour.</p>\n<p>That is why appliance labels matter. A 1000 W heater uses energy faster than a 100 W bulb, even though both use the same idea of current and voltage.</p>\n<ul><li>Power = rate of energy use.</li><li>P = VI = I2R = V2/R.</li><li>1 kWh is the commercial unit of electrical energy.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0011.png\" alt=\"The final pages of the chapter define electric power and the kilowatt-hour unit of energy.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The final pages of the chapter define electric power and the kilowatt-hour unit of energy.</p></div>\n<div class=\"real\"><strong>Money clue:</strong> the electricity bill is really a bill for energy used over time.</div>"}, {"m": 3, "t": "Quiz: M3: Heating Effect and Power", "q": true}];
+    const MODULE_NAMES = ["M0: Current and Circuits", "M1: Ohm's Law and Resistance", "M2: Series and Parallel Resistors", "M3: Heating Effect and Power"];
+    const STORE_KEY = 'jesc111_workshop';
+
+    let cur = 0;
+    let quizState = {};
+    let failedQs = [];
+
+    function save() {
+      const data = { cur, quizState, failedQs, ts: Date.now() };
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
+      try { document.cookie = STORE_KEY + '=' + cur + ';max-age=31536000;path=/'; } catch (e) {}
+    }
+
+    function load() {
+      try {
+        const data = JSON.parse(localStorage.getItem(STORE_KEY));
+        if (data) {
+          cur = data.cur || 0;
+          quizState = data.quizState || {};
+          failedQs = data.failedQs || [];
+        }
+      } catch (e) {}
+    }
+
+    function esc(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function hashSeed(seed) {
+      let h = 2166136261;
+      for (let i = 0; i < seed.length; i += 1) {
+        h ^= seed.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return h >>> 0;
+    }
+
+    function shuffleOpts(opts, seed) {
+      const items = opts.map((text, index) => ({ text, correct: index === 0 }));
+      let state = hashSeed(seed) || 1;
+      for (let i = items.length - 1; i > 0; i -= 1) {
+        state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+        const j = state % (i + 1);
+        const tmp = items[i];
+        items[i] = items[j];
+        items[j] = tmp;
+      }
+      return items;
+    }
+
+    function getModule(moduleId) {
+      return QUIZ_DATA.modules.find((module) => module.id === moduleId);
+    }
+
+    function ensureQuizState(moduleId) {
+      const module = getModule(moduleId);
+      if (!quizState[moduleId]) {
+        quizState[moduleId] = { answers: {}, score: 0, total: module.questions.length, done: false };
+      }
+      return quizState[moduleId];
+    }
+
+    function renderQuiz(moduleId) {
+      const module = getModule(moduleId);
+      const state = ensureQuizState(moduleId);
+      state.total = module.questions.length;
+      state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+
+      const nextQuestion = module.questions.find((question) => !state.answers[question.id]);
+      if (!nextQuestion) {
+        state.done = true;
+        const pct = Math.round((state.score / state.total) * 100);
+        return `
+          <div class="quiz-container">
+            <h1>${esc(module.name)} Quiz</h1>
+            <p class="quiz-meta">You completed ${state.total} questions for this module.</p>
+            <div class="${pct >= 70 ? 'quiz-feedback pass show' : 'quiz-feedback fail show'}">
+              Score: ${state.score} / ${state.total} (${pct}%).
+              Use Retry to revisit questions answered incorrectly.
+            </div>
+          </div>
+        `;
+      }
+
+      const questionIndex = module.questions.findIndex((question) => question.id === nextQuestion.id);
+      const options = shuffleOpts(nextQuestion.options, nextQuestion.id);
+
+      return `
+        <div class="quiz-container">
+          <h1>${esc(module.name)} Quiz</h1>
+          <p class="quiz-meta">Question ${questionIndex + 1} of ${module.questions.length}</p>
+          <h2>${esc(nextQuestion.question)}</h2>
+          ${options.map((option, index) => `
+            <button class="quiz-opt" id="opt-${index}" onclick="answerQuiz(${moduleId}, '${nextQuestion.id}', ${index})">${esc(option.text)}</button>
+          `).join('')}
+          <div class="quiz-feedback" id="quiz-feedback"></div>
+        </div>
+      `;
+    }
+
+    function answerQuiz(moduleId, questionId, chosenIndex) {
+      const module = getModule(moduleId);
+      const state = ensureQuizState(moduleId);
+      if (state.answers[questionId]) {
+        return;
+      }
+
+      const question = module.questions.find((item) => item.id === questionId);
+      const options = shuffleOpts(question.options, question.id);
+      const chosen = options[chosenIndex];
+      const isCorrect = !!chosen.correct;
+
+      state.answers[questionId] = { chosen: chosen.text, correct: isCorrect };
+      state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+
+      if (!isCorrect && !failedQs.some((item) => item.moduleId === moduleId && item.qId === questionId)) {
+        failedQs.push({ moduleId, qId: questionId });
+      }
+      if (Object.keys(state.answers).length === module.questions.length) {
+        state.done = true;
+      }
+
+      options.forEach((option, index) => {
+        const button = document.getElementById(`opt-${index}`);
+        if (!button) return;
+        button.classList.add('disabled');
+        if (option.correct) {
+          button.classList.add('correct');
+        } else if (index === chosenIndex) {
+          button.classList.add('wrong');
+        }
+      });
+
+      const feedback = document.getElementById('quiz-feedback');
+      if (feedback) {
+        feedback.className = `quiz-feedback show ${isCorrect ? 'pass' : 'fail'}`;
+        feedback.innerHTML = `<strong>${isCorrect ? 'Correct.' : 'Not quite.'}</strong> ${esc(question.explanation)}`;
+      }
+
+      save();
+      setTimeout(render, isCorrect ? 1200 : 3000);
+    }
+
+    function retryFailed() {
+      if (!failedQs.length) {
+        alert('No failed quiz questions are currently tracked.');
+        return;
+      }
+
+      const retryItems = failedQs.slice();
+      retryItems.forEach((item) => {
+        const state = ensureQuizState(item.moduleId);
+        delete state.answers[item.qId];
+        state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+        state.done = false;
+      });
+
+      const first = retryItems[0];
+      failedQs = [];
+      cur = SLIDES.findIndex((slide) => slide.q && slide.m === first.moduleId);
+      render();
+    }
+
+    function go(dir) {
+      cur = Math.max(0, Math.min(SLIDES.length - 1, cur + dir));
+      render();
+    }
+
+    function jump(index) {
+      cur = index;
+      render();
+      toggleTOC(false);
+    }
+
+    function toggleTOC(force) {
+      const toc = document.getElementById('toc');
+      const overlay = document.getElementById('toc-overlay');
+      const shouldOpen = typeof force === 'boolean' ? force : !toc.classList.contains('open');
+      toc.classList.toggle('open', shouldOpen);
+      overlay.classList.toggle('open', shouldOpen);
+    }
+
+    function buildTOC() {
+      const tocBody = document.getElementById('toc-body');
+      const html = MODULE_NAMES.map((moduleName, moduleIndex) => {
+        const links = SLIDES.map((slide, slideIndex) => ({ slide, slideIndex }))
+          .filter((entry) => entry.slide.m === moduleIndex)
+          .map((entry) => `
+            <button class="toc-link ${entry.slideIndex === cur ? 'current' : ''}" onclick="jump(${entry.slideIndex})">
+              ${entry.slide.q ? 'Quiz' : esc(entry.slide.t)}
+            </button>
+          `)
+          .join('');
+        return `<div class="toc-module"><h3>${esc(moduleName)}</h3>${links}</div>`;
+      }).join('');
+      tocBody.innerHTML = html;
+    }
+
+    function render() {
+      const slide = SLIDES[cur];
+      const progress = Math.round(((cur + 1) / SLIDES.length) * 100);
+      document.getElementById('progress-bar').style.width = progress + '%';
+      document.getElementById('pct').textContent = progress + '%';
+      document.getElementById('slide-counter').textContent = `${cur + 1} / ${SLIDES.length}`;
+      document.getElementById('module-label').textContent = MODULE_NAMES[slide.m];
+      document.getElementById('slide').innerHTML = slide.q ? renderQuiz(slide.m) : `<h1>${esc(slide.t)}</h1>${slide.c}`;
+      save();
+      buildTOC();
+    }
+
+    document.addEventListener('keydown', (event) => {
+      const tag = (event.target && event.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') {
+        return;
+      }
+      if (event.key === ' ' && !event.shiftKey) {
+        event.preventDefault();
+        go(1);
+      } else if ((event.key === ' ' && event.shiftKey) || event.key === 'ArrowLeft') {
+        event.preventDefault();
+        go(-1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        go(1);
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        cur = 0;
+        render();
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        cur = SLIDES.length - 1;
+        render();
+      } else if (event.key === 't' || event.key === 'T') {
+        event.preventDefault();
+        toggleTOC();
+      } else if (event.key === 'r' || event.key === 'R') {
+        event.preventDefault();
+        retryFailed();
+      }
+    });
+
+    load();
+    render();
+  </script>
+</body>
+</html>

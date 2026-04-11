@@ -1,0 +1,415 @@
+{
+  "title": "Life Processes - Kid-friendly science workshop with tiny lessons and quick quizzes",
+  "version": "1.0",
+  "totalQuestions": 32,
+  "modules": [
+    {
+      "id": 0,
+      "name": "M0: What Keeps Living Things Alive",
+      "questions": [
+        {
+          "question": "Why are life processes important?",
+          "options": [
+            "They maintain the body and keep it alive",
+            "They only help in sleeping",
+            "They are needed only for machines",
+            "They remove all molecules"
+          ],
+          "answer": 0,
+          "explanation": "Life processes are the maintenance jobs of living organisms.",
+          "id": "q0_1"
+        },
+        {
+          "question": "Why is visible movement not enough to define life?",
+          "options": [
+            "Because many important life activities are hidden inside the body",
+            "Because all living things are always still",
+            "Because plants are metals",
+            "Because movement does not exist"
+          ],
+          "answer": 0,
+          "explanation": "Internal molecular and cellular activity matters.",
+          "id": "q0_2"
+        },
+        {
+          "question": "Which organisms make their own food?",
+          "options": [
+            "Autotrophs",
+            "Heterotrophs",
+            "Only animals",
+            "Only fungi in this lesson"
+          ],
+          "answer": 0,
+          "explanation": "Autotrophs prepare their own food.",
+          "id": "q0_3"
+        },
+        {
+          "question": "Green plants make food mainly by",
+          "options": [
+            "photosynthesis",
+            "rusting",
+            "neutralisation",
+            "distillation"
+          ],
+          "answer": 0,
+          "explanation": "Photosynthesis is the food-making process in plants.",
+          "id": "q0_4"
+        },
+        {
+          "question": "Which organisms depend on ready-made food?",
+          "options": [
+            "Heterotrophs",
+            "Autotrophs",
+            "Only stones",
+            "Only gases"
+          ],
+          "answer": 0,
+          "explanation": "Heterotrophs depend on other organisms for food.",
+          "id": "q0_5"
+        },
+        {
+          "question": "What does food supply for the body?",
+          "options": [
+            "Energy, growth, and repair materials",
+            "Only colour",
+            "Only sound",
+            "Only magnets"
+          ],
+          "answer": 0,
+          "explanation": "Food supports multiple life needs.",
+          "id": "q0_6"
+        },
+        {
+          "question": "A sleeping person is still alive because",
+          "options": [
+            "life processes continue inside the body",
+            "all cells stop working",
+            "oxygen is no longer needed",
+            "the heart becomes metal"
+          ],
+          "answer": 0,
+          "explanation": "Hidden maintenance processes keep running.",
+          "id": "q0_7"
+        },
+        {
+          "question": "What does the word autotroph suggest?",
+          "options": [
+            "Self-feeding or self-nourishing",
+            "Always moving fast",
+            "Made of metal",
+            "Having no cells"
+          ],
+          "answer": 0,
+          "explanation": "“Auto” helps remember self-made food.",
+          "id": "q0_8"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "M1: Respiration and Breathing",
+      "questions": [
+        {
+          "question": "What is respiration mainly about?",
+          "options": [
+            "Releasing energy from food",
+            "Only drinking water",
+            "Only movement of legs",
+            "Only sleeping"
+          ],
+          "answer": 0,
+          "explanation": "Respiration makes food energy usable.",
+          "id": "q1_1"
+        },
+        {
+          "question": "What is breathing?",
+          "options": [
+            "Movement of air in and out of the body",
+            "Breaking down food inside cells",
+            "A kind of alloy",
+            "A neutralisation reaction"
+          ],
+          "answer": 0,
+          "explanation": "Breathing is physical movement of air.",
+          "id": "q1_2"
+        },
+        {
+          "question": "Which process directly releases usable energy inside cells?",
+          "options": [
+            "Respiration",
+            "Breathing only",
+            "Rusting",
+            "Melting"
+          ],
+          "answer": 0,
+          "explanation": "Respiration is the energy-releasing process.",
+          "id": "q1_3"
+        },
+        {
+          "question": "Aerobic respiration needs",
+          "options": [
+            "oxygen",
+            "only salt",
+            "graphite",
+            "kerosene"
+          ],
+          "answer": 0,
+          "explanation": "Aerobic respiration uses oxygen.",
+          "id": "q1_4"
+        },
+        {
+          "question": "Anaerobic respiration happens when",
+          "options": [
+            "oxygen is absent or insufficient",
+            "oxygen is very abundant",
+            "water is solid",
+            "all cells stop"
+          ],
+          "answer": 0,
+          "explanation": "Anaerobic pathways work without enough oxygen.",
+          "id": "q1_5"
+        },
+        {
+          "question": "Why can intense exercise make muscles feel strained?",
+          "options": [
+            "Oxygen supply may not keep up fully with demand",
+            "Because muscles become wooden",
+            "Because breathing stops forever",
+            "Because all food disappears"
+          ],
+          "answer": 0,
+          "explanation": "Hard-working muscles can face oxygen shortage.",
+          "id": "q1_6"
+        },
+        {
+          "question": "Which statement is correct?",
+          "options": [
+            "Breathing and respiration are related but not identical",
+            "They are exactly the same word",
+            "Breathing happens only in plants",
+            "Respiration happens only outside the body"
+          ],
+          "answer": 0,
+          "explanation": "One is movement of air, the other is cellular energy release.",
+          "id": "q1_7"
+        },
+        {
+          "question": "Why does the body need respiration?",
+          "options": [
+            "To make stored food energy usable",
+            "To turn bones into gas",
+            "To create litmus paper",
+            "To stop the heart"
+          ],
+          "answer": 0,
+          "explanation": "Respiration keeps energy available for life processes.",
+          "id": "q1_8"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "M2: Transport in Bodies and Plants",
+      "questions": [
+        {
+          "question": "Why does the body need a transport system?",
+          "options": [
+            "To move materials to and from cells",
+            "To change metals into plants",
+            "To stop respiration",
+            "To remove all water"
+          ],
+          "answer": 0,
+          "explanation": "Cells need a delivery system.",
+          "id": "q2_1"
+        },
+        {
+          "question": "Which organ pumps blood through the body?",
+          "options": [
+            "Heart",
+            "Liver",
+            "Kidney",
+            "Stomach"
+          ],
+          "answer": 0,
+          "explanation": "The heart is the main pump.",
+          "id": "q2_2"
+        },
+        {
+          "question": "What does blood carry?",
+          "options": [
+            "Oxygen, nutrients, and wastes",
+            "Only bones",
+            "Only sound",
+            "Only acids"
+          ],
+          "answer": 0,
+          "explanation": "Blood transports many important materials.",
+          "id": "q2_3"
+        },
+        {
+          "question": "Which plant tissue mainly carries water and minerals?",
+          "options": [
+            "Xylem",
+            "Phloem",
+            "Epidermis",
+            "Petal"
+          ],
+          "answer": 0,
+          "explanation": "Xylem is the water-carrying tissue.",
+          "id": "q2_4"
+        },
+        {
+          "question": "Which plant tissue carries prepared food?",
+          "options": [
+            "Phloem",
+            "Xylem",
+            "Bark only",
+            "Root cap only"
+          ],
+          "answer": 0,
+          "explanation": "Phloem transports food.",
+          "id": "q2_5"
+        },
+        {
+          "question": "Why is transport important even in plants?",
+          "options": [
+            "Because different parts need water, minerals, and food",
+            "Because plants do not have cells",
+            "Because roots can fly",
+            "Because leaves are metals"
+          ],
+          "answer": 0,
+          "explanation": "Plants also need internal distribution.",
+          "id": "q2_6"
+        },
+        {
+          "question": "Which statement is true?",
+          "options": [
+            "Transport helps with both supply and waste removal",
+            "Transport only brings colour",
+            "Transport happens only during sleep",
+            "Transport is not needed in multicellular organisms"
+          ],
+          "answer": 0,
+          "explanation": "Delivery and cleanup are both transport roles.",
+          "id": "q2_7"
+        },
+        {
+          "question": "What does the heart mainly act like?",
+          "options": [
+            "A pump",
+            "A magnet",
+            "A pH paper",
+            "A beaker"
+          ],
+          "answer": 0,
+          "explanation": "The heart drives circulation by pumping blood.",
+          "id": "q2_8"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "M3: Excretion and Balance",
+      "questions": [
+        {
+          "question": "Why is excretion important?",
+          "options": [
+            "It removes harmful wastes from the body",
+            "It creates all food",
+            "It turns blood into bones",
+            "It stops all movement"
+          ],
+          "answer": 0,
+          "explanation": "Excretion protects the body by removing wastes.",
+          "id": "q3_1"
+        },
+        {
+          "question": "Which organs mainly filter blood to form urine?",
+          "options": [
+            "Kidneys",
+            "Lungs",
+            "Eyes",
+            "Skin only"
+          ],
+          "answer": 0,
+          "explanation": "Kidneys are the main excretory organs.",
+          "id": "q3_2"
+        },
+        {
+          "question": "What is a nephron?",
+          "options": [
+            "A tiny filtering unit in the kidney",
+            "A type of blood vessel",
+            "A food molecule",
+            "A metal alloy"
+          ],
+          "answer": 0,
+          "explanation": "Nephrons do the filtering work.",
+          "id": "q3_3"
+        },
+        {
+          "question": "What can happen if harmful wastes are not removed?",
+          "options": [
+            "They can damage the body",
+            "They become food",
+            "They increase photosynthesis",
+            "They become magnets"
+          ],
+          "answer": 0,
+          "explanation": "Waste buildup is harmful.",
+          "id": "q3_4"
+        },
+        {
+          "question": "Which plant structures help in gas exchange and water loss?",
+          "options": [
+            "Stomata",
+            "Nephrons",
+            "Ribosomes",
+            "Bones"
+          ],
+          "answer": 0,
+          "explanation": "Stomata are important openings in leaves.",
+          "id": "q3_5"
+        },
+        {
+          "question": "Which statement fits life processes best?",
+          "options": [
+            "They work together to maintain balance",
+            "They are all unrelated",
+            "Only nutrition matters",
+            "Only excretion matters"
+          ],
+          "answer": 0,
+          "explanation": "Life processes are connected systems.",
+          "id": "q3_6"
+        },
+        {
+          "question": "What is one major job of the urinary system?",
+          "options": [
+            "Removing dissolved wastes",
+            "Making chlorophyll",
+            "Producing metal sheets",
+            "Raising pH paper"
+          ],
+          "answer": 0,
+          "explanation": "Urine formation helps remove wastes.",
+          "id": "q3_7"
+        },
+        {
+          "question": "Why are nephrons important even though they are tiny?",
+          "options": [
+            "Small structures can perform essential body functions",
+            "Tiny things are never useful",
+            "They replace the heart",
+            "They only store oxygen"
+          ],
+          "answer": 0,
+          "explanation": "Nephrons show how microscopic units do vital work.",
+          "id": "q3_8"
+        }
+      ]
+    }
+  ]
+}

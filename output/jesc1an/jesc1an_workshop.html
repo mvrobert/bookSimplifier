@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Answer Key Revision Workshop</title>
+  <style>
+    :root {
+      --bg:#fff8f1; --surface:#ffffff; --text:#3a2412; --muted:#7b6149;
+      --border:#f1d5b7; --primary:#c2410c; --accent:#f97316; --good:#15803d; --bad:#b91c1c;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Segoe UI, system-ui, sans-serif; color:var(--text);
+      background:linear-gradient(180deg, var(--bg), color-mix(in srgb, var(--bg) 80%, white)); }
+    #bar { position:fixed; top:0; left:0; height:4px; width:0; background:linear-gradient(90deg,var(--primary),var(--accent)); z-index:50; }
+    #shell { max-width:1100px; margin:0 auto; padding:16px 14px 36px; }
+    #top { position:sticky; top:8px; z-index:30; display:flex; justify-content:space-between; gap:10px; align-items:center;
+      padding:12px 14px; background:rgba(255,255,255,.9); border:1px solid var(--border); border-radius:18px; backdrop-filter:blur(10px); }
+    .brand strong { display:block; font-size:1.02rem; }
+    .brand span { color:var(--muted); font-size:.92rem; }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; }
+    button { font:inherit; }
+    .btn { border:1px solid var(--border); background:#fff; padding:10px 14px; border-radius:12px; cursor:pointer; }
+    .btn.primary { background:linear-gradient(135deg,var(--primary),var(--accent)); color:#fff; border-color:transparent; }
+    #slide { margin-top:16px; background:rgba(255,255,255,.92); border:1px solid var(--border); border-radius:22px; overflow:hidden; box-shadow:0 16px 32px rgba(15,23,42,.12); }
+    .panel { display:none; padding:22px; }
+    .panel.active { display:block; }
+    .eyebrow { text-transform:uppercase; letter-spacing:.14em; color:var(--primary); font-size:.78rem; font-weight:800; margin-bottom:10px; }
+    h1,h2,h3 { margin:0 0 10px; line-height:1.15; }
+    h2 { font-size:clamp(1.7rem, 4vw, 2.8rem); }
+    .lede, p, li { line-height:1.65; font-size:1.02rem; }
+    .lede { color:var(--muted); max-width:70ch; }
+    .grid { display:grid; grid-template-columns:repeat(12, 1fr); gap:14px; margin-top:16px; }
+    .card { grid-column:span 6; padding:16px; border:1px solid var(--border); border-radius:18px; background:#fff; }
+    .callout { margin-top:12px; padding:12px 14px; border-radius:14px; background:color-mix(in srgb, var(--primary) 10%, white); border-left:4px solid var(--primary); }
+    .previews { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:10px; }
+    .preview { margin:0; padding:10px; border:1px solid var(--border); border-radius:16px; background:#fff; }
+    .preview img { width:100%; display:block; border-radius:12px; }
+    .preview figcaption { color:var(--muted); font-size:.9rem; margin-top:6px; }
+    #toc { position:fixed; left:-350px; top:0; bottom:0; width:min(330px, 92vw); background:rgba(255,255,255,.96); border-right:1px solid var(--border);
+      box-shadow:18px 0 32px rgba(15,23,42,.14); z-index:40; padding:16px; overflow:auto; transition:left .2s ease; }
+    #toc.open { left:0; }
+    .toc-item { width:100%; text-align:left; display:block; margin:0 0 8px; border:1px solid var(--border); background:#fff; padding:10px 12px; border-radius:12px; cursor:pointer; }
+    .toc-item.active { border-color:var(--primary); background:color-mix(in srgb, var(--primary) 10%, white); font-weight:700; }
+    .footer { display:flex; justify-content:space-between; gap:10px; margin-top:14px; flex-wrap:wrap; }
+    .qmodule { margin-top:14px; }
+    .qcard { margin-top:12px; border:1px solid var(--border); border-radius:18px; padding:14px; background:#fff; }
+    .qtitle { font-weight:700; margin-bottom:10px; }
+    .opts { display:grid; gap:10px; }
+    .opt { width:100%; display:flex; gap:10px; text-align:left; border:1px solid var(--border); border-radius:14px; background:#fff; padding:11px 12px; cursor:pointer; }
+    .opt span { width:26px; height:26px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:color-mix(in srgb, var(--primary) 12%, white); color:var(--primary); font-weight:800; flex:none; }
+    .opt.correct { border-color:#16a34a; background:#f0fdf4; }
+    .opt.wrong { border-color:#dc2626; background:#fef2f2; }
+    .opt.locked { pointer-events:none; opacity:.88; }
+    .feedback { display:none; margin-top:10px; padding:12px 14px; border-radius:14px; }
+    .feedback.show { display:block; }
+    .feedback.good { background:#f0fdf4; color:#166534; border:1px solid #86efac; }
+    .feedback.bad { background:#fef2f2; color:#991b1b; border:1px solid #fecaca; }
+    .summary { display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:12px; margin:16px 0; }
+    .stat { padding:14px; border:1px solid var(--border); border-radius:18px; background:#fff; }
+    .muted { color:var(--muted); }
+    @media (max-width:820px) { .card { grid-column:span 12; } #top { flex-direction:column; align-items:flex-start; } }
+  </style>
+</head>
+<body>
+  <div id="bar"></div>
+  <aside id="toc">
+    <button class="btn" data-close>Close</button>
+    <h3>Answer Key Revision Workshop</h3>
+    <p class="muted">A kid-friendly answer-check guide for self-marking and smart revision.</p>
+    <button class="toc-item" data-jump="0">1. This is a self-check helper, not a lesson chapter</button><button class="toc-item" data-jump="1">2. Meet the answer key</button><button class="toc-item" data-jump="2">3. How to read the answer patterns</button><button class="toc-item" data-jump="3">4. Check, fix, and retry</button><button class="toc-item" data-jump="4">5. Fast revision habits</button><button class="toc-item" data-jump="5">6. Quiz</button>
+  </aside>
+  <div id="shell">
+    <header id="top">
+      <div class="brand"><strong>Answer Key Revision Workshop</strong><span>A kid-friendly answer-check guide for self-marking and smart revision.</span></div>
+      <div class="actions">
+        <button class="btn" data-open>Menu</button>
+        <button class="btn" data-home>Start</button>
+        <button class="btn primary" data-end>Quiz</button>
+        <span class="btn" id="counter">Slide 1 / 6</span>
+      </div>
+    </header>
+    <main id="slide">
+      
+            <section class="panel" data-slide="0">
+              <div class="eyebrow">Start here</div>
+              <h2>This is a self-check helper, not a lesson chapter</h2>
+              <p class="lede">The source PDF is an answer resource, so this workshop turns it into a friendly revision tool.</p>
+              <div class="grid">
+                <div class="card">
+                  <h3>Key ideas</h3>
+                  <ul><li>Use it after trying the questions yourself.</li><li>Learn how chapter numbers, option letters, and short answers are shown.</li><li>Turn mistakes into clues for what to revise next.</li></ul>
+                  <div class="callout">Best habit: try first, check second, retry third.</div>
+                </div>
+                <div class="card">
+                  <h3>Page previews</h3>
+                  <div class="previews"><figure class="preview"><img src="page_previews/page_0001.png" alt="Page 1 preview"><figcaption>Page 1</figcaption></figure><figure class="preview"><img src="page_previews/page_0002.png" alt="Page 2 preview"><figcaption>Page 2</figcaption></figure><figure class="preview"><img src="page_previews/page_0003.png" alt="Page 3 preview"><figcaption>Page 3</figcaption></figure></div>
+                </div>
+              </div>
+            </section>
+            
+            <section class="panel" data-slide="1">
+              <div class="eyebrow">Module 1</div>
+              <h2>Meet the answer key</h2>
+              <p class="lede">The answer pages are chapter-wise and compact. That makes them good for self-marking, not for copying.</p>
+              <div class="grid">
+                <div class="card">
+                  <h3>Key ideas</h3>
+                  <ul><li>Chapter numbers help you find the right section quickly.</li><li>Letters like a, b, c, and d show multiple-choice answers.</li><li>Some answers are short phrases instead of letters.</li></ul>
+                  <div class="callout">An answer key is a coach, not a shortcut.</div>
+                </div>
+                <div class="card">
+                  <h3>Page previews</h3>
+                  <div class="previews"><figure class="preview"><img src="page_previews/page_0001.png" alt="Page 1 preview"><figcaption>Page 1</figcaption></figure></div>
+                </div>
+              </div>
+            </section>
+            
+            <section class="panel" data-slide="2">
+              <div class="eyebrow">Module 2</div>
+              <h2>How to read the answer patterns</h2>
+              <p class="lede">This resource shows several answer styles, so you can learn what kind of question each one belongs to.</p>
+              <div class="grid">
+                <div class="card">
+                  <h3>Key ideas</h3>
+                  <ul><li>More than one letter can mean more than one correct option.</li><li>True/False entries come from statement questions.</li><li>Short answers show the key idea you should remember.</li></ul>
+                  <div class="callout">Look for the pattern, then ask what the question might have been.</div>
+                </div>
+                <div class="card">
+                  <h3>Page previews</h3>
+                  <div class="previews"><figure class="preview"><img src="page_previews/page_0002.png" alt="Page 2 preview"><figcaption>Page 2</figcaption></figure></div>
+                </div>
+              </div>
+            </section>
+            
+            <section class="panel" data-slide="3">
+              <div class="eyebrow">Module 3</div>
+              <h2>Check, fix, and retry</h2>
+              <p class="lede">The best revision happens after a mistake: compare, spot the gap, and try again.</p>
+              <div class="grid">
+                <div class="card">
+                  <h3>Key ideas</h3>
+                  <ul><li>Mark your own attempt before opening the key.</li><li>Circle the questions you missed.</li><li>Retry after one more quick review.</li></ul>
+                  <div class="callout">The goal is remembering it later, not just once.</div>
+                </div>
+                <div class="card">
+                  <h3>Page previews</h3>
+                  <div class="previews"><figure class="preview"><img src="page_previews/page_0002.png" alt="Page 2 preview"><figcaption>Page 2</figcaption></figure><figure class="preview"><img src="page_previews/page_0003.png" alt="Page 3 preview"><figcaption>Page 3</figcaption></figure></div>
+                </div>
+              </div>
+            </section>
+            
+            <section class="panel" data-slide="4">
+              <div class="eyebrow">Module 4</div>
+              <h2>Fast revision habits</h2>
+              <p class="lede">A calm routine keeps revision honest and useful.</p>
+              <div class="grid">
+                <div class="card">
+                  <h3>Key ideas</h3>
+                  <ul><li>Work chapter by chapter.</li><li>Use the key to see what you know well.</li><li>Keep a short list of ideas to revisit.</li></ul>
+                  <div class="callout">Small, steady, honest revision works best.</div>
+                </div>
+                <div class="card">
+                  <h3>Page previews</h3>
+                  <div class="previews"><figure class="preview"><img src="page_previews/page_0001.png" alt="Page 1 preview"><figcaption>Page 1</figcaption></figure><figure class="preview"><img src="page_previews/page_0002.png" alt="Page 2 preview"><figcaption>Page 2</figcaption></figure><figure class="preview"><img src="page_previews/page_0003.png" alt="Page 3 preview"><figcaption>Page 3</figcaption></figure></div>
+                </div>
+              </div>
+            </section>
+            
+      <section class="panel" data-slide="5">
+        <div class="eyebrow">Quiz time</div>
+        <h2>Quick self-check</h2>
+        <p class="lede">These questions are saved in this browser. Pick an answer, see the feedback, and use Try again to reset everything.</p>
+        <div class="summary">
+          <div class="stat"><div class="muted">Answered</div><strong id="answered">0</strong></div>
+          <div class="stat"><div class="muted">Correct</div><strong id="correct">0</strong></div>
+          <div class="stat"><div class="muted">Total</div><strong>8</strong></div>
+        </div>
+        <button class="btn" id="retry">Try again</button>
+        
+            <div class="qmodule">
+              <h3>Using the key</h3>
+              <p class="muted">This resource is for checking, not skipping practice.</p>
+              
+                <div class="qcard" data-qid="j1an_1">
+                  <div class="qtitle">What is this PDF mostly for?</div>
+                  <div class="opts"><button class="opt" data-qid="j1an_1" data-choice="0"><span>A</span><em>Checking your own answers</em></button><button class="opt" data-qid="j1an_1" data-choice="1"><span>B</span><em>Watching cartoons</em></button><button class="opt" data-qid="j1an_1" data-choice="2"><span>C</span><em>Drawing maps</em></button><button class="opt" data-qid="j1an_1" data-choice="3"><span>D</span><em>Counting pencils</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+                <div class="qcard" data-qid="j1an_2">
+                  <div class="qtitle">When should you use the answer key?</div>
+                  <div class="opts"><button class="opt" data-qid="j1an_2" data-choice="0"><span>A</span><em>After you try the work</em></button><button class="opt" data-qid="j1an_2" data-choice="1"><span>B</span><em>Before reading the question</em></button><button class="opt" data-qid="j1an_2" data-choice="2"><span>C</span><em>Instead of studying</em></button><button class="opt" data-qid="j1an_2" data-choice="3"><span>D</span><em>Only when bored</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+            </div>
+            
+            <div class="qmodule">
+              <h3>Reading patterns</h3>
+              <p class="muted">Different answer shapes tell you what kind of question it was.</p>
+              
+                <div class="qcard" data-qid="j1an_3">
+                  <div class="qtitle">If the key shows more than one letter, that usually means</div>
+                  <div class="opts"><button class="opt" data-qid="j1an_3" data-choice="0"><span>A</span><em>More than one option may be correct</em></button><button class="opt" data-qid="j1an_3" data-choice="1"><span>B</span><em>The page is broken</em></button><button class="opt" data-qid="j1an_3" data-choice="2"><span>C</span><em>The chapter has no answers</em></button><button class="opt" data-qid="j1an_3" data-choice="3"><span>D</span><em>The pencil is dull</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+                <div class="qcard" data-qid="j1an_4">
+                  <div class="qtitle">If the key says True/False, the question was probably a</div>
+                  <div class="opts"><button class="opt" data-qid="j1an_4" data-choice="0"><span>A</span><em>statement to judge</em></button><button class="opt" data-qid="j1an_4" data-choice="1"><span>B</span><em>picture puzzle</em></button><button class="opt" data-qid="j1an_4" data-choice="2"><span>C</span><em>music task</em></button><button class="opt" data-qid="j1an_4" data-choice="3"><span>D</span><em>labelling race</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+            </div>
+            
+            <div class="qmodule">
+              <h3>Fixing mistakes</h3>
+              <p class="muted">Mistakes are clues for what to revise next.</p>
+              
+                <div class="qcard" data-qid="j1an_5">
+                  <div class="qtitle">What should you do after finding a wrong answer?</div>
+                  <div class="opts"><button class="opt" data-qid="j1an_5" data-choice="0"><span>A</span><em>Read the explanation and retry</em></button><button class="opt" data-qid="j1an_5" data-choice="1"><span>B</span><em>Hide the notebook</em></button><button class="opt" data-qid="j1an_5" data-choice="2"><span>C</span><em>Stop studying</em></button><button class="opt" data-qid="j1an_5" data-choice="3"><span>D</span><em>Ignore it</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+                <div class="qcard" data-qid="j1an_6">
+                  <div class="qtitle">Why is retrying helpful?</div>
+                  <div class="opts"><button class="opt" data-qid="j1an_6" data-choice="0"><span>A</span><em>It helps you remember later</em></button><button class="opt" data-qid="j1an_6" data-choice="1"><span>B</span><em>It changes the answer key</em></button><button class="opt" data-qid="j1an_6" data-choice="2"><span>C</span><em>It makes pages vanish</em></button><button class="opt" data-qid="j1an_6" data-choice="3"><span>D</span><em>It removes homework</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+            </div>
+            
+            <div class="qmodule">
+              <h3>Revision habits</h3>
+              <p class="muted">Use the key to learn, not to copy.</p>
+              
+                <div class="qcard" data-qid="j1an_7">
+                  <div class="qtitle">What is the main job of a revision resource?</div>
+                  <div class="opts"><button class="opt" data-qid="j1an_7" data-choice="0"><span>A</span><em>Help you check and remember</em></button><button class="opt" data-qid="j1an_7" data-choice="1"><span>B</span><em>Decorate the desk</em></button><button class="opt" data-qid="j1an_7" data-choice="2"><span>C</span><em>Replace all practice</em></button><button class="opt" data-qid="j1an_7" data-choice="3"><span>D</span><em>Hide the syllabus</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+                <div class="qcard" data-qid="j1an_8">
+                  <div class="qtitle">What is the best study habit here?</div>
+                  <div class="opts"><button class="opt" data-qid="j1an_8" data-choice="0"><span>A</span><em>Try first, check second, retry third</em></button><button class="opt" data-qid="j1an_8" data-choice="1"><span>B</span><em>Open answers first</em></button><button class="opt" data-qid="j1an_8" data-choice="2"><span>C</span><em>Skip revision</em></button><button class="opt" data-qid="j1an_8" data-choice="3"><span>D</span><em>Read once and stop</em></button></div>
+                  <div class="feedback"></div>
+                </div>
+                
+            </div>
+            
+      </section>
+      <div class="footer"><button class="btn" data-prev>Previous</button><button class="btn primary" data-next>Next</button></div>
+    </main>
+  </div>
+  <script>
+    const DATA = {
+  "slug": "jesc1an",
+  "title": "Answer Key Revision Workshop",
+  "subtitle": "A kid-friendly answer-check guide for self-marking and smart revision.",
+  "theme": {
+    "bg": "#fff8f1",
+    "surface": "#ffffff",
+    "text": "#3a2412",
+    "muted": "#7b6149",
+    "border": "#f1d5b7",
+    "primary": "#c2410c",
+    "accent": "#f97316"
+  },
+  "slides": [
+    {
+      "eyebrow": "Start here",
+      "title": "This is a self-check helper, not a lesson chapter",
+      "summary": "The source PDF is an answer resource, so this workshop turns it into a friendly revision tool.",
+      "bullets": [
+        "Use it after trying the questions yourself.",
+        "Learn how chapter numbers, option letters, and short answers are shown.",
+        "Turn mistakes into clues for what to revise next."
+      ],
+      "callout": "Best habit: try first, check second, retry third.",
+      "pages": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "eyebrow": "Module 1",
+      "title": "Meet the answer key",
+      "summary": "The answer pages are chapter-wise and compact. That makes them good for self-marking, not for copying.",
+      "bullets": [
+        "Chapter numbers help you find the right section quickly.",
+        "Letters like a, b, c, and d show multiple-choice answers.",
+        "Some answers are short phrases instead of letters."
+      ],
+      "callout": "An answer key is a coach, not a shortcut.",
+      "pages": [
+        1
+      ]
+    },
+    {
+      "eyebrow": "Module 2",
+      "title": "How to read the answer patterns",
+      "summary": "This resource shows several answer styles, so you can learn what kind of question each one belongs to.",
+      "bullets": [
+        "More than one letter can mean more than one correct option.",
+        "True/False entries come from statement questions.",
+        "Short answers show the key idea you should remember."
+      ],
+      "callout": "Look for the pattern, then ask what the question might have been.",
+      "pages": [
+        2
+      ]
+    },
+    {
+      "eyebrow": "Module 3",
+      "title": "Check, fix, and retry",
+      "summary": "The best revision happens after a mistake: compare, spot the gap, and try again.",
+      "bullets": [
+        "Mark your own attempt before opening the key.",
+        "Circle the questions you missed.",
+        "Retry after one more quick review."
+      ],
+      "callout": "The goal is remembering it later, not just once.",
+      "pages": [
+        2,
+        3
+      ]
+    },
+    {
+      "eyebrow": "Module 4",
+      "title": "Fast revision habits",
+      "summary": "A calm routine keeps revision honest and useful.",
+      "bullets": [
+        "Work chapter by chapter.",
+        "Use the key to see what you know well.",
+        "Keep a short list of ideas to revisit."
+      ],
+      "callout": "Small, steady, honest revision works best.",
+      "pages": [
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "quiz": {
+    "modules": [
+      {
+        "name": "Using the key",
+        "focus": "This resource is for checking, not skipping practice.",
+        "questions": [
+          {
+            "id": "j1an_1",
+            "question": "What is this PDF mostly for?",
+            "options": [
+              "Checking your own answers",
+              "Watching cartoons",
+              "Drawing maps",
+              "Counting pencils"
+            ],
+            "answer": 0,
+            "explanation": "It is an answer resource for self-checking."
+          },
+          {
+            "id": "j1an_2",
+            "question": "When should you use the answer key?",
+            "options": [
+              "After you try the work",
+              "Before reading the question",
+              "Instead of studying",
+              "Only when bored"
+            ],
+            "answer": 0,
+            "explanation": "Trying first makes the check useful."
+          }
+        ]
+      },
+      {
+        "name": "Reading patterns",
+        "focus": "Different answer shapes tell you what kind of question it was.",
+        "questions": [
+          {
+            "id": "j1an_3",
+            "question": "If the key shows more than one letter, that usually means",
+            "options": [
+              "More than one option may be correct",
+              "The page is broken",
+              "The chapter has no answers",
+              "The pencil is dull"
+            ],
+            "answer": 0,
+            "explanation": "Multiple letters usually mean a multi-answer question."
+          },
+          {
+            "id": "j1an_4",
+            "question": "If the key says True/False, the question was probably a",
+            "options": [
+              "statement to judge",
+              "picture puzzle",
+              "music task",
+              "labelling race"
+            ],
+            "answer": 0,
+            "explanation": "True/False belongs to statement questions."
+          }
+        ]
+      },
+      {
+        "name": "Fixing mistakes",
+        "focus": "Mistakes are clues for what to revise next.",
+        "questions": [
+          {
+            "id": "j1an_5",
+            "question": "What should you do after finding a wrong answer?",
+            "options": [
+              "Read the explanation and retry",
+              "Hide the notebook",
+              "Stop studying",
+              "Ignore it"
+            ],
+            "answer": 0,
+            "explanation": "Retrying helps the idea stick."
+          },
+          {
+            "id": "j1an_6",
+            "question": "Why is retrying helpful?",
+            "options": [
+              "It helps you remember later",
+              "It changes the answer key",
+              "It makes pages vanish",
+              "It removes homework"
+            ],
+            "answer": 0,
+            "explanation": "A second attempt builds stronger memory."
+          }
+        ]
+      },
+      {
+        "name": "Revision habits",
+        "focus": "Use the key to learn, not to copy.",
+        "questions": [
+          {
+            "id": "j1an_7",
+            "question": "What is the main job of a revision resource?",
+            "options": [
+              "Help you check and remember",
+              "Decorate the desk",
+              "Replace all practice",
+              "Hide the syllabus"
+            ],
+            "answer": 0,
+            "explanation": "A revision resource supports honest study."
+          },
+          {
+            "id": "j1an_8",
+            "question": "What is the best study habit here?",
+            "options": [
+              "Try first, check second, retry third",
+              "Open answers first",
+              "Skip revision",
+              "Read once and stop"
+            ],
+            "answer": 0,
+            "explanation": "That routine keeps practice real."
+          }
+        ]
+      }
+    ]
+  }
+};
+    const KEY = 'workshop:jesc1an';
+    const state = {
+      slide: Number(localStorage.getItem(KEY + ':slide') || 0),
+      answers: JSON.parse(localStorage.getItem(KEY + ':answers') || '{}')
+    };
+    const panels = [...document.querySelectorAll('.panel')];
+    const bar = document.getElementById('bar');
+    const toc = document.getElementById('toc');
+    const counter = document.getElementById('counter');
+    const answered = document.getElementById('answered');
+    const correct = document.getElementById('correct');
+    const total = DATA.quiz.totalQuestions || 1;
+    function save() {
+      localStorage.setItem(KEY + ':slide', String(state.slide));
+      localStorage.setItem(KEY + ':answers', JSON.stringify(state.answers));
+    }
+    function show(n) {
+      state.slide = Math.max(0, Math.min(n, panels.length - 1));
+      panels.forEach((p, i) => p.classList.toggle('active', i === state.slide));
+      bar.style.width = ((state.slide + 1) / panels.length * 100) + '%';
+      counter.textContent = `Slide ${state.slide + 1} / ${panels.length}`;
+      document.querySelectorAll('.toc-item').forEach((b, i) => b.classList.toggle('active', i === state.slide));
+      save();
+    }
+    function score() {
+      let a = 0, c = 0;
+      for (const m of DATA.quiz.modules) for (const q of m.questions) {
+        if (state.answers[q.id] !== undefined) {
+          a += 1;
+          if (state.answers[q.id] === q.answer) c += 1;
+        }
+      }
+      answered.textContent = a;
+      correct.textContent = c;
+    }
+    function lock(card, q, chosen) {
+      const fb = card.querySelector('.feedback');
+      card.querySelectorAll('.opt').forEach(btn => {
+        btn.classList.add('locked');
+        const c = Number(btn.dataset.choice);
+        if (c === q.answer) btn.classList.add('correct');
+        if (c === chosen && chosen !== q.answer) btn.classList.add('wrong');
+      });
+      fb.classList.add('show');
+      fb.classList.add(chosen === q.answer ? 'good' : 'bad');
+      fb.innerHTML = '<strong>' + (chosen === q.answer ? 'Correct. ' : 'Not quite. ') + '</strong>' + q.explanation;
+    }
+    document.querySelectorAll('.opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const qid = btn.dataset.qid;
+        const chosen = Number(btn.dataset.choice);
+        const q = DATA.quiz.modules.flatMap(m => m.questions).find(item => item.id === qid);
+        const card = btn.closest('.qcard');
+        state.answers[qid] = chosen;
+        save();
+        lock(card, q, chosen);
+        score();
+      });
+    });
+    document.getElementById('retry').addEventListener('click', () => {
+      state.answers = {};
+      localStorage.removeItem(KEY + ':answers');
+      document.querySelectorAll('.qcard').forEach(card => {
+        card.querySelectorAll('.opt').forEach(btn => btn.classList.remove('correct', 'wrong', 'locked'));
+        const fb = card.querySelector('.feedback');
+        fb.className = 'feedback';
+        fb.textContent = '';
+      });
+      score();
+      show(DATA.slides.length);
+    });
+    document.querySelectorAll('[data-open]').forEach(btn => btn.addEventListener('click', () => toc.classList.add('open')));
+    document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => toc.classList.remove('open')));
+    document.querySelectorAll('[data-home]').forEach(btn => btn.addEventListener('click', () => show(0)));
+    document.querySelectorAll('[data-end]').forEach(btn => btn.addEventListener('click', () => show(panels.length - 1)));
+    document.querySelectorAll('[data-prev]').forEach(btn => btn.addEventListener('click', () => show(state.slide - 1)));
+    document.querySelectorAll('[data-next]').forEach(btn => btn.addEventListener('click', () => show(state.slide + 1)));
+    document.querySelectorAll('[data-jump]').forEach(btn => btn.addEventListener('click', () => {
+      show(Number(btn.dataset.jump));
+      toc.classList.remove('open');
+    }));
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') toc.classList.remove('open');
+      if (e.key === 'ArrowLeft') show(state.slide - 1);
+      if (e.key === 'ArrowRight') show(state.slide + 1);
+      if (e.key.toLowerCase() === 'm') toc.classList.toggle('open');
+    });
+    DATA.quiz.modules.forEach(m => m.questions.forEach(q => {
+      if (state.answers[q.id] !== undefined) {
+        const card = document.querySelector(`.qcard[data-qid="${q.id}"]`);
+        if (card) lock(card, q, state.answers[q.id]);
+      }
+    }));
+    score();
+    show(state.slide);
+  </script>
+</body>
+</html>

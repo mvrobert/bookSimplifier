@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Life Processes</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --text: #1a1a2e;
+      --muted: #64748b;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --secondary: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 32%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.10), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    code, pre, .diagram {
+      font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+    }
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      width: 0;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      z-index: 1000;
+    }
+    #app {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 16px 36px;
+    }
+    #header {
+      position: sticky;
+      top: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      z-index: 100;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    }
+    #header .left,
+    #header .center,
+    #header .right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #header .center {
+      justify-content: center;
+      flex: 1;
+    }
+    #header .left {
+      min-width: 220px;
+      font-weight: 600;
+    }
+    #pct {
+      min-width: 46px;
+      text-align: right;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    button {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover {
+      border-color: var(--primary);
+    }
+    #slide {
+      background: var(--surface);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      padding: 40px 48px;
+      min-height: 520px;
+      border: 1px solid rgba(226, 232, 240, 0.85);
+    }
+    #slide h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+    #slide h2 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+    #slide p,
+    #slide li,
+    #slide td,
+    #slide th {
+      line-height: 1.7;
+      font-size: 1.03rem;
+    }
+    #slide pre {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    #slide table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    #slide th,
+    #slide td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    #slide tr:hover td {
+      background: #f8fafc;
+    }
+    .diagram {
+      border: 2px dashed #cbd5e1;
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 16px;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 18px 0;
+    }
+    .note,
+    .tip,
+    .warn,
+    .real {
+      border-left: 5px solid;
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin: 18px 0;
+    }
+    .note { border-color: #2563eb; background: #eff6ff; }
+    .tip { border-color: #22c55e; background: #f0fdf4; }
+    .warn { border-color: #eab308; background: #fefce8; }
+    .real { border-color: #7c3aed; background: #faf5ff; }
+    .quiz-container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .quiz-opt {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 12px;
+      border: 2px solid var(--border);
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .quiz-opt.correct {
+      border-color: var(--good);
+      background: #f0fdf4;
+    }
+    .quiz-opt.wrong {
+      border-color: var(--bad);
+      background: #fef2f2;
+    }
+    .quiz-opt.disabled {
+      pointer-events: none;
+      opacity: 0.78;
+    }
+    .quiz-feedback {
+      display: none;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 16px;
+    }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.pass {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .quiz-feedback.fail {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    #nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    #nav .prev {
+      background: #e2e8f0;
+    }
+    #nav .next {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    #toc {
+      position: fixed;
+      top: 0;
+      left: -360px;
+      width: 350px;
+      height: 100vh;
+      background: #ffffff;
+      border-right: 1px solid var(--border);
+      z-index: 201;
+      transition: left 0.2s ease;
+      padding: 24px 18px;
+      overflow-y: auto;
+      box-shadow: 8px 0 24px rgba(15, 23, 42, 0.1);
+    }
+    #toc.open {
+      left: 0;
+    }
+    #toc-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.32);
+      z-index: 200;
+    }
+    #toc-overlay.open {
+      display: block;
+    }
+    .toc-module {
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .toc-module h3 {
+      margin: 0 0 10px 0;
+      color: var(--secondary);
+    }
+    .toc-link {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 6px;
+      background: #fff;
+    }
+    .toc-link.current {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+    .quiz-meta {
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    @media (max-width: 768px) {
+      #slide { padding: 20px 24px; }
+      #header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      #header .left,
+      #header .center,
+      #header .right {
+        justify-content: space-between;
+        min-width: 0;
+      }
+    }
+    @media print {
+      #header, #nav, #progress-bar, #toc, #toc-overlay { display: none !important; }
+      #slide { box-shadow: none; border: none; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+  <div id="app">
+    <div id="header">
+      <div class="left" id="module-label">Module 0</div>
+      <div class="center" id="slide-counter">1 / 1</div>
+      <div class="right">
+        <button onclick="toggleTOC()" title="Table of Contents (T)">TOC</button>
+        <button onclick="retryFailed()" title="Retry failed quiz questions (R)">Retry</button>
+        <span id="pct">0%</span>
+      </div>
+    </div>
+    <div id="slide"></div>
+    <div id="nav">
+      <button class="prev" onclick="go(-1)">Prev</button>
+      <button class="next" onclick="go(1)">Next</button>
+    </div>
+  </div>
+  <div id="toc-overlay" onclick="toggleTOC(false)"></div>
+  <div id="toc">
+    <h2>Table of Contents</h2>
+    <div id="toc-body"></div>
+  </div>
+
+  <script>
+    const QUIZ_DATA = {"title": "Life Processes - Kid-friendly science workshop with tiny lessons and quick quizzes", "version": "1.0", "totalQuestions": 32, "modules": [{"id": 0, "name": "M0: What Keeps Living Things Alive", "questions": [{"question": "Why are life processes important?", "options": ["They maintain the body and keep it alive", "They only help in sleeping", "They are needed only for machines", "They remove all molecules"], "answer": 0, "explanation": "Life processes are the maintenance jobs of living organisms.", "id": "q0_1"}, {"question": "Why is visible movement not enough to define life?", "options": ["Because many important life activities are hidden inside the body", "Because all living things are always still", "Because plants are metals", "Because movement does not exist"], "answer": 0, "explanation": "Internal molecular and cellular activity matters.", "id": "q0_2"}, {"question": "Which organisms make their own food?", "options": ["Autotrophs", "Heterotrophs", "Only animals", "Only fungi in this lesson"], "answer": 0, "explanation": "Autotrophs prepare their own food.", "id": "q0_3"}, {"question": "Green plants make food mainly by", "options": ["photosynthesis", "rusting", "neutralisation", "distillation"], "answer": 0, "explanation": "Photosynthesis is the food-making process in plants.", "id": "q0_4"}, {"question": "Which organisms depend on ready-made food?", "options": ["Heterotrophs", "Autotrophs", "Only stones", "Only gases"], "answer": 0, "explanation": "Heterotrophs depend on other organisms for food.", "id": "q0_5"}, {"question": "What does food supply for the body?", "options": ["Energy, growth, and repair materials", "Only colour", "Only sound", "Only magnets"], "answer": 0, "explanation": "Food supports multiple life needs.", "id": "q0_6"}, {"question": "A sleeping person is still alive because", "options": ["life processes continue inside the body", "all cells stop working", "oxygen is no longer needed", "the heart becomes metal"], "answer": 0, "explanation": "Hidden maintenance processes keep running.", "id": "q0_7"}, {"question": "What does the word autotroph suggest?", "options": ["Self-feeding or self-nourishing", "Always moving fast", "Made of metal", "Having no cells"], "answer": 0, "explanation": "“Auto” helps remember self-made food.", "id": "q0_8"}]}, {"id": 1, "name": "M1: Respiration and Breathing", "questions": [{"question": "What is respiration mainly about?", "options": ["Releasing energy from food", "Only drinking water", "Only movement of legs", "Only sleeping"], "answer": 0, "explanation": "Respiration makes food energy usable.", "id": "q1_1"}, {"question": "What is breathing?", "options": ["Movement of air in and out of the body", "Breaking down food inside cells", "A kind of alloy", "A neutralisation reaction"], "answer": 0, "explanation": "Breathing is physical movement of air.", "id": "q1_2"}, {"question": "Which process directly releases usable energy inside cells?", "options": ["Respiration", "Breathing only", "Rusting", "Melting"], "answer": 0, "explanation": "Respiration is the energy-releasing process.", "id": "q1_3"}, {"question": "Aerobic respiration needs", "options": ["oxygen", "only salt", "graphite", "kerosene"], "answer": 0, "explanation": "Aerobic respiration uses oxygen.", "id": "q1_4"}, {"question": "Anaerobic respiration happens when", "options": ["oxygen is absent or insufficient", "oxygen is very abundant", "water is solid", "all cells stop"], "answer": 0, "explanation": "Anaerobic pathways work without enough oxygen.", "id": "q1_5"}, {"question": "Why can intense exercise make muscles feel strained?", "options": ["Oxygen supply may not keep up fully with demand", "Because muscles become wooden", "Because breathing stops forever", "Because all food disappears"], "answer": 0, "explanation": "Hard-working muscles can face oxygen shortage.", "id": "q1_6"}, {"question": "Which statement is correct?", "options": ["Breathing and respiration are related but not identical", "They are exactly the same word", "Breathing happens only in plants", "Respiration happens only outside the body"], "answer": 0, "explanation": "One is movement of air, the other is cellular energy release.", "id": "q1_7"}, {"question": "Why does the body need respiration?", "options": ["To make stored food energy usable", "To turn bones into gas", "To create litmus paper", "To stop the heart"], "answer": 0, "explanation": "Respiration keeps energy available for life processes.", "id": "q1_8"}]}, {"id": 2, "name": "M2: Transport in Bodies and Plants", "questions": [{"question": "Why does the body need a transport system?", "options": ["To move materials to and from cells", "To change metals into plants", "To stop respiration", "To remove all water"], "answer": 0, "explanation": "Cells need a delivery system.", "id": "q2_1"}, {"question": "Which organ pumps blood through the body?", "options": ["Heart", "Liver", "Kidney", "Stomach"], "answer": 0, "explanation": "The heart is the main pump.", "id": "q2_2"}, {"question": "What does blood carry?", "options": ["Oxygen, nutrients, and wastes", "Only bones", "Only sound", "Only acids"], "answer": 0, "explanation": "Blood transports many important materials.", "id": "q2_3"}, {"question": "Which plant tissue mainly carries water and minerals?", "options": ["Xylem", "Phloem", "Epidermis", "Petal"], "answer": 0, "explanation": "Xylem is the water-carrying tissue.", "id": "q2_4"}, {"question": "Which plant tissue carries prepared food?", "options": ["Phloem", "Xylem", "Bark only", "Root cap only"], "answer": 0, "explanation": "Phloem transports food.", "id": "q2_5"}, {"question": "Why is transport important even in plants?", "options": ["Because different parts need water, minerals, and food", "Because plants do not have cells", "Because roots can fly", "Because leaves are metals"], "answer": 0, "explanation": "Plants also need internal distribution.", "id": "q2_6"}, {"question": "Which statement is true?", "options": ["Transport helps with both supply and waste removal", "Transport only brings colour", "Transport happens only during sleep", "Transport is not needed in multicellular organisms"], "answer": 0, "explanation": "Delivery and cleanup are both transport roles.", "id": "q2_7"}, {"question": "What does the heart mainly act like?", "options": ["A pump", "A magnet", "A pH paper", "A beaker"], "answer": 0, "explanation": "The heart drives circulation by pumping blood.", "id": "q2_8"}]}, {"id": 3, "name": "M3: Excretion and Balance", "questions": [{"question": "Why is excretion important?", "options": ["It removes harmful wastes from the body", "It creates all food", "It turns blood into bones", "It stops all movement"], "answer": 0, "explanation": "Excretion protects the body by removing wastes.", "id": "q3_1"}, {"question": "Which organs mainly filter blood to form urine?", "options": ["Kidneys", "Lungs", "Eyes", "Skin only"], "answer": 0, "explanation": "Kidneys are the main excretory organs.", "id": "q3_2"}, {"question": "What is a nephron?", "options": ["A tiny filtering unit in the kidney", "A type of blood vessel", "A food molecule", "A metal alloy"], "answer": 0, "explanation": "Nephrons do the filtering work.", "id": "q3_3"}, {"question": "What can happen if harmful wastes are not removed?", "options": ["They can damage the body", "They become food", "They increase photosynthesis", "They become magnets"], "answer": 0, "explanation": "Waste buildup is harmful.", "id": "q3_4"}, {"question": "Which plant structures help in gas exchange and water loss?", "options": ["Stomata", "Nephrons", "Ribosomes", "Bones"], "answer": 0, "explanation": "Stomata are important openings in leaves.", "id": "q3_5"}, {"question": "Which statement fits life processes best?", "options": ["They work together to maintain balance", "They are all unrelated", "Only nutrition matters", "Only excretion matters"], "answer": 0, "explanation": "Life processes are connected systems.", "id": "q3_6"}, {"question": "What is one major job of the urinary system?", "options": ["Removing dissolved wastes", "Making chlorophyll", "Producing metal sheets", "Raising pH paper"], "answer": 0, "explanation": "Urine formation helps remove wastes.", "id": "q3_7"}, {"question": "Why are nephrons important even though they are tiny?", "options": ["Small structures can perform essential body functions", "Tiny things are never useful", "They replace the heart", "They only store oxygen"], "answer": 0, "explanation": "Nephrons show how microscopic units do vital work.", "id": "q3_8"}]}]};
+    const SLIDES = [{"m": 0, "t": "Life Means Constant Work", "c": "<p>Living things are not alive only when they run, jump, or wave. Even when you are resting, your body is still busy. Cells keep repairing, moving materials, making energy available, and maintaining order inside the body.</p>\n<p>That is why life processes matter. They are the quiet jobs that keep organisms alive all the time, even when no obvious movement can be seen.</p>\n<ul><li>Life needs continuous maintenance.</li><li>Molecular movement inside the body matters.</li><li>Visible movement alone is not enough to define life.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0001.png\" alt=\"The opening source page explains that life depends on invisible maintenance processes, not only visible movement.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The opening source page explains that life depends on invisible maintenance processes, not only visible movement.</p></div>\n<div class=\"tip\"><strong>Think deeper:</strong> A sleeping dog is alive because many hidden processes are still happening.</div>"}, {"m": 0, "t": "Nutrition Starts the Story", "c": "<p>Organisms need materials to grow, repair, and release energy. Green plants make food through photosynthesis, while animals and humans depend on eating other organisms or their products.</p>\n<p>Nutrition is therefore the first big survival system. Without food or a way to make food, the rest of the body's processes cannot keep going for long.</p>\n<ul><li>Plants are autotrophs because they make food.</li><li>Animals are heterotrophs because they depend on ready-made food.</li><li>Food supports growth, repair, and energy release.</li></ul>\n<div class=\"note\"><strong>Word power:</strong> “auto” means self, so an autotroph makes its own food.</div>"}, {"m": 0, "t": "Quiz: M0: What Keeps Living Things Alive", "q": true}, {"m": 1, "t": "Why Food Alone Is Not Enough", "c": "<p>Food stores energy, but that energy must be released in a usable way. Respiration breaks down food to release energy that cells can use. This happens inside the body all the time.</p>\n<p>Breathing and respiration are connected, but they are not exactly the same thing. Breathing moves air in and out, while respiration is the chemical process that releases energy from food.</p>\n<ul><li>Breathing is movement of air.</li><li>Respiration releases energy from food.</li><li>Oxygen helps complete aerobic respiration.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0010.png\" alt=\"Middle source pages explain how respiration releases energy from food and how gas exchange supports it.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Middle source pages explain how respiration releases energy from food and how gas exchange supports it.</p></div>\n<div class=\"tip\"><strong>Easy distinction:</strong> Breathing is the door. Respiration is what happens inside the room.</div>"}, {"m": 1, "t": "Different Paths of Respiration", "c": "<p>When oxygen is available, cells can release more energy through aerobic respiration. When oxygen is limited, some organisms or body cells may use anaerobic pathways instead. That can lead to different end products.</p>\n<p>This matters in real life. Muscles working very hard may not get oxygen fast enough for every cell all the time, which is one reason the body can feel tired or strained.</p>\n<ul><li>Aerobic respiration uses oxygen.</li><li>Anaerobic respiration happens without enough oxygen.</li><li>Energy release and end products can differ.</li></ul>\n<div class=\"real\"><strong>Sports link:</strong> Heavy exercise reminds you that respiration is not just a textbook idea.</div>"}, {"m": 1, "t": "Quiz: M1: Respiration and Breathing", "q": true}, {"m": 2, "t": "The Body Needs Delivery Systems", "c": "<p>Cells are spread throughout the body, so oxygen, food, water, and wastes cannot stay in one place. Transport systems move these materials where they need to go. In humans, blood and the heart play the central role.</p>\n<p>The heart works like a powerful pump. Blood carries oxygen, nutrients, hormones, and wastes through vessels so cells can keep functioning.</p>\n<ul><li>The heart pumps blood.</li><li>Blood carries oxygen and nutrients.</li><li>Transport also helps remove wastes.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0014.png\" alt=\"The transport pages focus on the heart, blood flow, and movement of materials inside the body.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The transport pages focus on the heart, blood flow, and movement of materials inside the body.</p></div>\n<div class=\"note\"><strong>Big picture:</strong> A transport system is a delivery and cleanup network at the same time.</div>"}, {"m": 2, "t": "Plants Also Need Transport", "c": "<p>Plants may not have a heart, but they still need transport. Water and minerals move upward from the roots through xylem, while prepared food can move through phloem to places that need it.</p>\n<p>This shows one of the most beautiful ideas in biology: different organisms solve the same problem in different ways.</p>\n<ul><li>Xylem mainly carries water and minerals.</li><li>Phloem carries prepared food.</li><li>Transport is essential in both plants and animals.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0018.png\" alt=\"Later source pages describe xylem and phloem as transport tissues in plants.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Later source pages describe xylem and phloem as transport tissues in plants.</p></div>\n<div class=\"tip\"><strong>Memory trick:</strong> Xylem lifts water up. Phloem shares food around.</div>"}, {"m": 2, "t": "Quiz: M2: Transport in Bodies and Plants", "q": true}, {"m": 3, "t": "Cleaning Up the Body", "c": "<p>Life processes create wastes as well as useful products. If those wastes stay inside too long, they can harm the body. Excretion removes these unwanted materials and helps keep internal conditions balanced.</p>\n<p>In humans, kidneys filter the blood and form urine. Tiny units called nephrons do the filtering work, proving again that big body jobs depend on tiny structures.</p>\n<ul><li>Excretion removes harmful wastes.</li><li>Kidneys filter the blood.</li><li>Nephrons are the tiny filtering units.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0020.png\" alt=\"The final pages cover excretion and how the body filters wastes.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The final pages cover excretion and how the body filters wastes.</p></div>\n<div class=\"real\"><strong>Body wisdom:</strong> Survival is not only about taking things in. It is also about removing the right things.</div>"}, {"m": 3, "t": "Balance Matters in Plants Too", "c": "<p>Plants also handle extra materials and water balance in their own ways. Stomata help in gas exchange and water loss, while transport tissues and surrounding cells help manage movement and pressure inside the plant.</p>\n<p>Across humans and plants, one shared truth appears again and again: life survives by maintaining balance through many connected processes.</p>\n<ul><li>Excretion and balance support life.</li><li>Plants also regulate water and gases.</li><li>Life processes work as a team, not as separate islands.</li></ul>\n<div class=\"tip\"><strong>Final thought:</strong> Nutrition, respiration, transport, and excretion are like teammates keeping the organism stable.</div>"}, {"m": 3, "t": "Quiz: M3: Excretion and Balance", "q": true}];
+    const MODULE_NAMES = ["M0: What Keeps Living Things Alive", "M1: Respiration and Breathing", "M2: Transport in Bodies and Plants", "M3: Excretion and Balance"];
+    const STORE_KEY = 'jesc105_workshop';
+
+    let cur = 0;
+    let quizState = {};
+    let failedQs = [];
+
+    function save() {
+      const data = { cur, quizState, failedQs, ts: Date.now() };
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
+      try { document.cookie = STORE_KEY + '=' + cur + ';max-age=31536000;path=/'; } catch (e) {}
+    }
+
+    function load() {
+      try {
+        const data = JSON.parse(localStorage.getItem(STORE_KEY));
+        if (data) {
+          cur = data.cur || 0;
+          quizState = data.quizState || {};
+          failedQs = data.failedQs || [];
+        }
+      } catch (e) {}
+    }
+
+    function esc(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function hashSeed(seed) {
+      let h = 2166136261;
+      for (let i = 0; i < seed.length; i += 1) {
+        h ^= seed.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return h >>> 0;
+    }
+
+    function shuffleOpts(opts, seed) {
+      const items = opts.map((text, index) => ({ text, correct: index === 0 }));
+      let state = hashSeed(seed) || 1;
+      for (let i = items.length - 1; i > 0; i -= 1) {
+        state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+        const j = state % (i + 1);
+        const tmp = items[i];
+        items[i] = items[j];
+        items[j] = tmp;
+      }
+      return items;
+    }
+
+    function getModule(moduleId) {
+      return QUIZ_DATA.modules.find((module) => module.id === moduleId);
+    }
+
+    function ensureQuizState(moduleId) {
+      const module = getModule(moduleId);
+      if (!quizState[moduleId]) {
+        quizState[moduleId] = { answers: {}, score: 0, total: module.questions.length, done: false };
+      }
+      return quizState[moduleId];
+    }
+
+    function renderQuiz(moduleId) {
+      const module = getModule(moduleId);
+      const state = ensureQuizState(moduleId);
+      state.total = module.questions.length;
+      state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+
+      const nextQuestion = module.questions.find((question) => !state.answers[question.id]);
+      if (!nextQuestion) {
+        state.done = true;
+        const pct = Math.round((state.score / state.total) * 100);
+        return `
+          <div class="quiz-container">
+            <h1>${esc(module.name)} Quiz</h1>
+            <p class="quiz-meta">You completed ${state.total} questions for this module.</p>
+            <div class="${pct >= 70 ? 'quiz-feedback pass show' : 'quiz-feedback fail show'}">
+              Score: ${state.score} / ${state.total} (${pct}%).
+              Use Retry to revisit questions answered incorrectly.
+            </div>
+          </div>
+        `;
+      }
+
+      const questionIndex = module.questions.findIndex((question) => question.id === nextQuestion.id);
+      const options = shuffleOpts(nextQuestion.options, nextQuestion.id);
+
+      return `
+        <div class="quiz-container">
+          <h1>${esc(module.name)} Quiz</h1>
+          <p class="quiz-meta">Question ${questionIndex + 1} of ${module.questions.length}</p>
+          <h2>${esc(nextQuestion.question)}</h2>
+          ${options.map((option, index) => `
+            <button class="quiz-opt" id="opt-${index}" onclick="answerQuiz(${moduleId}, '${nextQuestion.id}', ${index})">${esc(option.text)}</button>
+          `).join('')}
+          <div class="quiz-feedback" id="quiz-feedback"></div>
+        </div>
+      `;
+    }
+
+    function answerQuiz(moduleId, questionId, chosenIndex) {
+      const module = getModule(moduleId);
+      const state = ensureQuizState(moduleId);
+      if (state.answers[questionId]) {
+        return;
+      }
+
+      const question = module.questions.find((item) => item.id === questionId);
+      const options = shuffleOpts(question.options, question.id);
+      const chosen = options[chosenIndex];
+      const isCorrect = !!chosen.correct;
+
+      state.answers[questionId] = { chosen: chosen.text, correct: isCorrect };
+      state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+
+      if (!isCorrect && !failedQs.some((item) => item.moduleId === moduleId && item.qId === questionId)) {
+        failedQs.push({ moduleId, qId: questionId });
+      }
+      if (Object.keys(state.answers).length === module.questions.length) {
+        state.done = true;
+      }
+
+      options.forEach((option, index) => {
+        const button = document.getElementById(`opt-${index}`);
+        if (!button) return;
+        button.classList.add('disabled');
+        if (option.correct) {
+          button.classList.add('correct');
+        } else if (index === chosenIndex) {
+          button.classList.add('wrong');
+        }
+      });
+
+      const feedback = document.getElementById('quiz-feedback');
+      if (feedback) {
+        feedback.className = `quiz-feedback show ${isCorrect ? 'pass' : 'fail'}`;
+        feedback.innerHTML = `<strong>${isCorrect ? 'Correct.' : 'Not quite.'}</strong> ${esc(question.explanation)}`;
+      }
+
+      save();
+      setTimeout(render, isCorrect ? 1200 : 3000);
+    }
+
+    function retryFailed() {
+      if (!failedQs.length) {
+        alert('No failed quiz questions are currently tracked.');
+        return;
+      }
+
+      const retryItems = failedQs.slice();
+      retryItems.forEach((item) => {
+        const state = ensureQuizState(item.moduleId);
+        delete state.answers[item.qId];
+        state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+        state.done = false;
+      });
+
+      const first = retryItems[0];
+      failedQs = [];
+      cur = SLIDES.findIndex((slide) => slide.q && slide.m === first.moduleId);
+      render();
+    }
+
+    function go(dir) {
+      cur = Math.max(0, Math.min(SLIDES.length - 1, cur + dir));
+      render();
+    }
+
+    function jump(index) {
+      cur = index;
+      render();
+      toggleTOC(false);
+    }
+
+    function toggleTOC(force) {
+      const toc = document.getElementById('toc');
+      const overlay = document.getElementById('toc-overlay');
+      const shouldOpen = typeof force === 'boolean' ? force : !toc.classList.contains('open');
+      toc.classList.toggle('open', shouldOpen);
+      overlay.classList.toggle('open', shouldOpen);
+    }
+
+    function buildTOC() {
+      const tocBody = document.getElementById('toc-body');
+      const html = MODULE_NAMES.map((moduleName, moduleIndex) => {
+        const links = SLIDES.map((slide, slideIndex) => ({ slide, slideIndex }))
+          .filter((entry) => entry.slide.m === moduleIndex)
+          .map((entry) => `
+            <button class="toc-link ${entry.slideIndex === cur ? 'current' : ''}" onclick="jump(${entry.slideIndex})">
+              ${entry.slide.q ? 'Quiz' : esc(entry.slide.t)}
+            </button>
+          `)
+          .join('');
+        return `<div class="toc-module"><h3>${esc(moduleName)}</h3>${links}</div>`;
+      }).join('');
+      tocBody.innerHTML = html;
+    }
+
+    function render() {
+      const slide = SLIDES[cur];
+      const progress = Math.round(((cur + 1) / SLIDES.length) * 100);
+      document.getElementById('progress-bar').style.width = progress + '%';
+      document.getElementById('pct').textContent = progress + '%';
+      document.getElementById('slide-counter').textContent = `${cur + 1} / ${SLIDES.length}`;
+      document.getElementById('module-label').textContent = MODULE_NAMES[slide.m];
+      document.getElementById('slide').innerHTML = slide.q ? renderQuiz(slide.m) : `<h1>${esc(slide.t)}</h1>${slide.c}`;
+      save();
+      buildTOC();
+    }
+
+    document.addEventListener('keydown', (event) => {
+      const tag = (event.target && event.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') {
+        return;
+      }
+      if (event.key === ' ' && !event.shiftKey) {
+        event.preventDefault();
+        go(1);
+      } else if ((event.key === ' ' && event.shiftKey) || event.key === 'ArrowLeft') {
+        event.preventDefault();
+        go(-1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        go(1);
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        cur = 0;
+        render();
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        cur = SLIDES.length - 1;
+        render();
+      } else if (event.key === 't' || event.key === 'T') {
+        event.preventDefault();
+        toggleTOC();
+      } else if (event.key === 'r' || event.key === 'R') {
+        event.preventDefault();
+        retryFailed();
+      }
+    });
+
+    load();
+    render();
+  </script>
+</body>
+</html>

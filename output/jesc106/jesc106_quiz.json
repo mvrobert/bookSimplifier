@@ -1,0 +1,271 @@
+{
+  "title": "Control and Coordination Workshop - Interactive study deck generated from jesc106.pdf",
+  "version": "1.0",
+  "totalQuestions": 20,
+  "modules": [
+    {
+      "id": 0,
+      "name": "M0: Why the Body Needs Control",
+      "questions": [
+        {
+          "id": "j106_q1",
+          "question": "What do receptors do in the nervous system?",
+          "options": [
+            "They detect changes in the environment",
+            "They make food for the body",
+            "They pump blood through the body",
+            "They store bones in the brain"
+          ],
+          "answer": 0,
+          "explanation": "Receptors are the body's first detectors."
+        },
+        {
+          "id": "j106_q2",
+          "question": "Which part of a neuron receives information first?",
+          "options": [
+            "Dendrite",
+            "Axon",
+            "Cell wall",
+            "Nucleus of a leaf cell"
+          ],
+          "answer": 0,
+          "explanation": "The dendrite is where information is first acquired."
+        },
+        {
+          "id": "j106_q3",
+          "question": "What is the gap between two neurons called?",
+          "options": [
+            "Synapse",
+            "Pupil",
+            "Valve",
+            "Capillary"
+          ],
+          "answer": 0,
+          "explanation": "The chapter names the tiny gap between neurons as a synapse."
+        },
+        {
+          "id": "j106_q4",
+          "question": "Which receptors help you notice taste?",
+          "options": [
+            "Gustatory receptors",
+            "Olfactory receptors",
+            "Reproductive receptors",
+            "Joint receptors"
+          ],
+          "answer": 0,
+          "explanation": "Gustatory receptors detect taste."
+        },
+        {
+          "id": "j106_q5",
+          "question": "How does the nervous system send a fast message?",
+          "options": [
+            "By electrical impulses",
+            "By growing new leaves",
+            "By melting proteins",
+            "By turning water into metal"
+          ],
+          "answer": 0,
+          "explanation": "The nervous system uses electrical impulses to carry information."
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "M1: Reflexes and the Brain",
+      "questions": [
+        {
+          "id": "j106_q6",
+          "question": "What is a reflex action?",
+          "options": [
+            "A quick automatic response",
+            "A slow writing exercise",
+            "A kind of plant seed",
+            "A stomach juice"
+          ],
+          "answer": 0,
+          "explanation": "The textbook defines reflex action as a quick, automatic response."
+        },
+        {
+          "id": "j106_q7",
+          "question": "Which part of the body helps make reflex responses fast?",
+          "options": [
+            "Spinal cord",
+            "Tooth enamel",
+            "Ear lobe",
+            "Rib cage only"
+          ],
+          "answer": 0,
+          "explanation": "The spinal cord handles the shortcut response in a reflex arc."
+        },
+        {
+          "id": "j106_q8",
+          "question": "Which brain part helps with balance?",
+          "options": [
+            "Cerebellum",
+            "Retina",
+            "Alveolus",
+            "Stigma"
+          ],
+          "answer": 0,
+          "explanation": "The cerebellum helps coordinate body balance and movement."
+        },
+        {
+          "id": "j106_q9",
+          "question": "Which is an involuntary action?",
+          "options": [
+            "Heartbeat",
+            "Drawing a picture",
+            "Clapping on purpose",
+            "Walking to a friend"
+          ],
+          "answer": 0,
+          "explanation": "The chapter lists heartbeat as one of the actions the body controls on its own."
+        },
+        {
+          "id": "j106_q10",
+          "question": "Why is the brain protected by the skull and meninges?",
+          "options": [
+            "Because it is delicate and important",
+            "Because it needs sunlight",
+            "Because it is a bone",
+            "Because it can swim"
+          ],
+          "answer": 0,
+          "explanation": "The brain needs strong protection because it controls many body functions."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "M2: Plants Respond Too",
+      "questions": [
+        {
+          "id": "j106_q11",
+          "question": "What does the sensitive plant show when touched?",
+          "options": [
+            "Its leaves fold quickly",
+            "Its roots become wings",
+            "Its flowers turn into fruit",
+            "Its stem becomes metal"
+          ],
+          "answer": 0,
+          "explanation": "The chapter uses the sensitive plant as an example of a quick response to touch."
+        },
+        {
+          "id": "j106_q12",
+          "question": "What is a movement caused by growth in a plant called?",
+          "options": [
+            "Tropism",
+            "Synapse",
+            "Reflex arc",
+            "Hormone rush"
+          ],
+          "answer": 0,
+          "explanation": "Growth-based directional movement in plants is called tropism."
+        },
+        {
+          "id": "j106_q13",
+          "question": "What is phototropism?",
+          "options": [
+            "Growth in response to light",
+            "Growth in response to sound",
+            "Growth in response to hunger",
+            "Growth in response to metal"
+          ],
+          "answer": 0,
+          "explanation": "Phototropism means the plant grows toward light."
+        },
+        {
+          "id": "j106_q14",
+          "question": "What is geotropism?",
+          "options": [
+            "Growth in response to gravity",
+            "Growth in response to colour",
+            "Growth in response to taste",
+            "Growth in response to wind only"
+          ],
+          "answer": 0,
+          "explanation": "Geotropism is the growth response to gravity."
+        },
+        {
+          "id": "j106_q15",
+          "question": "Which plant part usually grows downward because of gravity?",
+          "options": [
+            "Root",
+            "Petal",
+            "Leaf blade",
+            "Pollen grain"
+          ],
+          "answer": 0,
+          "explanation": "Roots commonly show positive geotropism and grow downward."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "M3: Hormones Do the Long-Range Work",
+      "questions": [
+        {
+          "id": "j106_q16",
+          "question": "What is the main job of hormones?",
+          "options": [
+            "To carry chemical messages",
+            "To make bones turn into water",
+            "To cut paper in the brain",
+            "To paint the skin blue"
+          ],
+          "answer": 0,
+          "explanation": "Hormones are chemical messengers used for coordination."
+        },
+        {
+          "id": "j106_q17",
+          "question": "Which hormone helps control blood sugar?",
+          "options": [
+            "Insulin",
+            "Adrenaline",
+            "Growth hormone",
+            "Olfactory hormone"
+          ],
+          "answer": 0,
+          "explanation": "Insulin helps regulate the sugar level in blood."
+        },
+        {
+          "id": "j106_q18",
+          "question": "Which hormone helps the body react in an emergency?",
+          "options": [
+            "Adrenaline",
+            "Insulin",
+            "Digestive juice",
+            "Meninges"
+          ],
+          "answer": 0,
+          "explanation": "Adrenaline prepares the body for quick action in danger."
+        },
+        {
+          "id": "j106_q19",
+          "question": "What does feedback help the body do?",
+          "options": [
+            "Keep hormone action balanced",
+            "Make all hormones stop forever",
+            "Turn nerves into bones",
+            "Erase all blood"
+          ],
+          "answer": 0,
+          "explanation": "Feedback keeps hormone levels from going too high or too low."
+        },
+        {
+          "id": "j106_q20",
+          "question": "Which system is fast and uses electrical impulses?",
+          "options": [
+            "Nervous system",
+            "Respiratory system",
+            "Digestive system",
+            "Skeleton system"
+          ],
+          "answer": 0,
+          "explanation": "The nervous system sends quick messages as electrical impulses."
+        }
+      ]
+    }
+  ]
+}

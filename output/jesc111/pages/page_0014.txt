@@ -1,0 +1,49 @@
+Science
+184
+On applying Ohm’s law to the three resistors separately, we further
+have
+V1 = I R1
+[11.13(a)]
+V2 = I R2
+[11.13(b)]
+and
+V3 = I R3
+[11.13(c)]
+From Eq. (11.11),
+I R = I R1 + I R2 + I R3
+or
+Rs = R1 +R2 + R3
+(11.14)
+We can conclude that when several resistors are joined in series, the
+resistance of the combination Rs equals the sum of their individual
+resistances, R1, R2, R3, and is thus greater than any individual resistance.
+Example 11.7
+An electric lamp, whose resistance is 20 Ω, and a conductor of 4 Ω
+resistance are connected to a 6 V battery (Fig. 11.9). Calculate (a) the
+total resistance of the circuit, (b) the current through the circuit, and (c)
+the potential difference across the electric lamp and conductor.
+Solution
+The resistance of electric lamp, R1 = 20 Ω,
+The resistance of the conductor connected in series, R2 = 4 Ω.
+Then the total resistance in the circuit
+R
+= R1 + R2
+Rs
+= 20 Ω + 4 Ω = 24 Ω.
+The total potential difference across the two terminals of the battery
+V = 6 V.
+Now by Ohm’s law, the current through the circuit is given by
+I
+=
+V/Rs
+=
+6 V/24 Ω
+=
+0.25 A.
+Figure 11.9
+Figure 11.9
+Figure 11.9
+Figure 11.9
+Figure 11.9 An electric lamp connected in series with
+a resistor of 4 Ω to a 6 V battery
+Reprint 2026-27

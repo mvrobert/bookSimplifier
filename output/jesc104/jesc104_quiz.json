@@ -1,0 +1,415 @@
+{
+  "title": "Carbon and its Compounds - Kid-friendly science workshop with tiny lessons and quick quizzes",
+  "version": "1.0",
+  "totalQuestions": 32,
+  "modules": [
+    {
+      "id": 0,
+      "name": "M0: Why Carbon Is Special",
+      "questions": [
+        {
+          "question": "What does tetravalency of carbon mean?",
+          "options": [
+            "Carbon forms four bonds",
+            "Carbon has four colours",
+            "Carbon is always a gas",
+            "Carbon dissolves every metal"
+          ],
+          "answer": 0,
+          "explanation": "Tetravalency means carbon has combining capacity of four.",
+          "id": "q0_1"
+        },
+        {
+          "question": "What does catenation mean?",
+          "options": [
+            "Carbon atoms link to each other",
+            "Carbon turns into oxygen",
+            "Carbon becomes an acid",
+            "Carbon loses all bonds"
+          ],
+          "answer": 0,
+          "explanation": "Catenation is the ability to form chains with itself.",
+          "id": "q0_2"
+        },
+        {
+          "question": "Why can carbon form so many compounds?",
+          "options": [
+            "Because of tetravalency and catenation",
+            "Because it is always molten",
+            "Because it never bonds",
+            "Because it has only one valency"
+          ],
+          "answer": 0,
+          "explanation": "Those two features together create huge variety.",
+          "id": "q0_3"
+        },
+        {
+          "question": "A covalent bond is formed by",
+          "options": [
+            "sharing electrons",
+            "throwing away all electrons",
+            "only transferring neutrons",
+            "breaking the atom completely"
+          ],
+          "answer": 0,
+          "explanation": "Covalent bonding involves sharing electrons.",
+          "id": "q0_4"
+        },
+        {
+          "question": "Many carbon compounds are poor conductors because they are mainly",
+          "options": [
+            "covalent",
+            "metallic",
+            "radio waves",
+            "alloys"
+          ],
+          "answer": 0,
+          "explanation": "Covalent compounds generally conduct poorly.",
+          "id": "q0_5"
+        },
+        {
+          "question": "Which element is central in food, fuels, and many living structures?",
+          "options": [
+            "Carbon",
+            "Helium",
+            "Neon",
+            "Argon"
+          ],
+          "answer": 0,
+          "explanation": "Carbon chemistry is everywhere in daily life.",
+          "id": "q0_6"
+        },
+        {
+          "question": "What kind of shapes can carbon skeletons form?",
+          "options": [
+            "Chains, branches, and rings",
+            "Only squares",
+            "Only triangles",
+            "Only liquids"
+          ],
+          "answer": 0,
+          "explanation": "Carbon can build many structural patterns.",
+          "id": "q0_7"
+        },
+        {
+          "question": "Which type of compounds often has lower melting points than ionic compounds?",
+          "options": [
+            "Many covalent carbon compounds",
+            "All metal oxides",
+            "Alloys only",
+            "Salts only"
+          ],
+          "answer": 0,
+          "explanation": "Covalent compounds often melt more easily than ionic ones.",
+          "id": "q0_8"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "M1: Hydrocarbons and Families",
+      "questions": [
+        {
+          "question": "A hydrocarbon contains only",
+          "options": [
+            "carbon and hydrogen",
+            "carbon and oxygen",
+            "hydrogen and nitrogen",
+            "carbon and iron"
+          ],
+          "answer": 0,
+          "explanation": "Hydrocarbons are made only of carbon and hydrogen.",
+          "id": "q1_1"
+        },
+        {
+          "question": "A saturated hydrocarbon has",
+          "options": [
+            "only single bonds between carbon atoms",
+            "only triple bonds",
+            "only ionic bonds",
+            "no hydrogen atoms"
+          ],
+          "answer": 0,
+          "explanation": "Saturated hydrocarbons contain only single carbon-carbon bonds.",
+          "id": "q1_2"
+        },
+        {
+          "question": "An unsaturated hydrocarbon may contain",
+          "options": [
+            "double or triple bonds",
+            "only sodium",
+            "only oxygen gas",
+            "only single bonds and no carbon"
+          ],
+          "answer": 0,
+          "explanation": "Unsaturated hydrocarbons include multiple bonds.",
+          "id": "q1_3"
+        },
+        {
+          "question": "Which type of hydrocarbon usually undergoes addition reactions more easily?",
+          "options": [
+            "Unsaturated hydrocarbon",
+            "Saturated hydrocarbon",
+            "Noble gas",
+            "Salt crystal"
+          ],
+          "answer": 0,
+          "explanation": "Multiple bonds make addition easier.",
+          "id": "q1_4"
+        },
+        {
+          "question": "What is a homologous series?",
+          "options": [
+            "A family of compounds with similar structures and patterns",
+            "A type of rust",
+            "A pH scale colour",
+            "A metal alloy"
+          ],
+          "answer": 0,
+          "explanation": "Homologous series organise compounds into related families.",
+          "id": "q1_5"
+        },
+        {
+          "question": "Why are homologous series useful?",
+          "options": [
+            "They help you see patterns instead of memorising each compound separately",
+            "They remove all carbon",
+            "They stop reactions",
+            "They make metals softer"
+          ],
+          "answer": 0,
+          "explanation": "Pattern recognition is the key benefit.",
+          "id": "q1_6"
+        },
+        {
+          "question": "Which statement fits saturated compounds best?",
+          "options": [
+            "They are full of single carbon-carbon bonds",
+            "They always contain chlorine",
+            "They are metals",
+            "They never burn"
+          ],
+          "answer": 0,
+          "explanation": "Single bonds define saturation.",
+          "id": "q1_7"
+        },
+        {
+          "question": "Which statement fits unsaturated compounds best?",
+          "options": [
+            "They contain at least one multiple bond",
+            "They contain no carbon",
+            "They are always solids",
+            "They always have pH 7"
+          ],
+          "answer": 0,
+          "explanation": "Multiple bonds define unsaturation.",
+          "id": "q1_8"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "M2: Useful Reactions of Carbon Compounds",
+      "questions": [
+        {
+          "question": "What is combustion?",
+          "options": [
+            "Burning of a substance in oxygen",
+            "Freezing of a liquid",
+            "Mixing salt with water",
+            "Only dissolving sugar"
+          ],
+          "answer": 0,
+          "explanation": "Combustion means burning.",
+          "id": "q2_1"
+        },
+        {
+          "question": "A clean blue flame usually suggests",
+          "options": [
+            "more complete burning",
+            "no burning at all",
+            "only water formation",
+            "a magnetic reaction"
+          ],
+          "answer": 0,
+          "explanation": "Blue flames usually indicate better combustion.",
+          "id": "q2_2"
+        },
+        {
+          "question": "A smoky yellow flame suggests",
+          "options": [
+            "incomplete combustion",
+            "neutralisation",
+            "electrolysis",
+            "no carbon present"
+          ],
+          "answer": 0,
+          "explanation": "Soot and smoke indicate incomplete combustion.",
+          "id": "q2_3"
+        },
+        {
+          "question": "What does oxidation often involve?",
+          "options": [
+            "Gain of oxygen or loss of hydrogen",
+            "Gain of sand",
+            "Loss of all atoms",
+            "Only turning into a metal"
+          ],
+          "answer": 0,
+          "explanation": "Oxidation changes substances through oxygen or hydrogen changes.",
+          "id": "q2_4"
+        },
+        {
+          "question": "Which type of compound often undergoes addition reactions?",
+          "options": [
+            "Unsaturated compound",
+            "Noble gas",
+            "Salt only",
+            "Pure metal"
+          ],
+          "answer": 0,
+          "explanation": "Multiple bonds support addition reactions.",
+          "id": "q2_5"
+        },
+        {
+          "question": "What happens in a substitution reaction?",
+          "options": [
+            "One atom or group is replaced by another",
+            "All atoms vanish",
+            "Only heat is removed",
+            "The substance becomes a planet"
+          ],
+          "answer": 0,
+          "explanation": "Substitution means replacement.",
+          "id": "q2_6"
+        },
+        {
+          "question": "Why does bond type matter in carbon chemistry?",
+          "options": [
+            "It affects how compounds react",
+            "It changes gravity",
+            "It removes carbon",
+            "It stops all burning"
+          ],
+          "answer": 0,
+          "explanation": "Structure controls reactivity.",
+          "id": "q2_7"
+        },
+        {
+          "question": "Which reaction type best matches “new atoms join across a multiple bond”?",
+          "options": [
+            "Addition",
+            "Rusting",
+            "Neutralisation",
+            "Filtration"
+          ],
+          "answer": 0,
+          "explanation": "That is the idea of an addition reaction.",
+          "id": "q2_8"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "M3: Ethanol, Ethanoic Acid and Soap",
+      "questions": [
+        {
+          "question": "Which carbon compound is related to vinegar in dilute form?",
+          "options": [
+            "Ethanoic acid",
+            "Methane",
+            "Carbon dioxide",
+            "Graphite"
+          ],
+          "answer": 0,
+          "explanation": "Vinegar contains dilute ethanoic acid.",
+          "id": "q3_1"
+        },
+        {
+          "question": "Which statement about ethanol is correct?",
+          "options": [
+            "It is flammable",
+            "It is a metal",
+            "It cannot burn",
+            "It is always solid"
+          ],
+          "answer": 0,
+          "explanation": "Ethanol is flammable and must be handled carefully.",
+          "id": "q3_2"
+        },
+        {
+          "question": "Why is safe handling important even for useful chemicals?",
+          "options": [
+            "Because usefulness does not remove risk",
+            "Because useful chemicals can never react",
+            "Because all chemicals are sweet",
+            "Because risk only exists in space"
+          ],
+          "answer": 0,
+          "explanation": "Safety remains important for all chemicals.",
+          "id": "q3_3"
+        },
+        {
+          "question": "Why can soap remove oily dirt better than plain water?",
+          "options": [
+            "Soap interacts with both water and oil",
+            "Soap turns oil into metal",
+            "Soap removes all oxygen",
+            "Soap freezes water instantly"
+          ],
+          "answer": 0,
+          "explanation": "Soap molecules have two different helpful ends.",
+          "id": "q3_4"
+        },
+        {
+          "question": "What is a micelle?",
+          "options": [
+            "A tiny droplet structure that traps oily dirt",
+            "A type of metal wire",
+            "A pH paper",
+            "A salt crystal"
+          ],
+          "answer": 0,
+          "explanation": "Soap forms micelles around oily dirt.",
+          "id": "q3_5"
+        },
+        {
+          "question": "Which part of soap helps connect to oil?",
+          "options": [
+            "The oil-loving end of the soap molecule",
+            "Only the water-loving end",
+            "The QR code",
+            "The indicator colour"
+          ],
+          "answer": 0,
+          "explanation": "Soap has one end that is attracted to oil.",
+          "id": "q3_6"
+        },
+        {
+          "question": "What makes soap a great example in science?",
+          "options": [
+            "Its cleaning action is explained by molecular structure",
+            "It never mixes with water",
+            "It removes all atoms",
+            "It behaves like a noble gas"
+          ],
+          "answer": 0,
+          "explanation": "Soap links molecular design with visible effects.",
+          "id": "q3_7"
+        },
+        {
+          "question": "Ethanoic acid belongs to which broad class of substances in this workshop?",
+          "options": [
+            "Carbon compounds",
+            "Metals",
+            "Noble gases",
+            "Salts only"
+          ],
+          "answer": 0,
+          "explanation": "Ethanoic acid is an important carbon compound.",
+          "id": "q3_8"
+        }
+      ]
+    }
+  ]
+}

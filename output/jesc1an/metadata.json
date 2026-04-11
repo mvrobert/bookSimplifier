@@ -1,0 +1,44 @@
+{
+  "source_pdf": "C:\\Users\\Robert\\Downloads\\jesc1dd\\jesc1an.pdf",
+  "page_count": 3,
+  "image_count": 6,
+  "page_preview_count": 3,
+  "images": [
+    {
+      "page": 1,
+      "image_index": 1,
+      "xref": 132,
+      "path": "images\\page_0001_img_01.png"
+    },
+    {
+      "page": 1,
+      "image_index": 2,
+      "xref": 137,
+      "path": "images\\page_0001_img_02.png"
+    },
+    {
+      "page": 2,
+      "image_index": 1,
+      "xref": 117,
+      "path": "images\\page_0002_img_01.png"
+    },
+    {
+      "page": 2,
+      "image_index": 2,
+      "xref": 122,
+      "path": "images\\page_0002_img_02.png"
+    },
+    {
+      "page": 3,
+      "image_index": 1,
+      "xref": 102,
+      "path": "images\\page_0003_img_01.png"
+    },
+    {
+      "page": 3,
+      "image_index": 2,
+      "xref": 107,
+      "path": "images\\page_0003_img_02.png"
+    }
+  ]
+}

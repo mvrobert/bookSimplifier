@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Control and Coordination Workshop</title>
+  <style>
+    :root {
+      --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#5c6a82;--line:#d7e0ea;
+      --accent:#1d4ed8;--accent2:#ea580c;--good:#15803d;--bad:#dc2626;
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:Segoe UI,system-ui,sans-serif;color:var(--text);background:
+      radial-gradient(circle at top left,rgba(29,78,216,.08),transparent 28%),
+      radial-gradient(circle at top right,rgba(234,88,12,.10),transparent 26%),var(--bg)}
+    button{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#fff;color:var(--text);font-weight:700;cursor:pointer}
+    button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    #progress{position:fixed;inset:0 auto auto 0;height:4px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:200}
+    #app{max-width:1200px;margin:0 auto;padding:16px}
+    #header{position:sticky;top:10px;z-index:120;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border:1px solid rgba(215,224,234,.95);border-radius:18px;box-shadow:0 10px 28px rgba(15,23,42,.08)}
+    #header .meta{min-width:180px} #header .meta strong{display:block} #header .center{flex:1;text-align:center;color:var(--muted);font-weight:700}
+    #header .actions{display:flex;gap:8px;flex-wrap:wrap}
+    #layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;margin-top:16px}
+    #toc{position:sticky;top:92px;align-self:start;background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 24px rgba(15,23,42,.06);padding:14px;max-height:calc(100vh - 120px);overflow:auto}
+    #toc h2{margin:0 0 10px;font-size:1rem}
+    .toc-module{margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)} .toc-module:last-child{border-bottom:0;padding-bottom:0;margin-bottom:0}
+    .toc-module h3{margin:0 0 8px;font-size:.97rem} .toc-list{display:grid;gap:8px}
+    .toc-list button{width:100%;text-align:left;background:#f8fbff;border-color:#e4edf7} .toc-list button.current{background:#e0ecff;border-color:#a7c5ff}
+    main{min-width:0}
+    .module{display:none;background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:22px;box-shadow:0 14px 36px rgba(15,23,42,.07);overflow:hidden}
+    .module.active{display:block} .module-header{padding:20px 20px 0} .module-header h2{margin:0;font-size:clamp(1.4rem,2.1vw,2rem)} .module-summary{margin:6px 0 0;color:var(--muted)}
+    .slides{padding:8px 20px 20px} .slide{display:none;padding-top:14px} .slide.active{display:block} .slide h3{margin:0 0 12px;color:var(--accent);font-size:1.35rem} .slide p,.slide li{line-height:1.7;font-size:1rem} .slide ul{margin:12px 0 16px 20px}
+    .preview{margin:18px 0 0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#f8fbff} .preview img{display:block;width:100%;max-height:380px;object-fit:contain;background:#f8fbff} .preview figcaption{padding:10px 12px;color:var(--muted);font-size:.95rem}
+    .note,.tip,.warn,.real{border-left:5px solid;border-radius:14px;padding:14px 16px;margin:16px 0} .note{border-color:var(--accent);background:#eff6ff} .tip{border-color:#16a34a;background:#f0fdf4} .warn{border-color:#eab308;background:#fefce8} .real{border-color:var(--accent2);background:#fff7ed}
+    .quiz-panel{display:none;padding:10px 20px 22px;border-top:1px solid var(--line);background:linear-gradient(180deg,#fff,#f8fbff)} .quiz-panel.active{display:block}
+    .quiz-panel-head{display:grid;gap:8px;margin-bottom:16px} .quiz-panel-head h3{margin:0;font-size:1.25rem} .quiz-meta,.quiz-score{margin:0;color:var(--muted)} .quiz-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .questions{display:grid;gap:14px} .question-card{border:1px solid var(--line);border-radius:18px;padding:16px;background:#fff} .question-text{margin-top:0;font-weight:800} .choices{display:grid;gap:10px}
+    .choice{width:100%;text-align:left;border-width:2px;background:#f8fbff} .choice.correct{border-color:var(--good);background:#f0fdf4} .choice.wrong{border-color:var(--bad);background:#fef2f2} .choice.locked{pointer-events:none;opacity:.82}
+    .question-feedback{display:none;margin-top:10px;padding:10px 12px;border-radius:12px;font-weight:700} .question-feedback.show{display:block} .question-feedback.pass{background:#dcfce7;color:#166534} .question-feedback.fail{background:#fee2e2;color:#991b1b}
+    .question-explanation{display:none;margin-top:10px;color:var(--muted)} .question-explanation.show{display:block}
+    #overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.34);z-index:110}
+    @media(max-width:920px){#layout{grid-template-columns:1fr}#toc{position:fixed;left:-320px;top:10px;width:min(320px,calc(100vw - 20px));height:calc(100vh - 20px);max-height:none;z-index:130;transition:left .2s ease}#toc.open{left:10px}}
+    @media(max-width:700px){#header{flex-direction:column;align-items:stretch}#header .center{text-align:left}#header .actions button{flex:1 1 45%}.slides,.quiz-panel,.module-header{padding-left:14px;padding-right:14px}}
+  </style>
+</head>
+<body>
+  <div id="progress"></div>
+  <div id="overlay" onclick="toggleToc(false)"></div>
+  <div id="app">
+    <header id="header">
+      <div class="meta"><strong id="module-label"></strong><span id="mode-label"></span></div>
+      <div class="center" id="counter"></div>
+      <div class="actions">
+        <button type="button" onclick="toggleToc()">TOC</button>
+        <button type="button" onclick="step(-1)">Prev</button>
+        <button type="button" class="primary" id="next-btn" onclick="step(1)">Next</button>
+      </div>
+    </header>
+    <div id="layout">
+      <aside id="toc"><h2>Contents</h2><div class="toc-module">
+  <h3>M0: Why the Body Needs Control</h3>
+  <div class="toc-list"><button type="button" data-jump="1" data-module="0" data-slide="0" onclick="jump(0,0,'slides')">Life Responds to Change</button><button type="button" data-jump="1" data-module="0" data-slide="1" onclick="jump(0,1,'slides')">How a Nerve Message Travels</button><button type="button" data-jump="1" data-module="0" data-mode="quiz" onclick="jump(0,0,'quiz')">Quiz</button></div>
+</div>
+<div class="toc-module">
+  <h3>M1: Reflexes and the Brain</h3>
+  <div class="toc-list"><button type="button" data-jump="1" data-module="1" data-slide="0" onclick="jump(1,0,'slides')">Reflex Actions Are Super Fast</button><button type="button" data-jump="1" data-module="1" data-slide="1" onclick="jump(1,1,'slides')">The Brain Keeps the Plan Together</button><button type="button" data-jump="1" data-module="1" data-mode="quiz" onclick="jump(1,0,'quiz')">Quiz</button></div>
+</div>
+<div class="toc-module">
+  <h3>M2: Plants Respond Too</h3>
+  <div class="toc-list"><button type="button" data-jump="1" data-module="2" data-slide="0" onclick="jump(2,0,'slides')">The Sensitive Plant Responds Right Away</button><button type="button" data-jump="1" data-module="2" data-slide="1" onclick="jump(2,1,'slides')">Growth Movements Are Directional</button><button type="button" data-jump="1" data-module="2" data-mode="quiz" onclick="jump(2,0,'quiz')">Quiz</button></div>
+</div>
+<div class="toc-module">
+  <h3>M3: Hormones Do the Long-Range Work</h3>
+  <div class="toc-list"><button type="button" data-jump="1" data-module="3" data-slide="0" onclick="jump(3,0,'slides')">Hormones in Animals</button><button type="button" data-jump="1" data-module="3" data-slide="1" onclick="jump(3,1,'slides')">Feedback Keeps Hormones Balanced</button><button type="button" data-jump="1" data-module="3" data-mode="quiz" onclick="jump(3,0,'quiz')">Quiz</button></div>
+</div></aside>
+      <main id="main"><section class="module" data-module-index="0">
+          <div class="module-header">
+            <h2>M0: Why the Body Needs Control</h2>
+            <p class="module-summary">Read, look, then check yourself.</p>
+          </div>
+          <div class="slides"><article class="slide" data-slide-index="0">
+          <h3>Life Responds to Change</h3>
+          <p>Living things do not just move for no reason. They notice what is happening and then react.</p>
+<p>The chapter starts with familiar examples like a cat chasing a mouse, a child pulling away from heat, and a plant turning toward sunlight.</p>
+<ul><li>Movement can be a response to the environment.</li><li>The response is controlled, not random.</li><li>Different situations need different actions.</li></ul>
+<div class="note"><strong>Big idea:</strong> control and coordination help an organism choose the right response at the right time.</div>
+<figure class="preview">
+  <img src="page_previews/page_0001.png" alt="Opening page showing how living things respond to the world around them.">
+  <figcaption>Opening page showing how living things respond to the world around them.</figcaption>
+</figure>
+        </article>
+<article class="slide" data-slide-index="1">
+          <h3>How a Nerve Message Travels</h3>
+          <p>Nerve cells carry information as electrical impulses. The message starts at the dendrite, moves through the cell body, goes along the axon, and crosses the synapse to the next cell.</p>
+<p>Receptors in sense organs notice the change first. Gustatory receptors sense taste, and olfactory receptors sense smell.</p>
+<ul><li>Receptors detect the stimulus.</li><li>A neuron carries the impulse.</li><li>The synapse passes the message on.</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0002.png" alt="Neuron diagram and the first look at sense organs and synapses.">
+  <figcaption>Neuron diagram and the first look at sense organs and synapses.</figcaption>
+</figure>
+        </article></div>
+          <section class="quiz-panel">
+            <div class="quiz-panel-head">
+              <h3>Quick Check</h3>
+              <p class="quiz-meta">Your answers are saved in this browser.</p>
+              <div class="quiz-actions">
+                <button type="button" onclick="retryMissed()">Retry missed</button>
+                <button type="button" class="primary" onclick="startNextModule()">Next module</button>
+              </div>
+              <div class="quiz-score"></div>
+            </div>
+            <div class="questions"><section class="question-card" data-qid="j106_q1">
+  <p class="question-text">What do receptors do in the nervous system?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q1',0)">They detect changes in the environment</button><button class="choice" type="button" onclick="answerQuestion('j106_q1',1)">They make food for the body</button><button class="choice" type="button" onclick="answerQuestion('j106_q1',2)">They pump blood through the body</button><button class="choice" type="button" onclick="answerQuestion('j106_q1',3)">They store bones in the brain</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Receptors are the body&#x27;s first detectors.</div>
+</section>
+<section class="question-card" data-qid="j106_q2">
+  <p class="question-text">Which part of a neuron receives information first?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q2',0)">Dendrite</button><button class="choice" type="button" onclick="answerQuestion('j106_q2',1)">Axon</button><button class="choice" type="button" onclick="answerQuestion('j106_q2',2)">Cell wall</button><button class="choice" type="button" onclick="answerQuestion('j106_q2',3)">Nucleus of a leaf cell</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The dendrite is where information is first acquired.</div>
+</section>
+<section class="question-card" data-qid="j106_q3">
+  <p class="question-text">What is the gap between two neurons called?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q3',0)">Synapse</button><button class="choice" type="button" onclick="answerQuestion('j106_q3',1)">Pupil</button><button class="choice" type="button" onclick="answerQuestion('j106_q3',2)">Valve</button><button class="choice" type="button" onclick="answerQuestion('j106_q3',3)">Capillary</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The chapter names the tiny gap between neurons as a synapse.</div>
+</section>
+<section class="question-card" data-qid="j106_q4">
+  <p class="question-text">Which receptors help you notice taste?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q4',0)">Gustatory receptors</button><button class="choice" type="button" onclick="answerQuestion('j106_q4',1)">Olfactory receptors</button><button class="choice" type="button" onclick="answerQuestion('j106_q4',2)">Reproductive receptors</button><button class="choice" type="button" onclick="answerQuestion('j106_q4',3)">Joint receptors</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Gustatory receptors detect taste.</div>
+</section>
+<section class="question-card" data-qid="j106_q5">
+  <p class="question-text">How does the nervous system send a fast message?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q5',0)">By electrical impulses</button><button class="choice" type="button" onclick="answerQuestion('j106_q5',1)">By growing new leaves</button><button class="choice" type="button" onclick="answerQuestion('j106_q5',2)">By melting proteins</button><button class="choice" type="button" onclick="answerQuestion('j106_q5',3)">By turning water into metal</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The nervous system uses electrical impulses to carry information.</div>
+</section></div>
+          </section>
+        </section>
+<section class="module" data-module-index="1">
+          <div class="module-header">
+            <h2>M1: Reflexes and the Brain</h2>
+            <p class="module-summary">Read, look, then check yourself.</p>
+          </div>
+          <div class="slides"><article class="slide" data-slide-index="0">
+          <h3>Reflex Actions Are Super Fast</h3>
+          <p>A reflex action is a quick, automatic response to something that could hurt you. Touching a hot pan is the classic example.</p>
+<p>The signal uses a reflex arc, and the spinal cord helps the body react quickly.</p>
+<ul><li>Reflex actions are automatic.</li><li>They protect the body from danger.</li><li>The spinal cord helps make the response fast.</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0003.png" alt="The chapter moves into reflex actions and the reflex arc.">
+  <figcaption>The chapter moves into reflex actions and the reflex arc.</figcaption>
+</figure>
+        </article>
+<article class="slide" data-slide-index="1">
+          <h3>The Brain Keeps the Plan Together</h3>
+          <p>The brain helps control thinking, balance, memory, and many other actions. The cerebrum helps with thinking, the cerebellum helps with balance, and the medulla handles life-support jobs.</p>
+<p>It is protected by the skull, meninges, and a fluid cushion around it.</p>
+<ul><li>Cerebrum: thinking and learning</li><li>Cerebellum: balance and movement</li><li>Medulla: breathing and heartbeat control</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0005.png" alt="Brain structure pages with the main regions and their jobs.">
+  <figcaption>Brain structure pages with the main regions and their jobs.</figcaption>
+</figure>
+        </article></div>
+          <section class="quiz-panel">
+            <div class="quiz-panel-head">
+              <h3>Quick Check</h3>
+              <p class="quiz-meta">Your answers are saved in this browser.</p>
+              <div class="quiz-actions">
+                <button type="button" onclick="retryMissed()">Retry missed</button>
+                <button type="button" class="primary" onclick="startNextModule()">Next module</button>
+              </div>
+              <div class="quiz-score"></div>
+            </div>
+            <div class="questions"><section class="question-card" data-qid="j106_q6">
+  <p class="question-text">What is a reflex action?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q6',0)">A quick automatic response</button><button class="choice" type="button" onclick="answerQuestion('j106_q6',1)">A slow writing exercise</button><button class="choice" type="button" onclick="answerQuestion('j106_q6',2)">A kind of plant seed</button><button class="choice" type="button" onclick="answerQuestion('j106_q6',3)">A stomach juice</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The textbook defines reflex action as a quick, automatic response.</div>
+</section>
+<section class="question-card" data-qid="j106_q7">
+  <p class="question-text">Which part of the body helps make reflex responses fast?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q7',0)">Spinal cord</button><button class="choice" type="button" onclick="answerQuestion('j106_q7',1)">Tooth enamel</button><button class="choice" type="button" onclick="answerQuestion('j106_q7',2)">Ear lobe</button><button class="choice" type="button" onclick="answerQuestion('j106_q7',3)">Rib cage only</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The spinal cord handles the shortcut response in a reflex arc.</div>
+</section>
+<section class="question-card" data-qid="j106_q8">
+  <p class="question-text">Which brain part helps with balance?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q8',0)">Cerebellum</button><button class="choice" type="button" onclick="answerQuestion('j106_q8',1)">Retina</button><button class="choice" type="button" onclick="answerQuestion('j106_q8',2)">Alveolus</button><button class="choice" type="button" onclick="answerQuestion('j106_q8',3)">Stigma</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The cerebellum helps coordinate body balance and movement.</div>
+</section>
+<section class="question-card" data-qid="j106_q9">
+  <p class="question-text">Which is an involuntary action?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q9',0)">Heartbeat</button><button class="choice" type="button" onclick="answerQuestion('j106_q9',1)">Drawing a picture</button><button class="choice" type="button" onclick="answerQuestion('j106_q9',2)">Clapping on purpose</button><button class="choice" type="button" onclick="answerQuestion('j106_q9',3)">Walking to a friend</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The chapter lists heartbeat as one of the actions the body controls on its own.</div>
+</section>
+<section class="question-card" data-qid="j106_q10">
+  <p class="question-text">Why is the brain protected by the skull and meninges?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q10',0)">Because it is delicate and important</button><button class="choice" type="button" onclick="answerQuestion('j106_q10',1)">Because it needs sunlight</button><button class="choice" type="button" onclick="answerQuestion('j106_q10',2)">Because it is a bone</button><button class="choice" type="button" onclick="answerQuestion('j106_q10',3)">Because it can swim</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The brain needs strong protection because it controls many body functions.</div>
+</section></div>
+          </section>
+        </section>
+<section class="module" data-module-index="2">
+          <div class="module-header">
+            <h2>M2: Plants Respond Too</h2>
+            <p class="module-summary">Read, look, then check yourself.</p>
+          </div>
+          <div class="slides"><article class="slide" data-slide-index="0">
+          <h3>The Sensitive Plant Responds Right Away</h3>
+          <p>Plants also respond to the world around them. The sensitive plant folds its leaves when touched.</p>
+<p>This is an immediate response, but it is not the same as growth.</p>
+<ul><li>Touch can trigger a quick plant response.</li><li>Some plant movements are not growth based.</li><li>Plants still need coordination.</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0007.png" alt="The plant example shows an immediate response to touch.">
+  <figcaption>The plant example shows an immediate response to touch.</figcaption>
+</figure>
+        </article>
+<article class="slide" data-slide-index="1">
+          <h3>Growth Movements Are Directional</h3>
+          <p>Some plant movements happen because of growth. A shoot bends toward light, and roots grow downward into the soil. These are called tropisms.</p>
+<p>Plants may look still, but they are constantly adjusting their growth to match the environment.</p>
+<ul><li>Phototropism: growth in response to light</li><li>Geotropism: growth in response to gravity</li><li>Growth movements are slow but important</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0010.png" alt="Pages on tropisms show how roots and shoots bend because of growth.">
+  <figcaption>Pages on tropisms show how roots and shoots bend because of growth.</figcaption>
+</figure>
+        </article></div>
+          <section class="quiz-panel">
+            <div class="quiz-panel-head">
+              <h3>Quick Check</h3>
+              <p class="quiz-meta">Your answers are saved in this browser.</p>
+              <div class="quiz-actions">
+                <button type="button" onclick="retryMissed()">Retry missed</button>
+                <button type="button" class="primary" onclick="startNextModule()">Next module</button>
+              </div>
+              <div class="quiz-score"></div>
+            </div>
+            <div class="questions"><section class="question-card" data-qid="j106_q11">
+  <p class="question-text">What does the sensitive plant show when touched?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q11',0)">Its leaves fold quickly</button><button class="choice" type="button" onclick="answerQuestion('j106_q11',1)">Its roots become wings</button><button class="choice" type="button" onclick="answerQuestion('j106_q11',2)">Its flowers turn into fruit</button><button class="choice" type="button" onclick="answerQuestion('j106_q11',3)">Its stem becomes metal</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The chapter uses the sensitive plant as an example of a quick response to touch.</div>
+</section>
+<section class="question-card" data-qid="j106_q12">
+  <p class="question-text">What is a movement caused by growth in a plant called?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q12',0)">Tropism</button><button class="choice" type="button" onclick="answerQuestion('j106_q12',1)">Synapse</button><button class="choice" type="button" onclick="answerQuestion('j106_q12',2)">Reflex arc</button><button class="choice" type="button" onclick="answerQuestion('j106_q12',3)">Hormone rush</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Growth-based directional movement in plants is called tropism.</div>
+</section>
+<section class="question-card" data-qid="j106_q13">
+  <p class="question-text">What is phototropism?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q13',0)">Growth in response to light</button><button class="choice" type="button" onclick="answerQuestion('j106_q13',1)">Growth in response to sound</button><button class="choice" type="button" onclick="answerQuestion('j106_q13',2)">Growth in response to hunger</button><button class="choice" type="button" onclick="answerQuestion('j106_q13',3)">Growth in response to metal</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Phototropism means the plant grows toward light.</div>
+</section>
+<section class="question-card" data-qid="j106_q14">
+  <p class="question-text">What is geotropism?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q14',0)">Growth in response to gravity</button><button class="choice" type="button" onclick="answerQuestion('j106_q14',1)">Growth in response to colour</button><button class="choice" type="button" onclick="answerQuestion('j106_q14',2)">Growth in response to taste</button><button class="choice" type="button" onclick="answerQuestion('j106_q14',3)">Growth in response to wind only</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Geotropism is the growth response to gravity.</div>
+</section>
+<section class="question-card" data-qid="j106_q15">
+  <p class="question-text">Which plant part usually grows downward because of gravity?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q15',0)">Root</button><button class="choice" type="button" onclick="answerQuestion('j106_q15',1)">Petal</button><button class="choice" type="button" onclick="answerQuestion('j106_q15',2)">Leaf blade</button><button class="choice" type="button" onclick="answerQuestion('j106_q15',3)">Pollen grain</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Roots commonly show positive geotropism and grow downward.</div>
+</section></div>
+          </section>
+        </section>
+<section class="module" data-module-index="3">
+          <div class="module-header">
+            <h2>M3: Hormones Do the Long-Range Work</h2>
+            <p class="module-summary">Read, look, then check yourself.</p>
+          </div>
+          <div class="slides"><article class="slide" data-slide-index="0">
+          <h3>Hormones in Animals</h3>
+          <p>Hormones are chemical messengers. They move through the blood and tell another part of the body what to do.</p>
+<p>Growth hormone helps the body grow, insulin helps control blood sugar, and adrenaline helps you react in an emergency.</p>
+<ul><li>Growth hormone supports growth.</li><li>Insulin controls blood sugar.</li><li>Adrenaline prepares the body for danger.</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0011.png" alt="Endocrine glands and their hormone jobs are shown on this page.">
+  <figcaption>Endocrine glands and their hormone jobs are shown on this page.</figcaption>
+</figure>
+        </article>
+<article class="slide" data-slide-index="1">
+          <h3>Feedback Keeps Hormones Balanced</h3>
+          <p>The nervous system and hormone system work together. The nervous system is fast and precise. Hormones are slower but useful for long-range control.</p>
+<p>Plants also use chemical signals to coordinate growth and response.</p>
+<div class="note"><strong>Final memory line:</strong> nerves send quick messages, hormones send long-range messages, and both help the body stay organized.</div>
+<figure class="preview">
+  <img src="page_previews/page_0013.png" alt="The end of the chapter summarizes the big ideas for revision.">
+  <figcaption>The end of the chapter summarizes the big ideas for revision.</figcaption>
+</figure>
+        </article></div>
+          <section class="quiz-panel">
+            <div class="quiz-panel-head">
+              <h3>Quick Check</h3>
+              <p class="quiz-meta">Your answers are saved in this browser.</p>
+              <div class="quiz-actions">
+                <button type="button" onclick="retryMissed()">Retry missed</button>
+                <button type="button" class="primary" onclick="startNextModule()">Next module</button>
+              </div>
+              <div class="quiz-score"></div>
+            </div>
+            <div class="questions"><section class="question-card" data-qid="j106_q16">
+  <p class="question-text">What is the main job of hormones?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q16',0)">To carry chemical messages</button><button class="choice" type="button" onclick="answerQuestion('j106_q16',1)">To make bones turn into water</button><button class="choice" type="button" onclick="answerQuestion('j106_q16',2)">To cut paper in the brain</button><button class="choice" type="button" onclick="answerQuestion('j106_q16',3)">To paint the skin blue</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Hormones are chemical messengers used for coordination.</div>
+</section>
+<section class="question-card" data-qid="j106_q17">
+  <p class="question-text">Which hormone helps control blood sugar?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q17',0)">Insulin</button><button class="choice" type="button" onclick="answerQuestion('j106_q17',1)">Adrenaline</button><button class="choice" type="button" onclick="answerQuestion('j106_q17',2)">Growth hormone</button><button class="choice" type="button" onclick="answerQuestion('j106_q17',3)">Olfactory hormone</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Insulin helps regulate the sugar level in blood.</div>
+</section>
+<section class="question-card" data-qid="j106_q18">
+  <p class="question-text">Which hormone helps the body react in an emergency?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q18',0)">Adrenaline</button><button class="choice" type="button" onclick="answerQuestion('j106_q18',1)">Insulin</button><button class="choice" type="button" onclick="answerQuestion('j106_q18',2)">Digestive juice</button><button class="choice" type="button" onclick="answerQuestion('j106_q18',3)">Meninges</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Adrenaline prepares the body for quick action in danger.</div>
+</section>
+<section class="question-card" data-qid="j106_q19">
+  <p class="question-text">What does feedback help the body do?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q19',0)">Keep hormone action balanced</button><button class="choice" type="button" onclick="answerQuestion('j106_q19',1)">Make all hormones stop forever</button><button class="choice" type="button" onclick="answerQuestion('j106_q19',2)">Turn nerves into bones</button><button class="choice" type="button" onclick="answerQuestion('j106_q19',3)">Erase all blood</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Feedback keeps hormone levels from going too high or too low.</div>
+</section>
+<section class="question-card" data-qid="j106_q20">
+  <p class="question-text">Which system is fast and uses electrical impulses?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j106_q20',0)">Nervous system</button><button class="choice" type="button" onclick="answerQuestion('j106_q20',1)">Respiratory system</button><button class="choice" type="button" onclick="answerQuestion('j106_q20',2)">Digestive system</button><button class="choice" type="button" onclick="answerQuestion('j106_q20',3)">Skeleton system</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The nervous system sends quick messages as electrical impulses.</div>
+</section></div>
+          </section>
+        </section></main>
+    </div>
+  </div>
+  <script>
+    window.WORKSHOP_INDEX = {"modules": [{"id": 0, "name": "M0: Why the Body Needs Control", "slides": 2, "questions": 5}, {"id": 1, "name": "M1: Reflexes and the Brain", "slides": 2, "questions": 5}, {"id": 2, "name": "M2: Plants Respond Too", "slides": 2, "questions": 5}, {"id": 3, "name": "M3: Hormones Do the Long-Range Work", "slides": 2, "questions": 5}], "answers": {"j106_q1": 0, "j106_q2": 0, "j106_q3": 0, "j106_q4": 0, "j106_q5": 0, "j106_q6": 0, "j106_q7": 0, "j106_q8": 0, "j106_q9": 0, "j106_q10": 0, "j106_q11": 0, "j106_q12": 0, "j106_q13": 0, "j106_q14": 0, "j106_q15": 0, "j106_q16": 0, "j106_q17": 0, "j106_q18": 0, "j106_q19": 0, "j106_q20": 0}};
+    const STORAGE_KEY = "jesc106_workshop_state";
+    const modules = Array.from(document.querySelectorAll('.module'));
+    const tocButtons = Array.from(document.querySelectorAll('[data-jump]'));
+    const overlay = document.getElementById('overlay');
+    const moduleLabel = document.getElementById('module-label');
+    const modeLabel = document.getElementById('mode-label');
+    const counter = document.getElementById('counter');
+    const progress = document.getElementById('progress');
+    const nextButton = document.getElementById('next-btn');
+    const defaultState = {module:0, slide:0, mode:'slides', answers:{}};
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? Object.assign({}, defaultState, JSON.parse(raw)) : structuredClone(defaultState);
+      } catch (err) { return structuredClone(defaultState); }
+    }
+    function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    function currentModuleData() { return window.WORKSHOP_INDEX.modules[state.module]; }
+    function currentSlideCount() { return currentModuleData().slides; }
+    function clampState() {
+      state.module = Math.max(0, Math.min(state.module, modules.length - 1));
+      state.slide = Math.max(0, Math.min(state.slide, currentSlideCount() - 1));
+      if (!['slides', 'quiz'].includes(state.mode)) state.mode = 'slides';
+    }
+    function jump(moduleIndex, slideIndex = 0, mode = 'slides') { state.module = moduleIndex; state.slide = slideIndex; state.mode = mode; saveState(); render(); toggleToc(false); }
+    function startNextModule() { if (state.module < modules.length - 1) jump(state.module + 1, 0, 'slides'); }
+    function currentModuleQuestions(moduleIndex) { return Array.from(modules[moduleIndex].querySelectorAll('.question-card')).map(card => card.dataset.qid); }
+    function retryMissed() {
+      for (const qid of currentModuleQuestions(state.module)) {
+        const correct = window.WORKSHOP_INDEX.answers[qid];
+        if (state.answers[qid] !== undefined && state.answers[qid] !== correct) delete state.answers[qid];
+      }
+      state.mode = 'quiz'; saveState(); render();
+    }
+    function answerQuestion(qid, choiceIndex) { state.answers[qid] = choiceIndex; saveState(); renderQuizPanel(state.module); }
+    function renderSlide(moduleIndex, slideIndex) {
+      const moduleEl = modules[moduleIndex];
+      Array.from(moduleEl.querySelectorAll('.slide')).forEach((slide, index) => slide.classList.toggle('active', index === slideIndex));
+      moduleEl.querySelector('.quiz-panel').classList.toggle('active', state.mode === 'quiz');
+    }
+    function renderQuizPanel(moduleIndex) {
+      const moduleEl = modules[moduleIndex];
+      const questions = Array.from(moduleEl.querySelectorAll('.question-card'));
+      let correct = 0, answered = 0, missed = [];
+      questions.forEach(card => {
+        const qid = card.dataset.qid;
+        const correctIndex = window.WORKSHOP_INDEX.answers[qid];
+        const chosen = state.answers[qid];
+        const feedback = card.querySelector('.question-feedback');
+        const explanation = card.querySelector('.question-explanation');
+        const buttons = Array.from(card.querySelectorAll('.choice'));
+        buttons.forEach((button, choiceIndex) => {
+          button.classList.remove('correct', 'wrong', 'locked');
+          button.disabled = false;
+          if (chosen !== undefined) {
+            button.classList.add('locked');
+            button.disabled = true;
+            if (choiceIndex === correctIndex) button.classList.add('correct');
+            if (choiceIndex === chosen && chosen !== correctIndex) button.classList.add('wrong');
+          }
+        });
+        if (chosen !== undefined) {
+          answered++;
+          if (chosen === correctIndex) {
+            correct++;
+            feedback.textContent = 'Correct';
+            feedback.className = 'question-feedback show pass';
+          } else {
+            missed.push(qid);
+            feedback.textContent = 'Try again';
+            feedback.className = 'question-feedback show fail';
+          }
+          explanation.classList.add('show');
+        } else {
+          feedback.className = 'question-feedback';
+          feedback.textContent = '';
+          explanation.classList.remove('show');
+        }
+      });
+      moduleEl.querySelector('.quiz-score').textContent = 'Score: ' + correct + '/' + questions.length + ' correct. ' + answered + '/' + questions.length + ' answered.';
+      const retryButton = moduleEl.querySelector('.quiz-actions button');
+      retryButton.disabled = missed.length === 0;
+      retryButton.textContent = missed.length ? 'Retry missed (' + missed.length + ')' : 'Retry missed';
+      nextButton.textContent = state.module < modules.length - 1 ? 'Next' : 'Finish';
+    }
+    function updateToc() {
+      tocButtons.forEach(button => {
+        const moduleIndex = Number(button.dataset.module);
+        const slideIndex = button.dataset.slide !== undefined ? Number(button.dataset.slide) : 0;
+        const isQuiz = button.dataset.mode === 'quiz';
+        button.classList.toggle('current', moduleIndex === state.module && ((isQuiz && state.mode === 'quiz') || (!isQuiz && state.mode !== 'quiz' && slideIndex === state.slide)));
+      });
+    }
+    function render() {
+      clampState();
+      modules.forEach((moduleEl, index) => {
+        const active = index === state.module;
+        moduleEl.classList.toggle('active', active);
+        if (active) {
+          renderSlide(state.module, state.slide);
+          renderQuizPanel(state.module);
+        } else {
+          moduleEl.querySelector('.quiz-panel').classList.remove('active');
+        }
+      });
+      const data = currentModuleData();
+      moduleLabel.textContent = data.name;
+      modeLabel.textContent = state.mode === 'quiz' ? 'Quiz mode' : 'Slide mode';
+      const totalSteps = currentSlideCount() + 1;
+      const currentStep = state.mode === 'quiz' ? totalSteps : state.slide + 1;
+      counter.textContent = 'Module ' + (state.module + 1) + ' of ' + modules.length + ' - Step ' + currentStep + ' of ' + totalSteps;
+      progress.style.width = Math.round((currentStep / totalSteps) * 100) + '%';
+      nextButton.textContent = state.mode === 'quiz' ? (state.module < modules.length - 1 ? 'Next' : 'Finish') : (state.slide < currentSlideCount() - 1 ? 'Next' : 'Quiz');
+      updateToc();
+    }
+    function step(delta) {
+      if (state.mode === 'quiz') {
+        if (delta < 0) {
+          state.mode = 'slides';
+          state.slide = Math.max(0, currentSlideCount() - 1);
+          saveState();
+          render();
+        } else if (state.module < modules.length - 1) {
+          jump(state.module + 1, 0, 'slides');
+        }
+        return;
+      }
+      if (delta > 0) {
+        if (state.slide < currentSlideCount() - 1) state.slide++;
+        else state.mode = 'quiz';
+      } else if (delta < 0) {
+        if (state.slide > 0) state.slide--;
+        else if (state.module > 0) {
+          state.module--;
+          state.slide = window.WORKSHOP_INDEX.modules[state.module].slides - 1;
+        }
+      }
+      saveState();
+      render();
+    }
+    function toggleToc(force) {
+      if (!window.matchMedia('(max-width: 920px)').matches) return;
+      const toc = document.getElementById('toc');
+      const shouldOpen = typeof force === 'boolean' ? force : !toc.classList.contains('open');
+      toc.classList.toggle('open', shouldOpen);
+      overlay.style.display = shouldOpen ? 'block' : 'none';
+    }
+    function handleKeydown(event) {
+      if (event.key === 't' || event.key === 'T') return toggleToc();
+      if (event.key === 'ArrowRight' || event.key === ' ') { if (!(event.key === ' ' && event.shiftKey)) step(1); else step(-1); event.preventDefault(); return; }
+      if (event.key === 'ArrowLeft') return step(-1);
+      if (event.key === 'Home') return jump(0, 0, 'slides');
+      if (event.key === 'End') { const last = modules.length - 1; return jump(last, window.WORKSHOP_INDEX.modules[last].slides - 1, 'quiz'); }
+    }
+    document.addEventListener('keydown', handleKeydown);
+    saveState();
+    render();
+  </script>
+</body>
+</html>

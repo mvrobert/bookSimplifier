@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acids, Bases and Salts</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --text: #1a1a2e;
+      --muted: #64748b;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --secondary: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 32%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.10), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    code, pre, .diagram {
+      font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+    }
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      width: 0;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      z-index: 1000;
+    }
+    #app {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 16px 36px;
+    }
+    #header {
+      position: sticky;
+      top: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      z-index: 100;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    }
+    #header .left,
+    #header .center,
+    #header .right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #header .center {
+      justify-content: center;
+      flex: 1;
+    }
+    #header .left {
+      min-width: 220px;
+      font-weight: 600;
+    }
+    #pct {
+      min-width: 46px;
+      text-align: right;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    button {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover {
+      border-color: var(--primary);
+    }
+    #slide {
+      background: var(--surface);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      padding: 40px 48px;
+      min-height: 520px;
+      border: 1px solid rgba(226, 232, 240, 0.85);
+    }
+    #slide h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+    #slide h2 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+    #slide p,
+    #slide li,
+    #slide td,
+    #slide th {
+      line-height: 1.7;
+      font-size: 1.03rem;
+    }
+    #slide pre {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    #slide table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    #slide th,
+    #slide td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    #slide tr:hover td {
+      background: #f8fafc;
+    }
+    .diagram {
+      border: 2px dashed #cbd5e1;
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 16px;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 18px 0;
+    }
+    .note,
+    .tip,
+    .warn,
+    .real {
+      border-left: 5px solid;
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin: 18px 0;
+    }
+    .note { border-color: #2563eb; background: #eff6ff; }
+    .tip { border-color: #22c55e; background: #f0fdf4; }
+    .warn { border-color: #eab308; background: #fefce8; }
+    .real { border-color: #7c3aed; background: #faf5ff; }
+    .quiz-container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .quiz-opt {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 12px;
+      border: 2px solid var(--border);
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .quiz-opt.correct {
+      border-color: var(--good);
+      background: #f0fdf4;
+    }
+    .quiz-opt.wrong {
+      border-color: var(--bad);
+      background: #fef2f2;
+    }
+    .quiz-opt.disabled {
+      pointer-events: none;
+      opacity: 0.78;
+    }
+    .quiz-feedback {
+      display: none;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 16px;
+    }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.pass {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .quiz-feedback.fail {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    #nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    #nav .prev {
+      background: #e2e8f0;
+    }
+    #nav .next {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    #toc {
+      position: fixed;
+      top: 0;
+      left: -360px;
+      width: 350px;
+      height: 100vh;
+      background: #ffffff;
+      border-right: 1px solid var(--border);
+      z-index: 201;
+      transition: left 0.2s ease;
+      padding: 24px 18px;
+      overflow-y: auto;
+      box-shadow: 8px 0 24px rgba(15, 23, 42, 0.1);
+    }
+    #toc.open {
+      left: 0;
+    }
+    #toc-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.32);
+      z-index: 200;
+    }
+    #toc-overlay.open {
+      display: block;
+    }
+    .toc-module {
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .toc-module h3 {
+      margin: 0 0 10px 0;
+      color: var(--secondary);
+    }
+    .toc-link {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 6px;
+      background: #fff;
+    }
+    .toc-link.current {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+    .quiz-meta {
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    @media (max-width: 768px) {
+      #slide { padding: 20px 24px; }
+      #header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      #header .left,
+      #header .center,
+      #header .right {
+        justify-content: space-between;
+        min-width: 0;
+      }
+    }
+    @media print {
+      #header, #nav, #progress-bar, #toc, #toc-overlay { display: none !important; }
+      #slide { box-shadow: none; border: none; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+  <div id="app">
+    <div id="header">
+      <div class="left" id="module-label">Module 0</div>
+      <div class="center" id="slide-counter">1 / 1</div>
+      <div class="right">
+        <button onclick="toggleTOC()" title="Table of Contents (T)">TOC</button>
+        <button onclick="retryFailed()" title="Retry failed quiz questions (R)">Retry</button>
+        <span id="pct">0%</span>
+      </div>
+    </div>
+    <div id="slide"></div>
+    <div id="nav">
+      <button class="prev" onclick="go(-1)">Prev</button>
+      <button class="next" onclick="go(1)">Next</button>
+    </div>
+  </div>
+  <div id="toc-overlay" onclick="toggleTOC(false)"></div>
+  <div id="toc">
+    <h2>Table of Contents</h2>
+    <div id="toc-body"></div>
+  </div>
+
+  <script>
+    const QUIZ_DATA = {"title": "Acids, Bases and Salts - Kid-friendly science workshop with tiny lessons and quick quizzes", "version": "1.0", "totalQuestions": 32, "modules": [{"id": 0, "name": "M0: Colour Clues and Safe Clues", "questions": [{"question": "Which kind of substance is usually linked with a sour taste?", "options": ["Acid", "Base", "Salt", "Metal"], "answer": 0, "explanation": "Sour taste is one common everyday clue for acids.", "id": "q0_1"}, {"question": "Which safe tool helps you identify acids and bases without tasting them?", "options": ["Indicator", "Magnet", "Thermometer", "Pulley"], "answer": 0, "explanation": "Indicators change colour to reveal acidic or basic nature.", "id": "q0_2"}, {"question": "What happens to blue litmus paper in an acidic solution?", "options": ["It turns red", "It turns green", "It turns blue again", "It becomes colourless"], "answer": 0, "explanation": "Blue litmus turning red is a classic acid test.", "id": "q0_3"}, {"question": "What happens to red litmus paper in a basic solution?", "options": ["It turns blue", "It turns yellow", "It stays permanently red", "It melts"], "answer": 0, "explanation": "Bases turn red litmus blue.", "id": "q0_4"}, {"question": "Which kitchen material can act as a natural indicator?", "options": ["Turmeric", "Sand", "Salt crystals", "Charcoal"], "answer": 0, "explanation": "Turmeric is a natural indicator mentioned in the source material.", "id": "q0_5"}, {"question": "Why should you not taste an unknown laboratory liquid?", "options": ["Because it may be harmful", "Because it always tastes sweet", "Because tasting changes its pH", "Because it becomes a gas"], "answer": 0, "explanation": "Safety comes first. Unknown chemicals should never be tasted.", "id": "q0_6"}, {"question": "Which indicator is especially helpful for comparing the strength of acids and bases?", "options": ["Universal indicator", "Iron filings", "Copper wire", "Filter paper"], "answer": 0, "explanation": "Universal indicator gives a colour range linked with pH.", "id": "q0_7"}, {"question": "A soap solution is most likely to be", "options": ["basic", "acidic", "neutral gas", "metallic"], "answer": 0, "explanation": "Soap solution is commonly basic.", "id": "q0_8"}]}, {"id": 1, "name": "M1: Reactions and Neutralisation", "questions": [{"question": "When an acid reacts with a metal, which gas is usually released?", "options": ["Hydrogen", "Nitrogen", "Helium", "Chlorine"], "answer": 0, "explanation": "Acid-metal reactions commonly produce hydrogen gas.", "id": "q1_1"}, {"question": "When an acid reacts with a carbonate, which gas is released?", "options": ["Carbon dioxide", "Oxygen", "Hydrogen", "Argon"], "answer": 0, "explanation": "Acids reacting with carbonates release carbon dioxide.", "id": "q1_2"}, {"question": "What are the products of a neutralisation reaction?", "options": ["Salt and water", "Metal and oxygen", "Only gas", "Only water"], "answer": 0, "explanation": "Neutralisation is the reaction between an acid and a base to form salt and water.", "id": "q1_3"}, {"question": "Which kind of oxide usually behaves like a base?", "options": ["Metal oxide", "Non-metal oxide", "Noble gas oxide", "Water only"], "answer": 0, "explanation": "Metal oxides generally show basic behaviour.", "id": "q1_4"}, {"question": "Which kind of oxide often behaves like an acid?", "options": ["Non-metal oxide", "Metal oxide", "Plastic oxide", "Glass oxide"], "answer": 0, "explanation": "Non-metal oxides often show acidic behaviour.", "id": "q1_5"}, {"question": "Why do antacids help a person with too much stomach acid?", "options": ["They contain basic substances that neutralise acid", "They increase the acid quickly", "They freeze the stomach", "They remove all water from the stomach"], "answer": 0, "explanation": "Antacids work through neutralisation.", "id": "q1_6"}, {"question": "Which observation may suggest that a carbonate is reacting with an acid?", "options": ["Fizzing or bubbling", "The liquid becomes magnetic", "The beaker disappears", "The solution always turns black"], "answer": 0, "explanation": "Carbon dioxide gas causes fizzing in acid-carbonate reactions.", "id": "q1_7"}, {"question": "Which word best describes a reaction in which acid and base cancel each other's effect?", "options": ["Neutralisation", "Rusting", "Distillation", "Filtration"], "answer": 0, "explanation": "Neutralisation is the correct scientific term.", "id": "q1_8"}]}, {"id": 2, "name": "M2: The pH Scale", "questions": [{"question": "What pH value is considered neutral?", "options": ["7", "0", "3", "14"], "answer": 0, "explanation": "A neutral solution has pH 7.", "id": "q2_1"}, {"question": "A solution with pH 3 is", "options": ["acidic", "basic", "metallic", "neutral gas"], "answer": 0, "explanation": "Any pH below 7 is acidic.", "id": "q2_2"}, {"question": "A solution with pH 11 is", "options": ["basic", "acidic", "neutral", "salt only"], "answer": 0, "explanation": "Any pH above 7 is basic.", "id": "q2_3"}, {"question": "Which direction on the pH scale shows stronger acidity?", "options": ["Toward 0", "Toward 14", "Toward 7 from both sides equally", "There is no pattern"], "answer": 0, "explanation": "Lower pH values mean stronger acidity.", "id": "q2_4"}, {"question": "Which direction on the pH scale shows stronger basicity?", "options": ["Toward 14", "Toward 0", "Toward 7 only", "Toward 1"], "answer": 0, "explanation": "Higher pH values mean stronger basicity.", "id": "q2_5"}, {"question": "Why is pH useful in farming?", "options": ["Because soil pH affects plant growth", "Because it turns plants into metals", "Because it removes sunlight", "Because it measures wind speed"], "answer": 0, "explanation": "The right soil pH helps crops grow well.", "id": "q2_6"}, {"question": "Why is very low pH harmful to tooth enamel?", "options": ["Strong acidity can damage it", "It makes teeth magnetic", "It turns teeth into salt", "It increases chlorophyll"], "answer": 0, "explanation": "Acidic conditions can erode tooth enamel.", "id": "q2_7"}, {"question": "Which tool is commonly used to estimate pH through colour change?", "options": ["Universal indicator", "Compass", "Ruler", "Spring balance"], "answer": 0, "explanation": "Universal indicator links colour shades to pH values.", "id": "q2_8"}]}, {"id": 3, "name": "M3: Helpful Salts in Daily Life", "questions": [{"question": "Which familiar substance is an important raw material for making many useful chemicals?", "options": ["Common salt", "Sand only", "Coal only", "Plastic only"], "answer": 0, "explanation": "Common salt is a major raw material in this topic.", "id": "q3_1"}, {"question": "Which substance is commonly used in baking and some antacids?", "options": ["Baking soda", "Copper sulphate", "Iron rust", "Graphite"], "answer": 0, "explanation": "Baking soda has both kitchen and health-related uses.", "id": "q3_2"}, {"question": "Which substance is useful for cleaning and softening hard water?", "options": ["Washing soda", "Lime water", "Hydrogen gas", "Nitrogen gas"], "answer": 0, "explanation": "Washing soda is used in cleaning and water treatment.", "id": "q3_3"}, {"question": "What does POP stand for?", "options": ["Plaster of Paris", "Power of Pressure", "Point of pH", "Part of Plastic"], "answer": 0, "explanation": "POP is the short form of Plaster of Paris.", "id": "q3_4"}, {"question": "Plaster of Paris is useful for making", "options": ["casts and moulds", "electric current", "rainbows", "oxygen cylinders"], "answer": 0, "explanation": "POP is widely used for casts, moulds, and decorative items.", "id": "q3_5"}, {"question": "Which product is often used for sanitation and disinfection?", "options": ["Bleaching powder", "Sugar", "Iron nails", "Chalk dust"], "answer": 0, "explanation": "Bleaching powder is used in sanitation-related work.", "id": "q3_6"}, {"question": "What is one reason salts are interesting in science?", "options": ["They can have very different uses in daily life", "They never react", "They only exist in gases", "They always taste sweet"], "answer": 0, "explanation": "Different salts have very different properties and uses.", "id": "q3_7"}, {"question": "Which gas can be released from baking soda in some reactions?", "options": ["Carbon dioxide", "Hydrogen", "Neon", "Helium"], "answer": 0, "explanation": "Baking soda can release carbon dioxide in suitable reactions.", "id": "q3_8"}]}]};
+    const SLIDES = [{"m": 0, "t": "Meet Acids and Bases", "c": "<p>Some everyday materials give us strong clues about their nature. Lemon juice and tamarind taste sour because they contain acids. Soap solution feels slippery because it is basic. In science, we do not taste unknown substances, so we learn to look for safer clues instead.</p>\n<p>Indicators are the heroes here. They change colour when they meet acidic or basic solutions. That lets you identify what a liquid is doing without putting yourself at risk.</p>\n<ul><li>Acids are often linked with sour substances.</li><li>Bases are often linked with bitter or slippery materials.</li><li>Unknown chemicals should be tested with indicators, not by tasting.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0001.png\" alt=\"The opening source page introduces acids, bases, and colour indicators.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The opening source page introduces acids, bases, and colour indicators.</p></div>\n<div class=\"tip\"><strong>Try this thought game:</strong> If you had lemon juice, soap water, and plain water, which one would you expect to turn blue litmus red?</div>"}, {"m": 0, "t": "How Indicators Talk in Colours", "c": "<p>Litmus, turmeric, methyl orange, phenolphthalein, and universal indicator all help us read a solution. Each one gives a different colour signal, so scientists choose the tool that matches the job.</p>\n<p>Turmeric is especially fun because it links science with the kitchen. A yellow turmeric stain can become reddish-brown in a basic solution and then turn yellow again when washed well with water.</p>\n<ul><li>Blue litmus turns red in an acid.</li><li>Red litmus turns blue in a base.</li><li>Universal indicator helps compare how strong or weak a solution is.</li></ul>\n<div class=\"note\"><strong>Remember:</strong> an indicator does not create acidity or basicity. It only reveals what is already there.</div>"}, {"m": 0, "t": "Quiz: M0: Colour Clues and Safe Clues", "q": true}, {"m": 1, "t": "What Acids and Bases Do", "c": "<p>Acids and bases do much more than change indicator colours. Acids can react with metals to produce a salt and hydrogen gas. Acids can also react with carbonates to release carbon dioxide. Those reactions give bubbles, which is a useful clue for learners.</p>\n<p>Bases react with acids in a special way called neutralisation. When that happens, the sharp effect of the acid and the slippery effect of the base can cancel out, making salt and water.</p>\n<ul><li>Acid + metal -> salt + hydrogen</li><li>Acid + carbonate -> salt + water + carbon dioxide</li><li>Acid + base -> salt + water</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0006.png\" alt=\"A later source page shows reaction patterns and equations for acids, bases, and oxides.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">A later source page shows reaction patterns and equations for acids, bases, and oxides.</p></div>\n<div class=\"real\"><strong>Everyday link:</strong> Antacids help calm extra stomach acid because they contain mild basic substances.</div>"}, {"m": 1, "t": "Why Oxides Matter", "c": "<p>Metal oxides usually behave like bases, while many non-metal oxides behave like acids. That is why metallic oxides often react with acids the way bases do. This idea helps you classify substances instead of memorising every example one by one.</p>\n<p>When you think in reaction patterns, science becomes easier. Instead of seeing separate equations, you start spotting families of behaviour.</p>\n<ul><li>Metal oxides often show basic character.</li><li>Non-metal oxides often show acidic character.</li><li>Neutralisation is one of the most useful reaction patterns in daily life.</li></ul>\n<div class=\"tip\"><strong>Quick check:</strong> If bubbles of carbon dioxide appear after adding acid to a chalk-like substance, a carbonate may be present.</div>"}, {"m": 1, "t": "Quiz: M1: Reactions and Neutralisation", "q": true}, {"m": 2, "t": "Reading the pH Number Line", "c": "<p>The pH scale is a handy number line from 0 to 14. Numbers below 7 show acidity, 7 shows neutrality, and numbers above 7 show basicity. The farther a value is from 7, the stronger the acidic or basic effect tends to be.</p>\n<p>This is useful because science becomes more precise. Instead of only saying a liquid is acidic, you can compare whether it is weakly acidic like rainwater or strongly acidic like concentrated acid.</p>\n<ul><li>pH less than 7 -> acidic</li><li>pH equal to 7 -> neutral</li><li>pH greater than 7 -> basic</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0010.png\" alt=\"The pH activity pages turn colour changes into a number scale from 0 to 14.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The pH activity pages turn colour changes into a number scale from 0 to 14.</p></div>\n<div class=\"note\"><strong>Important idea:</strong> lower pH means stronger acidity, while higher pH means stronger basicity.</div>"}, {"m": 2, "t": "Why pH Matters in Real Life", "c": "<p>Your body and your surroundings care about pH. Tooth enamel can start getting damaged when the mouth becomes too acidic for too long. Farmers check soil conditions because crops do better within a suitable pH range. Even our digestive system depends on acids and bases being controlled carefully.</p>\n<p>That makes pH more than a lab topic. It is a tool for health, farming, cleaning, and environmental care.</p>\n<ul><li>Very acidic food leftovers can affect teeth.</li><li>Soil pH can influence plant growth.</li><li>Digestive comfort can depend on acid-base balance.</li></ul>\n<div class=\"tip\"><strong>Kid memory trick:</strong> Think of 7 as the middle seat. Acid sits on one side, base sits on the other.</div>"}, {"m": 2, "t": "Quiz: M2: The pH Scale", "q": true}, {"m": 3, "t": "Common Salt Does More Than Season Food", "c": "<p>Common salt is not just something sprinkled on food. It is an important raw material for making many useful substances. From one familiar starting material, chemists can prepare sodium hydroxide, baking soda, bleaching powder, and more.</p>\n<p>This is a powerful science lesson: ordinary-looking substances can become the starting point for many useful products when we understand reactions properly.</p>\n<ul><li>Common salt is a useful chemical raw material.</li><li>It helps in making several products used at home and in industry.</li><li>Salts can have very different uses from the substances that formed them.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0014.png\" alt=\"The source pages connect common salt with several useful products of daily life.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">The source pages connect common salt with several useful products of daily life.</p></div>\n<div class=\"real\"><strong>Look around:</strong> baking soda in kitchens, bleaching powder in sanitation, and plaster materials in classrooms all connect with salt chemistry.</div>"}, {"m": 3, "t": "Baking Soda, Washing Soda and POP", "c": "<p>Baking soda helps in baking and is also used in some antacids. Washing soda is useful for cleaning and softening hard water. Plaster of Paris, often called POP, is valuable for casts, moulds, and decorative shapes because it sets into a hard solid after mixing.</p>\n<p>These examples show why science is exciting for kids: the chemistry in your classroom, kitchen, and health kit is full of hidden stories.</p>\n<ul><li>Baking soda can release carbon dioxide while heating or reacting.</li><li>Washing soda helps in cleaning work.</li><li>Plaster of Paris is made from gypsum and sets after mixing.</li></ul>\n<div class=\"tip\"><strong>Mini challenge:</strong> Next time you see a chalky white powder, ask yourself whether it is food-related, cleaning-related, or building-related chemistry.</div>"}, {"m": 3, "t": "Quiz: M3: Helpful Salts in Daily Life", "q": true}];
+    const MODULE_NAMES = ["M0: Colour Clues and Safe Clues", "M1: Reactions and Neutralisation", "M2: The pH Scale", "M3: Helpful Salts in Daily Life"];
+    const STORE_KEY = 'jesc102_workshop';
+
+    let cur = 0;
+    let quizState = {};
+    let failedQs = [];
+
+    function save() {
+      const data = { cur, quizState, failedQs, ts: Date.now() };
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
+      try { document.cookie = STORE_KEY + '=' + cur + ';max-age=31536000;path=/'; } catch (e) {}
+    }
+
+    function load() {
+      try {
+        const data = JSON.parse(localStorage.getItem(STORE_KEY));
+        if (data) {
+          cur = data.cur || 0;
+          quizState = data.quizState || {};
+          failedQs = data.failedQs || [];
+        }
+      } catch (e) {}
+    }
+
+    function esc(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function hashSeed(seed) {
+      let h = 2166136261;
+      for (let i = 0; i < seed.length; i += 1) {
+        h ^= seed.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return h >>> 0;
+    }
+
+    function shuffleOpts(opts, seed) {
+      const items = opts.map((text, index) => ({ text, correct: index === 0 }));
+      let state = hashSeed(seed) || 1;
+      for (let i = items.length - 1; i > 0; i -= 1) {
+        state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+        const j = state % (i + 1);
+        const tmp = items[i];
+        items[i] = items[j];
+        items[j] = tmp;
+      }
+      return items;
+    }
+
+    function getModule(moduleId) {
+      return QUIZ_DATA.modules.find((module) => module.id === moduleId);
+    }
+
+    function ensureQuizState(moduleId) {
+      const module = getModule(moduleId);
+      if (!quizState[moduleId]) {
+        quizState[moduleId] = { answers: {}, score: 0, total: module.questions.length, done: false };
+      }
+      return quizState[moduleId];
+    }
+
+    function renderQuiz(moduleId) {
+      const module = getModule(moduleId);
+      const state = ensureQuizState(moduleId);
+      state.total = module.questions.length;
+      state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+
+      const nextQuestion = module.questions.find((question) => !state.answers[question.id]);
+      if (!nextQuestion) {
+        state.done = true;
+        const pct = Math.round((state.score / state.total) * 100);
+        return `
+          <div class="quiz-container">
+            <h1>${esc(module.name)} Quiz</h1>
+            <p class="quiz-meta">You completed ${state.total} questions for this module.</p>
+            <div class="${pct >= 70 ? 'quiz-feedback pass show' : 'quiz-feedback fail show'}">
+              Score: ${state.score} / ${state.total} (${pct}%).
+              Use Retry to revisit questions answered incorrectly.
+            </div>
+          </div>
+        `;
+      }
+
+      const questionIndex = module.questions.findIndex((question) => question.id === nextQuestion.id);
+      const options = shuffleOpts(nextQuestion.options, nextQuestion.id);
+
+      return `
+        <div class="quiz-container">
+          <h1>${esc(module.name)} Quiz</h1>
+          <p class="quiz-meta">Question ${questionIndex + 1} of ${module.questions.length}</p>
+          <h2>${esc(nextQuestion.question)}</h2>
+          ${options.map((option, index) => `
+            <button class="quiz-opt" id="opt-${index}" onclick="answerQuiz(${moduleId}, '${nextQuestion.id}', ${index})">${esc(option.text)}</button>
+          `).join('')}
+          <div class="quiz-feedback" id="quiz-feedback"></div>
+        </div>
+      `;
+    }
+
+    function answerQuiz(moduleId, questionId, chosenIndex) {
+      const module = getModule(moduleId);
+      const state = ensureQuizState(moduleId);
+      if (state.answers[questionId]) {
+        return;
+      }
+
+      const question = module.questions.find((item) => item.id === questionId);
+      const options = shuffleOpts(question.options, question.id);
+      const chosen = options[chosenIndex];
+      const isCorrect = !!chosen.correct;
+
+      state.answers[questionId] = { chosen: chosen.text, correct: isCorrect };
+      state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+
+      if (!isCorrect && !failedQs.some((item) => item.moduleId === moduleId && item.qId === questionId)) {
+        failedQs.push({ moduleId, qId: questionId });
+      }
+      if (Object.keys(state.answers).length === module.questions.length) {
+        state.done = true;
+      }
+
+      options.forEach((option, index) => {
+        const button = document.getElementById(`opt-${index}`);
+        if (!button) return;
+        button.classList.add('disabled');
+        if (option.correct) {
+          button.classList.add('correct');
+        } else if (index === chosenIndex) {
+          button.classList.add('wrong');
+        }
+      });
+
+      const feedback = document.getElementById('quiz-feedback');
+      if (feedback) {
+        feedback.className = `quiz-feedback show ${isCorrect ? 'pass' : 'fail'}`;
+        feedback.innerHTML = `<strong>${isCorrect ? 'Correct.' : 'Not quite.'}</strong> ${esc(question.explanation)}`;
+      }
+
+      save();
+      setTimeout(render, isCorrect ? 1200 : 3000);
+    }
+
+    function retryFailed() {
+      if (!failedQs.length) {
+        alert('No failed quiz questions are currently tracked.');
+        return;
+      }
+
+      const retryItems = failedQs.slice();
+      retryItems.forEach((item) => {
+        const state = ensureQuizState(item.moduleId);
+        delete state.answers[item.qId];
+        state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+        state.done = false;
+      });
+
+      const first = retryItems[0];
+      failedQs = [];
+      cur = SLIDES.findIndex((slide) => slide.q && slide.m === first.moduleId);
+      render();
+    }
+
+    function go(dir) {
+      cur = Math.max(0, Math.min(SLIDES.length - 1, cur + dir));
+      render();
+    }
+
+    function jump(index) {
+      cur = index;
+      render();
+      toggleTOC(false);
+    }
+
+    function toggleTOC(force) {
+      const toc = document.getElementById('toc');
+      const overlay = document.getElementById('toc-overlay');
+      const shouldOpen = typeof force === 'boolean' ? force : !toc.classList.contains('open');
+      toc.classList.toggle('open', shouldOpen);
+      overlay.classList.toggle('open', shouldOpen);
+    }
+
+    function buildTOC() {
+      const tocBody = document.getElementById('toc-body');
+      const html = MODULE_NAMES.map((moduleName, moduleIndex) => {
+        const links = SLIDES.map((slide, slideIndex) => ({ slide, slideIndex }))
+          .filter((entry) => entry.slide.m === moduleIndex)
+          .map((entry) => `
+            <button class="toc-link ${entry.slideIndex === cur ? 'current' : ''}" onclick="jump(${entry.slideIndex})">
+              ${entry.slide.q ? 'Quiz' : esc(entry.slide.t)}
+            </button>
+          `)
+          .join('');
+        return `<div class="toc-module"><h3>${esc(moduleName)}</h3>${links}</div>`;
+      }).join('');
+      tocBody.innerHTML = html;
+    }
+
+    function render() {
+      const slide = SLIDES[cur];
+      const progress = Math.round(((cur + 1) / SLIDES.length) * 100);
+      document.getElementById('progress-bar').style.width = progress + '%';
+      document.getElementById('pct').textContent = progress + '%';
+      document.getElementById('slide-counter').textContent = `${cur + 1} / ${SLIDES.length}`;
+      document.getElementById('module-label').textContent = MODULE_NAMES[slide.m];
+      document.getElementById('slide').innerHTML = slide.q ? renderQuiz(slide.m) : `<h1>${esc(slide.t)}</h1>${slide.c}`;
+      save();
+      buildTOC();
+    }
+
+    document.addEventListener('keydown', (event) => {
+      const tag = (event.target && event.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') {
+        return;
+      }
+      if (event.key === ' ' && !event.shiftKey) {
+        event.preventDefault();
+        go(1);
+      } else if ((event.key === ' ' && event.shiftKey) || event.key === 'ArrowLeft') {
+        event.preventDefault();
+        go(-1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        go(1);
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        cur = 0;
+        render();
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        cur = SLIDES.length - 1;
+        render();
+      } else if (event.key === 't' || event.key === 'T') {
+        event.preventDefault();
+        toggleTOC();
+      } else if (event.key === 'r' || event.key === 'R') {
+        event.preventDefault();
+        retryFailed();
+      }
+    });
+
+    load();
+    render();
+  </script>
+</body>
+</html>

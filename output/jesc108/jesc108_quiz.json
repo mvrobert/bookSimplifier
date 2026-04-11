@@ -1,0 +1,205 @@
+{
+  "title": "Heredity Workshop - Interactive study deck generated from jesc108.pdf",
+  "version": "1.0",
+  "totalQuestions": 15,
+  "modules": [
+    {
+      "id": 0,
+      "name": "M0: Variation and Inheritance",
+      "questions": [
+        {
+          "id": "j108_q1",
+          "question": "What is variation?",
+          "options": [
+            "Small differences among individuals",
+            "A type of hormone",
+            "A bone in the ear",
+            "A gas from plants"
+          ],
+          "answer": 0,
+          "explanation": "Variation means the small differences we see among individuals."
+        },
+        {
+          "id": "j108_q2",
+          "question": "Why can variation help a species survive?",
+          "options": [
+            "Some members may fit new conditions better",
+            "It always stops growth",
+            "It makes all organisms identical",
+            "It removes DNA"
+          ],
+          "answer": 0,
+          "explanation": "Variation gives at least some individuals a better survival chance when conditions change."
+        },
+        {
+          "id": "j108_q3",
+          "question": "What does heredity do?",
+          "options": [
+            "Passes traits from parents to offspring",
+            "Turns plants into animals",
+            "Creates only water",
+            "Removes chromosomes"
+          ],
+          "answer": 0,
+          "explanation": "Heredity is the passing of traits from one generation to the next."
+        },
+        {
+          "id": "j108_q4",
+          "question": "Are offspring usually exact copies of their parents?",
+          "options": [
+            "No, they are similar but not identical",
+            "Yes, always exact copies",
+            "Only in flowering plants",
+            "Only in reptiles"
+          ],
+          "answer": 0,
+          "explanation": "The chapter keeps stressing that offspring are similar, but not exact copies."
+        },
+        {
+          "id": "j108_q5",
+          "question": "Which trait is an example often used in the chapter?",
+          "options": [
+            "Earlobes",
+            "Clouds",
+            "Rivers",
+            "Sand grains"
+          ],
+          "answer": 0,
+          "explanation": "The chapter uses earlobe type as one example of inherited variation."
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "M1: Mendel's Pea Experiments",
+      "questions": [
+        {
+          "id": "j108_q6",
+          "question": "What did Mendel study?",
+          "options": [
+            "Contrasting traits in pea plants",
+            "Only rainfall patterns",
+            "Only bird songs",
+            "Only rock colours"
+          ],
+          "answer": 0,
+          "explanation": "Mendel used pea plants with different visible traits."
+        },
+        {
+          "id": "j108_q7",
+          "question": "What did the first generation of Mendel's tall and short cross show?",
+          "options": [
+            "All the plants were tall",
+            "All the plants were short",
+            "All the plants were blue",
+            "No plants grew"
+          ],
+          "answer": 0,
+          "explanation": "The first generation showed only the tall trait."
+        },
+        {
+          "id": "j108_q8",
+          "question": "What is a dominant trait?",
+          "options": [
+            "A trait that shows with one copy",
+            "A trait that never appears",
+            "A trait made only of water",
+            "A trait found only in plants"
+          ],
+          "answer": 0,
+          "explanation": "A dominant trait appears when a single copy is present."
+        },
+        {
+          "id": "j108_q9",
+          "question": "What is a recessive trait?",
+          "options": [
+            "A trait that appears only when both copies match",
+            "A trait that always wins instantly",
+            "A trait made by sunlight",
+            "A trait with no genes"
+          ],
+          "answer": 0,
+          "explanation": "A recessive trait shows only when both copies are the same."
+        },
+        {
+          "id": "j108_q10",
+          "question": "What kind of new offspring can independent inheritance produce?",
+          "options": [
+            "New combinations of traits",
+            "Only exact copies",
+            "Only metals",
+            "Only clouds"
+          ],
+          "answer": 0,
+          "explanation": "Independent inheritance mixes traits into new combinations."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "M2: Genes, Chromosomes, and Sex Determination",
+      "questions": [
+        {
+          "id": "j108_q11",
+          "question": "What is a gene?",
+          "options": [
+            "A section of DNA that gives instructions for a protein",
+            "A type of flower petal",
+            "A body bone",
+            "A kind of sugar cube"
+          ],
+          "answer": 0,
+          "explanation": "The chapter defines a gene as a DNA section that provides information for one protein."
+        },
+        {
+          "id": "j108_q12",
+          "question": "What do chromosomes carry?",
+          "options": [
+            "Genes",
+            "Only water",
+            "Only sound",
+            "Only leaves"
+          ],
+          "answer": 0,
+          "explanation": "Chromosomes are the structures that carry genes."
+        },
+        {
+          "id": "j108_q13",
+          "question": "How many copies of each gene do sexually reproducing organisms usually have?",
+          "options": [
+            "Two",
+            "One",
+            "Five",
+            "None"
+          ],
+          "answer": 0,
+          "explanation": "The chapter says sexually reproducing organisms have two copies of genes for the same trait."
+        },
+        {
+          "id": "j108_q14",
+          "question": "What sex chromosome pair do females have in humans?",
+          "options": [
+            "XX",
+            "XY",
+            "YY",
+            "XZ"
+          ],
+          "answer": 0,
+          "explanation": "Females in humans have XX sex chromosomes."
+        },
+        {
+          "id": "j108_q15",
+          "question": "What sex chromosome pair do males have in humans?",
+          "options": [
+            "XY",
+            "XX",
+            "XO",
+            "ZZ"
+          ],
+          "answer": 0,
+          "explanation": "Males in humans have XY sex chromosomes."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Heredity Workshop</title>
+  <style>
+    :root {
+      --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#5c6a82;--line:#d7e0ea;
+      --accent:#1d4ed8;--accent2:#ea580c;--good:#15803d;--bad:#dc2626;
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:Segoe UI,system-ui,sans-serif;color:var(--text);background:
+      radial-gradient(circle at top left,rgba(29,78,216,.08),transparent 28%),
+      radial-gradient(circle at top right,rgba(234,88,12,.10),transparent 26%),var(--bg)}
+    button{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#fff;color:var(--text);font-weight:700;cursor:pointer}
+    button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    #progress{position:fixed;inset:0 auto auto 0;height:4px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:200}
+    #app{max-width:1200px;margin:0 auto;padding:16px}
+    #header{position:sticky;top:10px;z-index:120;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border:1px solid rgba(215,224,234,.95);border-radius:18px;box-shadow:0 10px 28px rgba(15,23,42,.08)}
+    #header .meta{min-width:180px} #header .meta strong{display:block} #header .center{flex:1;text-align:center;color:var(--muted);font-weight:700}
+    #header .actions{display:flex;gap:8px;flex-wrap:wrap}
+    #layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;margin-top:16px}
+    #toc{position:sticky;top:92px;align-self:start;background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 24px rgba(15,23,42,.06);padding:14px;max-height:calc(100vh - 120px);overflow:auto}
+    #toc h2{margin:0 0 10px;font-size:1rem}
+    .toc-module{margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)} .toc-module:last-child{border-bottom:0;padding-bottom:0;margin-bottom:0}
+    .toc-module h3{margin:0 0 8px;font-size:.97rem} .toc-list{display:grid;gap:8px}
+    .toc-list button{width:100%;text-align:left;background:#f8fbff;border-color:#e4edf7} .toc-list button.current{background:#e0ecff;border-color:#a7c5ff}
+    main{min-width:0}
+    .module{display:none;background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:22px;box-shadow:0 14px 36px rgba(15,23,42,.07);overflow:hidden}
+    .module.active{display:block} .module-header{padding:20px 20px 0} .module-header h2{margin:0;font-size:clamp(1.4rem,2.1vw,2rem)} .module-summary{margin:6px 0 0;color:var(--muted)}
+    .slides{padding:8px 20px 20px} .slide{display:none;padding-top:14px} .slide.active{display:block} .slide h3{margin:0 0 12px;color:var(--accent);font-size:1.35rem} .slide p,.slide li{line-height:1.7;font-size:1rem} .slide ul{margin:12px 0 16px 20px}
+    .preview{margin:18px 0 0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#f8fbff} .preview img{display:block;width:100%;max-height:380px;object-fit:contain;background:#f8fbff} .preview figcaption{padding:10px 12px;color:var(--muted);font-size:.95rem}
+    .note,.tip,.warn,.real{border-left:5px solid;border-radius:14px;padding:14px 16px;margin:16px 0} .note{border-color:var(--accent);background:#eff6ff} .tip{border-color:#16a34a;background:#f0fdf4} .warn{border-color:#eab308;background:#fefce8} .real{border-color:var(--accent2);background:#fff7ed}
+    .quiz-panel{display:none;padding:10px 20px 22px;border-top:1px solid var(--line);background:linear-gradient(180deg,#fff,#f8fbff)} .quiz-panel.active{display:block}
+    .quiz-panel-head{display:grid;gap:8px;margin-bottom:16px} .quiz-panel-head h3{margin:0;font-size:1.25rem} .quiz-meta,.quiz-score{margin:0;color:var(--muted)} .quiz-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .questions{display:grid;gap:14px} .question-card{border:1px solid var(--line);border-radius:18px;padding:16px;background:#fff} .question-text{margin-top:0;font-weight:800} .choices{display:grid;gap:10px}
+    .choice{width:100%;text-align:left;border-width:2px;background:#f8fbff} .choice.correct{border-color:var(--good);background:#f0fdf4} .choice.wrong{border-color:var(--bad);background:#fef2f2} .choice.locked{pointer-events:none;opacity:.82}
+    .question-feedback{display:none;margin-top:10px;padding:10px 12px;border-radius:12px;font-weight:700} .question-feedback.show{display:block} .question-feedback.pass{background:#dcfce7;color:#166534} .question-feedback.fail{background:#fee2e2;color:#991b1b}
+    .question-explanation{display:none;margin-top:10px;color:var(--muted)} .question-explanation.show{display:block}
+    #overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.34);z-index:110}
+    @media(max-width:920px){#layout{grid-template-columns:1fr}#toc{position:fixed;left:-320px;top:10px;width:min(320px,calc(100vw - 20px));height:calc(100vh - 20px);max-height:none;z-index:130;transition:left .2s ease}#toc.open{left:10px}}
+    @media(max-width:700px){#header{flex-direction:column;align-items:stretch}#header .center{text-align:left}#header .actions button{flex:1 1 45%}.slides,.quiz-panel,.module-header{padding-left:14px;padding-right:14px}}
+  </style>
+</head>
+<body>
+  <div id="progress"></div>
+  <div id="overlay" onclick="toggleToc(false)"></div>
+  <div id="app">
+    <header id="header">
+      <div class="meta"><strong id="module-label"></strong><span id="mode-label"></span></div>
+      <div class="center" id="counter"></div>
+      <div class="actions">
+        <button type="button" onclick="toggleToc()">TOC</button>
+        <button type="button" onclick="step(-1)">Prev</button>
+        <button type="button" class="primary" id="next-btn" onclick="step(1)">Next</button>
+      </div>
+    </header>
+    <div id="layout">
+      <aside id="toc"><h2>Contents</h2><div class="toc-module">
+  <h3>M0: Variation and Inheritance</h3>
+  <div class="toc-list"><button type="button" data-jump="1" data-module="0" data-slide="0" onclick="jump(0,0,'slides')">Why Variation Matters</button><button type="button" data-jump="1" data-module="0" data-slide="1" onclick="jump(0,1,'slides')">Heredity Passes Traits On</button><button type="button" data-jump="1" data-module="0" data-mode="quiz" onclick="jump(0,0,'quiz')">Quiz</button></div>
+</div>
+<div class="toc-module">
+  <h3>M1: Mendel&#x27;s Pea Experiments</h3>
+  <div class="toc-list"><button type="button" data-jump="1" data-module="1" data-slide="0" onclick="jump(1,0,'slides')">A Tall Plant Can Hide a Short Trait</button><button type="button" data-jump="1" data-module="1" data-slide="1" onclick="jump(1,1,'slides')">Two Traits Can Be Inherited Independently</button><button type="button" data-jump="1" data-module="1" data-mode="quiz" onclick="jump(1,0,'quiz')">Quiz</button></div>
+</div>
+<div class="toc-module">
+  <h3>M2: Genes, Chromosomes, and Sex Determination</h3>
+  <div class="toc-list"><button type="button" data-jump="1" data-module="2" data-slide="0" onclick="jump(2,0,'slides')">Genes Help Make Proteins</button><button type="button" data-jump="1" data-module="2" data-slide="1" onclick="jump(2,1,'slides')">XX, XY, and the Father&#x27;s Role</button><button type="button" data-jump="1" data-module="2" data-mode="quiz" onclick="jump(2,0,'quiz')">Quiz</button></div>
+</div></aside>
+      <main id="main"><section class="module" data-module-index="0">
+          <div class="module-header">
+            <h2>M0: Variation and Inheritance</h2>
+            <p class="module-summary">Read, look, then check yourself.</p>
+          </div>
+          <div class="slides"><article class="slide" data-slide-index="0">
+          <h3>Why Variation Matters</h3>
+          <p>The chapter starts with a simple picture: children look like their parents, but not exactly. That small difference is called variation.</p>
+<p>Variation can be useful because it gives a species a better chance of surviving changes in the environment.</p>
+<ul><li>Offspring are similar, not identical.</li><li>Variation appears during reproduction.</li><li>Variation can help survival.</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0001.png" alt="The opening pages show that offspring are similar but not identical.">
+  <figcaption>The opening pages show that offspring are similar but not identical.</figcaption>
+</figure>
+        </article>
+<article class="slide" data-slide-index="1">
+          <h3>Heredity Passes Traits On</h3>
+          <p>Heredity means passing traits from parents to offspring. The chapter uses examples such as earlobes and eye colour to show this.</p>
+<p>At the same time, the chapter reminds us that traits can vary in a population.</p>
+<div class="note"><strong>Big picture:</strong> heredity keeps the family likeness, while variation adds the differences.</div>
+<figure class="preview">
+  <img src="page_previews/page_0002.png" alt="The early chapter pages connect inherited traits to the next generation.">
+  <figcaption>The early chapter pages connect inherited traits to the next generation.</figcaption>
+</figure>
+        </article></div>
+          <section class="quiz-panel">
+            <div class="quiz-panel-head">
+              <h3>Quick Check</h3>
+              <p class="quiz-meta">Your answers are saved in this browser.</p>
+              <div class="quiz-actions">
+                <button type="button" onclick="retryMissed()">Retry missed</button>
+                <button type="button" class="primary" onclick="startNextModule()">Next module</button>
+              </div>
+              <div class="quiz-score"></div>
+            </div>
+            <div class="questions"><section class="question-card" data-qid="j108_q1">
+  <p class="question-text">What is variation?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q1',0)">Small differences among individuals</button><button class="choice" type="button" onclick="answerQuestion('j108_q1',1)">A type of hormone</button><button class="choice" type="button" onclick="answerQuestion('j108_q1',2)">A bone in the ear</button><button class="choice" type="button" onclick="answerQuestion('j108_q1',3)">A gas from plants</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Variation means the small differences we see among individuals.</div>
+</section>
+<section class="question-card" data-qid="j108_q2">
+  <p class="question-text">Why can variation help a species survive?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q2',0)">Some members may fit new conditions better</button><button class="choice" type="button" onclick="answerQuestion('j108_q2',1)">It always stops growth</button><button class="choice" type="button" onclick="answerQuestion('j108_q2',2)">It makes all organisms identical</button><button class="choice" type="button" onclick="answerQuestion('j108_q2',3)">It removes DNA</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Variation gives at least some individuals a better survival chance when conditions change.</div>
+</section>
+<section class="question-card" data-qid="j108_q3">
+  <p class="question-text">What does heredity do?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q3',0)">Passes traits from parents to offspring</button><button class="choice" type="button" onclick="answerQuestion('j108_q3',1)">Turns plants into animals</button><button class="choice" type="button" onclick="answerQuestion('j108_q3',2)">Creates only water</button><button class="choice" type="button" onclick="answerQuestion('j108_q3',3)">Removes chromosomes</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Heredity is the passing of traits from one generation to the next.</div>
+</section>
+<section class="question-card" data-qid="j108_q4">
+  <p class="question-text">Are offspring usually exact copies of their parents?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q4',0)">No, they are similar but not identical</button><button class="choice" type="button" onclick="answerQuestion('j108_q4',1)">Yes, always exact copies</button><button class="choice" type="button" onclick="answerQuestion('j108_q4',2)">Only in flowering plants</button><button class="choice" type="button" onclick="answerQuestion('j108_q4',3)">Only in reptiles</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The chapter keeps stressing that offspring are similar, but not exact copies.</div>
+</section>
+<section class="question-card" data-qid="j108_q5">
+  <p class="question-text">Which trait is an example often used in the chapter?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q5',0)">Earlobes</button><button class="choice" type="button" onclick="answerQuestion('j108_q5',1)">Clouds</button><button class="choice" type="button" onclick="answerQuestion('j108_q5',2)">Rivers</button><button class="choice" type="button" onclick="answerQuestion('j108_q5',3)">Sand grains</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The chapter uses earlobe type as one example of inherited variation.</div>
+</section></div>
+          </section>
+        </section>
+<section class="module" data-module-index="1">
+          <div class="module-header">
+            <h2>M1: Mendel&#x27;s Pea Experiments</h2>
+            <p class="module-summary">Read, look, then check yourself.</p>
+          </div>
+          <div class="slides"><article class="slide" data-slide-index="0">
+          <h3>A Tall Plant Can Hide a Short Trait</h3>
+          <p>Mendel crossed pea plants with contrasting traits, such as tall and short. In the first generation, all the plants were tall.</p>
+<p>When the first generation self-pollinated, the second generation showed both tall and short plants.</p>
+<figure class="preview">
+  <img src="page_previews/page_0003.png" alt="The pages explain how Mendel studied tall and short pea plants.">
+  <figcaption>The pages explain how Mendel studied tall and short pea plants.</figcaption>
+</figure>
+        </article>
+<article class="slide" data-slide-index="1">
+          <h3>Two Traits Can Be Inherited Independently</h3>
+          <p>Mendel also studied more than one trait at a time. He found that shape and colour of seeds could be inherited independently.</p>
+<p>The chapter also gives the idea of dominant and recessive traits. If a trait appears with one copy, it is dominant. If it shows only when both copies are the same, it is recessive.</p>
+<ul><li>Dominant trait: shows with one copy</li><li>Recessive trait: shows only with two matching copies</li><li>Independent inheritance can create new combinations</li></ul>
+<figure class="preview">
+  <img src="page_previews/page_0004.png" alt="The next page shows the famous pea experiment with seed shape and seed colour.">
+  <figcaption>The next page shows the famous pea experiment with seed shape and seed colour.</figcaption>
+</figure>
+        </article></div>
+          <section class="quiz-panel">
+            <div class="quiz-panel-head">
+              <h3>Quick Check</h3>
+              <p class="quiz-meta">Your answers are saved in this browser.</p>
+              <div class="quiz-actions">
+                <button type="button" onclick="retryMissed()">Retry missed</button>
+                <button type="button" class="primary" onclick="startNextModule()">Next module</button>
+              </div>
+              <div class="quiz-score"></div>
+            </div>
+            <div class="questions"><section class="question-card" data-qid="j108_q6">
+  <p class="question-text">What did Mendel study?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q6',0)">Contrasting traits in pea plants</button><button class="choice" type="button" onclick="answerQuestion('j108_q6',1)">Only rainfall patterns</button><button class="choice" type="button" onclick="answerQuestion('j108_q6',2)">Only bird songs</button><button class="choice" type="button" onclick="answerQuestion('j108_q6',3)">Only rock colours</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Mendel used pea plants with different visible traits.</div>
+</section>
+<section class="question-card" data-qid="j108_q7">
+  <p class="question-text">What did the first generation of Mendel&#x27;s tall and short cross show?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q7',0)">All the plants were tall</button><button class="choice" type="button" onclick="answerQuestion('j108_q7',1)">All the plants were short</button><button class="choice" type="button" onclick="answerQuestion('j108_q7',2)">All the plants were blue</button><button class="choice" type="button" onclick="answerQuestion('j108_q7',3)">No plants grew</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The first generation showed only the tall trait.</div>
+</section>
+<section class="question-card" data-qid="j108_q8">
+  <p class="question-text">What is a dominant trait?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q8',0)">A trait that shows with one copy</button><button class="choice" type="button" onclick="answerQuestion('j108_q8',1)">A trait that never appears</button><button class="choice" type="button" onclick="answerQuestion('j108_q8',2)">A trait made only of water</button><button class="choice" type="button" onclick="answerQuestion('j108_q8',3)">A trait found only in plants</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">A dominant trait appears when a single copy is present.</div>
+</section>
+<section class="question-card" data-qid="j108_q9">
+  <p class="question-text">What is a recessive trait?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q9',0)">A trait that appears only when both copies match</button><button class="choice" type="button" onclick="answerQuestion('j108_q9',1)">A trait that always wins instantly</button><button class="choice" type="button" onclick="answerQuestion('j108_q9',2)">A trait made by sunlight</button><button class="choice" type="button" onclick="answerQuestion('j108_q9',3)">A trait with no genes</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">A recessive trait shows only when both copies are the same.</div>
+</section>
+<section class="question-card" data-qid="j108_q10">
+  <p class="question-text">What kind of new offspring can independent inheritance produce?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q10',0)">New combinations of traits</button><button class="choice" type="button" onclick="answerQuestion('j108_q10',1)">Only exact copies</button><button class="choice" type="button" onclick="answerQuestion('j108_q10',2)">Only metals</button><button class="choice" type="button" onclick="answerQuestion('j108_q10',3)">Only clouds</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Independent inheritance mixes traits into new combinations.</div>
+</section></div>
+          </section>
+        </section>
+<section class="module" data-module-index="2">
+          <div class="module-header">
+            <h2>M2: Genes, Chromosomes, and Sex Determination</h2>
+            <p class="module-summary">Read, look, then check yourself.</p>
+          </div>
+          <div class="slides"><article class="slide" data-slide-index="0">
+          <h3>Genes Help Make Proteins</h3>
+          <p>A gene is a section of DNA that gives instructions for making a protein. Proteins help create the traits we see.</p>
+<p>The chapter also explains that chromosomes carry genes. Each parent gives one copy, so sexually reproducing organisms usually have two copies of each gene.</p>
+<figure class="preview">
+  <img src="page_previews/page_0005.png" alt="The chapter explains how genes, chromosomes, and traits fit together.">
+  <figcaption>The chapter explains how genes, chromosomes, and traits fit together.</figcaption>
+</figure>
+        </article>
+<article class="slide" data-slide-index="1">
+          <h3>XX, XY, and the Father&#x27;s Role</h3>
+          <p>In humans, sex is usually determined by chromosomes. Females have XX and males have XY. The mother gives an X chromosome to every child. The father gives either X or Y.</p>
+<p>If the father gives X, the child is a girl. If the father gives Y, the child is a boy.</p>
+<div class="note"><strong>Short summary:</strong> genes guide traits, chromosomes carry genes, and X or Y helps decide sex in humans.</div>
+<figure class="preview">
+  <img src="page_previews/page_0006.png" alt="The final page shows how sex is determined in human beings.">
+  <figcaption>The final page shows how sex is determined in human beings.</figcaption>
+</figure>
+        </article></div>
+          <section class="quiz-panel">
+            <div class="quiz-panel-head">
+              <h3>Quick Check</h3>
+              <p class="quiz-meta">Your answers are saved in this browser.</p>
+              <div class="quiz-actions">
+                <button type="button" onclick="retryMissed()">Retry missed</button>
+                <button type="button" class="primary" onclick="startNextModule()">Next module</button>
+              </div>
+              <div class="quiz-score"></div>
+            </div>
+            <div class="questions"><section class="question-card" data-qid="j108_q11">
+  <p class="question-text">What is a gene?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q11',0)">A section of DNA that gives instructions for a protein</button><button class="choice" type="button" onclick="answerQuestion('j108_q11',1)">A type of flower petal</button><button class="choice" type="button" onclick="answerQuestion('j108_q11',2)">A body bone</button><button class="choice" type="button" onclick="answerQuestion('j108_q11',3)">A kind of sugar cube</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The chapter defines a gene as a DNA section that provides information for one protein.</div>
+</section>
+<section class="question-card" data-qid="j108_q12">
+  <p class="question-text">What do chromosomes carry?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q12',0)">Genes</button><button class="choice" type="button" onclick="answerQuestion('j108_q12',1)">Only water</button><button class="choice" type="button" onclick="answerQuestion('j108_q12',2)">Only sound</button><button class="choice" type="button" onclick="answerQuestion('j108_q12',3)">Only leaves</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Chromosomes are the structures that carry genes.</div>
+</section>
+<section class="question-card" data-qid="j108_q13">
+  <p class="question-text">How many copies of each gene do sexually reproducing organisms usually have?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q13',0)">Two</button><button class="choice" type="button" onclick="answerQuestion('j108_q13',1)">One</button><button class="choice" type="button" onclick="answerQuestion('j108_q13',2)">Five</button><button class="choice" type="button" onclick="answerQuestion('j108_q13',3)">None</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">The chapter says sexually reproducing organisms have two copies of genes for the same trait.</div>
+</section>
+<section class="question-card" data-qid="j108_q14">
+  <p class="question-text">What sex chromosome pair do females have in humans?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q14',0)">XX</button><button class="choice" type="button" onclick="answerQuestion('j108_q14',1)">XY</button><button class="choice" type="button" onclick="answerQuestion('j108_q14',2)">YY</button><button class="choice" type="button" onclick="answerQuestion('j108_q14',3)">XZ</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Females in humans have XX sex chromosomes.</div>
+</section>
+<section class="question-card" data-qid="j108_q15">
+  <p class="question-text">What sex chromosome pair do males have in humans?</p>
+  <div class="choices"><button class="choice" type="button" onclick="answerQuestion('j108_q15',0)">XY</button><button class="choice" type="button" onclick="answerQuestion('j108_q15',1)">XX</button><button class="choice" type="button" onclick="answerQuestion('j108_q15',2)">XO</button><button class="choice" type="button" onclick="answerQuestion('j108_q15',3)">ZZ</button></div>
+  <div class="question-feedback"></div>
+  <div class="question-explanation">Males in humans have XY sex chromosomes.</div>
+</section></div>
+          </section>
+        </section></main>
+    </div>
+  </div>
+  <script>
+    window.WORKSHOP_INDEX = {"modules": [{"id": 0, "name": "M0: Variation and Inheritance", "slides": 2, "questions": 5}, {"id": 1, "name": "M1: Mendel's Pea Experiments", "slides": 2, "questions": 5}, {"id": 2, "name": "M2: Genes, Chromosomes, and Sex Determination", "slides": 2, "questions": 5}], "answers": {"j108_q1": 0, "j108_q2": 0, "j108_q3": 0, "j108_q4": 0, "j108_q5": 0, "j108_q6": 0, "j108_q7": 0, "j108_q8": 0, "j108_q9": 0, "j108_q10": 0, "j108_q11": 0, "j108_q12": 0, "j108_q13": 0, "j108_q14": 0, "j108_q15": 0}};
+    const STORAGE_KEY = "jesc108_workshop_state";
+    const modules = Array.from(document.querySelectorAll('.module'));
+    const tocButtons = Array.from(document.querySelectorAll('[data-jump]'));
+    const overlay = document.getElementById('overlay');
+    const moduleLabel = document.getElementById('module-label');
+    const modeLabel = document.getElementById('mode-label');
+    const counter = document.getElementById('counter');
+    const progress = document.getElementById('progress');
+    const nextButton = document.getElementById('next-btn');
+    const defaultState = {module:0, slide:0, mode:'slides', answers:{}};
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? Object.assign({}, defaultState, JSON.parse(raw)) : structuredClone(defaultState);
+      } catch (err) { return structuredClone(defaultState); }
+    }
+    function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    function currentModuleData() { return window.WORKSHOP_INDEX.modules[state.module]; }
+    function currentSlideCount() { return currentModuleData().slides; }
+    function clampState() {
+      state.module = Math.max(0, Math.min(state.module, modules.length - 1));
+      state.slide = Math.max(0, Math.min(state.slide, currentSlideCount() - 1));
+      if (!['slides', 'quiz'].includes(state.mode)) state.mode = 'slides';
+    }
+    function jump(moduleIndex, slideIndex = 0, mode = 'slides') { state.module = moduleIndex; state.slide = slideIndex; state.mode = mode; saveState(); render(); toggleToc(false); }
+    function startNextModule() { if (state.module < modules.length - 1) jump(state.module + 1, 0, 'slides'); }
+    function currentModuleQuestions(moduleIndex) { return Array.from(modules[moduleIndex].querySelectorAll('.question-card')).map(card => card.dataset.qid); }
+    function retryMissed() {
+      for (const qid of currentModuleQuestions(state.module)) {
+        const correct = window.WORKSHOP_INDEX.answers[qid];
+        if (state.answers[qid] !== undefined && state.answers[qid] !== correct) delete state.answers[qid];
+      }
+      state.mode = 'quiz'; saveState(); render();
+    }
+    function answerQuestion(qid, choiceIndex) { state.answers[qid] = choiceIndex; saveState(); renderQuizPanel(state.module); }
+    function renderSlide(moduleIndex, slideIndex) {
+      const moduleEl = modules[moduleIndex];
+      Array.from(moduleEl.querySelectorAll('.slide')).forEach((slide, index) => slide.classList.toggle('active', index === slideIndex));
+      moduleEl.querySelector('.quiz-panel').classList.toggle('active', state.mode === 'quiz');
+    }
+    function renderQuizPanel(moduleIndex) {
+      const moduleEl = modules[moduleIndex];
+      const questions = Array.from(moduleEl.querySelectorAll('.question-card'));
+      let correct = 0, answered = 0, missed = [];
+      questions.forEach(card => {
+        const qid = card.dataset.qid;
+        const correctIndex = window.WORKSHOP_INDEX.answers[qid];
+        const chosen = state.answers[qid];
+        const feedback = card.querySelector('.question-feedback');
+        const explanation = card.querySelector('.question-explanation');
+        const buttons = Array.from(card.querySelectorAll('.choice'));
+        buttons.forEach((button, choiceIndex) => {
+          button.classList.remove('correct', 'wrong', 'locked');
+          button.disabled = false;
+          if (chosen !== undefined) {
+            button.classList.add('locked');
+            button.disabled = true;
+            if (choiceIndex === correctIndex) button.classList.add('correct');
+            if (choiceIndex === chosen && chosen !== correctIndex) button.classList.add('wrong');
+          }
+        });
+        if (chosen !== undefined) {
+          answered++;
+          if (chosen === correctIndex) {
+            correct++;
+            feedback.textContent = 'Correct';
+            feedback.className = 'question-feedback show pass';
+          } else {
+            missed.push(qid);
+            feedback.textContent = 'Try again';
+            feedback.className = 'question-feedback show fail';
+          }
+          explanation.classList.add('show');
+        } else {
+          feedback.className = 'question-feedback';
+          feedback.textContent = '';
+          explanation.classList.remove('show');
+        }
+      });
+      moduleEl.querySelector('.quiz-score').textContent = 'Score: ' + correct + '/' + questions.length + ' correct. ' + answered + '/' + questions.length + ' answered.';
+      const retryButton = moduleEl.querySelector('.quiz-actions button');
+      retryButton.disabled = missed.length === 0;
+      retryButton.textContent = missed.length ? 'Retry missed (' + missed.length + ')' : 'Retry missed';
+      nextButton.textContent = state.module < modules.length - 1 ? 'Next' : 'Finish';
+    }
+    function updateToc() {
+      tocButtons.forEach(button => {
+        const moduleIndex = Number(button.dataset.module);
+        const slideIndex = button.dataset.slide !== undefined ? Number(button.dataset.slide) : 0;
+        const isQuiz = button.dataset.mode === 'quiz';
+        button.classList.toggle('current', moduleIndex === state.module && ((isQuiz && state.mode === 'quiz') || (!isQuiz && state.mode !== 'quiz' && slideIndex === state.slide)));
+      });
+    }
+    function render() {
+      clampState();
+      modules.forEach((moduleEl, index) => {
+        const active = index === state.module;
+        moduleEl.classList.toggle('active', active);
+        if (active) {
+          renderSlide(state.module, state.slide);
+          renderQuizPanel(state.module);
+        } else {
+          moduleEl.querySelector('.quiz-panel').classList.remove('active');
+        }
+      });
+      const data = currentModuleData();
+      moduleLabel.textContent = data.name;
+      modeLabel.textContent = state.mode === 'quiz' ? 'Quiz mode' : 'Slide mode';
+      const totalSteps = currentSlideCount() + 1;
+      const currentStep = state.mode === 'quiz' ? totalSteps : state.slide + 1;
+      counter.textContent = 'Module ' + (state.module + 1) + ' of ' + modules.length + ' - Step ' + currentStep + ' of ' + totalSteps;
+      progress.style.width = Math.round((currentStep / totalSteps) * 100) + '%';
+      nextButton.textContent = state.mode === 'quiz' ? (state.module < modules.length - 1 ? 'Next' : 'Finish') : (state.slide < currentSlideCount() - 1 ? 'Next' : 'Quiz');
+      updateToc();
+    }
+    function step(delta) {
+      if (state.mode === 'quiz') {
+        if (delta < 0) {
+          state.mode = 'slides';
+          state.slide = Math.max(0, currentSlideCount() - 1);
+          saveState();
+          render();
+        } else if (state.module < modules.length - 1) {
+          jump(state.module + 1, 0, 'slides');
+        }
+        return;
+      }
+      if (delta > 0) {
+        if (state.slide < currentSlideCount() - 1) state.slide++;
+        else state.mode = 'quiz';
+      } else if (delta < 0) {
+        if (state.slide > 0) state.slide--;
+        else if (state.module > 0) {
+          state.module--;
+          state.slide = window.WORKSHOP_INDEX.modules[state.module].slides - 1;
+        }
+      }
+      saveState();
+      render();
+    }
+    function toggleToc(force) {
+      if (!window.matchMedia('(max-width: 920px)').matches) return;
+      const toc = document.getElementById('toc');
+      const shouldOpen = typeof force === 'boolean' ? force : !toc.classList.contains('open');
+      toc.classList.toggle('open', shouldOpen);
+      overlay.style.display = shouldOpen ? 'block' : 'none';
+    }
+    function handleKeydown(event) {
+      if (event.key === 't' || event.key === 'T') return toggleToc();
+      if (event.key === 'ArrowRight' || event.key === ' ') { if (!(event.key === ' ' && event.shiftKey)) step(1); else step(-1); event.preventDefault(); return; }
+      if (event.key === 'ArrowLeft') return step(-1);
+      if (event.key === 'Home') return jump(0, 0, 'slides');
+      if (event.key === 'End') { const last = modules.length - 1; return jump(last, window.WORKSHOP_INDEX.modules[last].slides - 1, 'quiz'); }
+    }
+    document.addEventListener('keydown', handleKeydown);
+    saveState();
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+{
+  "source_pdf": "C:\\Users\\Robert\\Downloads\\jesc1dd\\jesc112.pdf",
+  "page_count": 13,
+  "image_count": 31,
+  "page_preview_count": 13,
+  "images": [
+    {
+      "page": 1,
+      "image_index": 1,
+      "xref": 193,
+      "path": "images\\page_0001_img_01.png"
+    },
+    {
+      "page": 1,
+      "image_index": 2,
+      "xref": 180,
+      "path": "images\\page_0001_img_02.png"
+    },
+    {
+      "page": 1,
+      "image_index": 3,
+      "xref": 194,
+      "path": "images\\page_0001_img_03.png"
+    },
+    {
+      "page": 1,
+      "image_index": 4,
+      "xref": 505,
+      "path": "images\\page_0001_img_04.png"
+    },
+    {
+      "page": 1,
+      "image_index": 5,
+      "xref": 510,
+      "path": "images\\page_0001_img_05.png"
+    },
+    {
+      "page": 2,
+      "image_index": 1,
+      "xref": 180,
+      "path": "images\\page_0002_img_01.png"
+    },
+    {
+      "page": 2,
+      "image_index": 2,
+      "xref": 490,
+      "path": "images\\page_0002_img_02.png"
+    },
+    {
+      "page": 2,
+      "image_index": 3,
+      "xref": 495,
+      "path": "images\\page_0002_img_03.png"
+    },
+    {
+      "page": 3,
+      "image_index": 1,
+      "xref": 475,
+      "path": "images\\page_0003_img_01.png"
+    },
+    {
+      "page": 3,
+      "image_index": 2,
+      "xref": 480,
+      "path": "images\\page_0003_img_02.png"
+    },
+    {
+      "page": 4,
+      "image_index": 1,
+      "xref": 460,
+      "path": "images\\page_0004_img_01.png"
+    },
+    {
+      "page": 4,
+      "image_index": 2,
+      "xref": 465,
+      "path": "images\\page_0004_img_02.png"
+    },
+    {
+      "page": 5,
+      "image_index": 1,
+      "xref": 10,
+      "path": "images\\page_0005_img_01.jpeg"
+    },
+    {
+      "page": 5,
+      "image_index": 2,
+      "xref": 445,
+      "path": "images\\page_0005_img_02.png"
+    },
+    {
+      "page": 5,
+      "image_index": 3,
+      "xref": 450,
+      "path": "images\\page_0005_img_03.png"
+    },
+    {
+      "page": 6,
+      "image_index": 1,
+      "xref": 430,
+      "path": "images\\page_0006_img_01.png"
+    },
+    {
+      "page": 6,
+      "image_index": 2,
+      "xref": 435,
+      "path": "images\\page_0006_img_02.png"
+    },
+    {
+      "page": 7,
+      "image_index": 1,
+      "xref": 415,
+      "path": "images\\page_0007_img_01.png"
+    },
+    {
+      "page": 7,
+      "image_index": 2,
+      "xref": 420,
+      "path": "images\\page_0007_img_02.png"
+    },
+    {
+      "page": 8,
+      "image_index": 1,
+      "xref": 400,
+      "path": "images\\page_0008_img_01.png"
+    },
+    {
+      "page": 8,
+      "image_index": 2,
+      "xref": 405,
+      "path": "images\\page_0008_img_02.png"
+    },
+    {
+      "page": 9,
+      "image_index": 1,
+      "xref": 385,
+      "path": "images\\page_0009_img_01.png"
+    },
+    {
+      "page": 9,
+      "image_index": 2,
+      "xref": 390,
+      "path": "images\\page_0009_img_02.png"
+    },
+    {
+      "page": 10,
+      "image_index": 1,
+      "xref": 370,
+      "path": "images\\page_0010_img_01.png"
+    },
+    {
+      "page": 10,
+      "image_index": 2,
+      "xref": 375,
+      "path": "images\\page_0010_img_02.png"
+    },
+    {
+      "page": 11,
+      "image_index": 1,
+      "xref": 355,
+      "path": "images\\page_0011_img_01.png"
+    },
+    {
+      "page": 11,
+      "image_index": 2,
+      "xref": 360,
+      "path": "images\\page_0011_img_02.png"
+    },
+    {
+      "page": 12,
+      "image_index": 1,
+      "xref": 340,
+      "path": "images\\page_0012_img_01.png"
+    },
+    {
+      "page": 12,
+      "image_index": 2,
+      "xref": 345,
+      "path": "images\\page_0012_img_02.png"
+    },
+    {
+      "page": 13,
+      "image_index": 1,
+      "xref": 325,
+      "path": "images\\page_0013_img_01.png"
+    },
+    {
+      "page": 13,
+      "image_index": 2,
+      "xref": 330,
+      "path": "images\\page_0013_img_02.png"
+    }
+  ]
+}
