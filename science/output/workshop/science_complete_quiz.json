@@ -1,0 +1,3979 @@
+{
+  "title": "Science Complete Workshop - Merged workshop built from completed science outputs in science/output",
+  "version": "1.0",
+  "totalQuestions": 305,
+  "modules": [
+    {
+      "id": 0,
+      "name": "Merged Overview",
+      "questions": [
+        {
+          "question": "Which science output is not included in this merged workshop because it lacks a completed workshop HTML in `science/output`?",
+          "options": [
+            "jesc101",
+            "jesc102",
+            "jesc112",
+            "jesc1an"
+          ],
+          "answer": 0,
+          "explanation": "The `science/output/jesc101` folder contains extraction output, but not a finished workshop HTML and quiz JSON.",
+          "id": "science_complete_m0_q1"
+        },
+        {
+          "question": "What is the main purpose of this merged deck?",
+          "options": [
+            "To let the learner study all completed science workshops from one HTML file",
+            "To delete the original workshop folders",
+            "To convert the PDFs again from scratch",
+            "To remove quiz slides from the science content"
+          ],
+          "answer": 0,
+          "explanation": "The merged deck preserves the completed workshop content while giving it a single entry point.",
+          "id": "science_complete_m0_q2"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "Acids, Bases and Salts - M0: Colour Clues and Safe Clues",
+      "questions": [
+        {
+          "question": "Which kind of substance is usually linked with a sour taste?",
+          "options": [
+            "Acid",
+            "Base",
+            "Salt",
+            "Metal"
+          ],
+          "answer": 0,
+          "explanation": "Sour taste is one common everyday clue for acids.",
+          "id": "science_complete_m1_q1"
+        },
+        {
+          "question": "Which safe tool helps you identify acids and bases without tasting them?",
+          "options": [
+            "Indicator",
+            "Magnet",
+            "Thermometer",
+            "Pulley"
+          ],
+          "answer": 0,
+          "explanation": "Indicators change colour to reveal acidic or basic nature.",
+          "id": "science_complete_m1_q2"
+        },
+        {
+          "question": "What happens to blue litmus paper in an acidic solution?",
+          "options": [
+            "It turns red",
+            "It turns green",
+            "It turns blue again",
+            "It becomes colourless"
+          ],
+          "answer": 0,
+          "explanation": "Blue litmus turning red is a classic acid test.",
+          "id": "science_complete_m1_q3"
+        },
+        {
+          "question": "What happens to red litmus paper in a basic solution?",
+          "options": [
+            "It turns blue",
+            "It turns yellow",
+            "It stays permanently red",
+            "It melts"
+          ],
+          "answer": 0,
+          "explanation": "Bases turn red litmus blue.",
+          "id": "science_complete_m1_q4"
+        },
+        {
+          "question": "Which kitchen material can act as a natural indicator?",
+          "options": [
+            "Turmeric",
+            "Sand",
+            "Salt crystals",
+            "Charcoal"
+          ],
+          "answer": 0,
+          "explanation": "Turmeric is a natural indicator mentioned in the source material.",
+          "id": "science_complete_m1_q5"
+        },
+        {
+          "question": "Why should you not taste an unknown laboratory liquid?",
+          "options": [
+            "Because it may be harmful",
+            "Because it always tastes sweet",
+            "Because tasting changes its pH",
+            "Because it becomes a gas"
+          ],
+          "answer": 0,
+          "explanation": "Safety comes first. Unknown chemicals should never be tasted.",
+          "id": "science_complete_m1_q6"
+        },
+        {
+          "question": "Which indicator is especially helpful for comparing the strength of acids and bases?",
+          "options": [
+            "Universal indicator",
+            "Iron filings",
+            "Copper wire",
+            "Filter paper"
+          ],
+          "answer": 0,
+          "explanation": "Universal indicator gives a colour range linked with pH.",
+          "id": "science_complete_m1_q7"
+        },
+        {
+          "question": "A soap solution is most likely to be",
+          "options": [
+            "basic",
+            "acidic",
+            "neutral gas",
+            "metallic"
+          ],
+          "answer": 0,
+          "explanation": "Soap solution is commonly basic.",
+          "id": "science_complete_m1_q8"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Acids, Bases and Salts - M1: Reactions and Neutralisation",
+      "questions": [
+        {
+          "question": "When an acid reacts with a metal, which gas is usually released?",
+          "options": [
+            "Hydrogen",
+            "Nitrogen",
+            "Helium",
+            "Chlorine"
+          ],
+          "answer": 0,
+          "explanation": "Acid-metal reactions commonly produce hydrogen gas.",
+          "id": "science_complete_m2_q1"
+        },
+        {
+          "question": "When an acid reacts with a carbonate, which gas is released?",
+          "options": [
+            "Carbon dioxide",
+            "Oxygen",
+            "Hydrogen",
+            "Argon"
+          ],
+          "answer": 0,
+          "explanation": "Acids reacting with carbonates release carbon dioxide.",
+          "id": "science_complete_m2_q2"
+        },
+        {
+          "question": "What are the products of a neutralisation reaction?",
+          "options": [
+            "Salt and water",
+            "Metal and oxygen",
+            "Only gas",
+            "Only water"
+          ],
+          "answer": 0,
+          "explanation": "Neutralisation is the reaction between an acid and a base to form salt and water.",
+          "id": "science_complete_m2_q3"
+        },
+        {
+          "question": "Which kind of oxide usually behaves like a base?",
+          "options": [
+            "Metal oxide",
+            "Non-metal oxide",
+            "Noble gas oxide",
+            "Water only"
+          ],
+          "answer": 0,
+          "explanation": "Metal oxides generally show basic behaviour.",
+          "id": "science_complete_m2_q4"
+        },
+        {
+          "question": "Which kind of oxide often behaves like an acid?",
+          "options": [
+            "Non-metal oxide",
+            "Metal oxide",
+            "Plastic oxide",
+            "Glass oxide"
+          ],
+          "answer": 0,
+          "explanation": "Non-metal oxides often show acidic behaviour.",
+          "id": "science_complete_m2_q5"
+        },
+        {
+          "question": "Why do antacids help a person with too much stomach acid?",
+          "options": [
+            "They contain basic substances that neutralise acid",
+            "They increase the acid quickly",
+            "They freeze the stomach",
+            "They remove all water from the stomach"
+          ],
+          "answer": 0,
+          "explanation": "Antacids work through neutralisation.",
+          "id": "science_complete_m2_q6"
+        },
+        {
+          "question": "Which observation may suggest that a carbonate is reacting with an acid?",
+          "options": [
+            "Fizzing or bubbling",
+            "The liquid becomes magnetic",
+            "The beaker disappears",
+            "The solution always turns black"
+          ],
+          "answer": 0,
+          "explanation": "Carbon dioxide gas causes fizzing in acid-carbonate reactions.",
+          "id": "science_complete_m2_q7"
+        },
+        {
+          "question": "Which word best describes a reaction in which acid and base cancel each other's effect?",
+          "options": [
+            "Neutralisation",
+            "Rusting",
+            "Distillation",
+            "Filtration"
+          ],
+          "answer": 0,
+          "explanation": "Neutralisation is the correct scientific term.",
+          "id": "science_complete_m2_q8"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Acids, Bases and Salts - M2: The pH Scale",
+      "questions": [
+        {
+          "question": "What pH value is considered neutral?",
+          "options": [
+            "7",
+            "0",
+            "3",
+            "14"
+          ],
+          "answer": 0,
+          "explanation": "A neutral solution has pH 7.",
+          "id": "science_complete_m3_q1"
+        },
+        {
+          "question": "A solution with pH 3 is",
+          "options": [
+            "acidic",
+            "basic",
+            "metallic",
+            "neutral gas"
+          ],
+          "answer": 0,
+          "explanation": "Any pH below 7 is acidic.",
+          "id": "science_complete_m3_q2"
+        },
+        {
+          "question": "A solution with pH 11 is",
+          "options": [
+            "basic",
+            "acidic",
+            "neutral",
+            "salt only"
+          ],
+          "answer": 0,
+          "explanation": "Any pH above 7 is basic.",
+          "id": "science_complete_m3_q3"
+        },
+        {
+          "question": "Which direction on the pH scale shows stronger acidity?",
+          "options": [
+            "Toward 0",
+            "Toward 14",
+            "Toward 7 from both sides equally",
+            "There is no pattern"
+          ],
+          "answer": 0,
+          "explanation": "Lower pH values mean stronger acidity.",
+          "id": "science_complete_m3_q4"
+        },
+        {
+          "question": "Which direction on the pH scale shows stronger basicity?",
+          "options": [
+            "Toward 14",
+            "Toward 0",
+            "Toward 7 only",
+            "Toward 1"
+          ],
+          "answer": 0,
+          "explanation": "Higher pH values mean stronger basicity.",
+          "id": "science_complete_m3_q5"
+        },
+        {
+          "question": "Why is pH useful in farming?",
+          "options": [
+            "Because soil pH affects plant growth",
+            "Because it turns plants into metals",
+            "Because it removes sunlight",
+            "Because it measures wind speed"
+          ],
+          "answer": 0,
+          "explanation": "The right soil pH helps crops grow well.",
+          "id": "science_complete_m3_q6"
+        },
+        {
+          "question": "Why is very low pH harmful to tooth enamel?",
+          "options": [
+            "Strong acidity can damage it",
+            "It makes teeth magnetic",
+            "It turns teeth into salt",
+            "It increases chlorophyll"
+          ],
+          "answer": 0,
+          "explanation": "Acidic conditions can erode tooth enamel.",
+          "id": "science_complete_m3_q7"
+        },
+        {
+          "question": "Which tool is commonly used to estimate pH through colour change?",
+          "options": [
+            "Universal indicator",
+            "Compass",
+            "Ruler",
+            "Spring balance"
+          ],
+          "answer": 0,
+          "explanation": "Universal indicator links colour shades to pH values.",
+          "id": "science_complete_m3_q8"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Acids, Bases and Salts - M3: Helpful Salts in Daily Life",
+      "questions": [
+        {
+          "question": "Which familiar substance is an important raw material for making many useful chemicals?",
+          "options": [
+            "Common salt",
+            "Sand only",
+            "Coal only",
+            "Plastic only"
+          ],
+          "answer": 0,
+          "explanation": "Common salt is a major raw material in this topic.",
+          "id": "science_complete_m4_q1"
+        },
+        {
+          "question": "Which substance is commonly used in baking and some antacids?",
+          "options": [
+            "Baking soda",
+            "Copper sulphate",
+            "Iron rust",
+            "Graphite"
+          ],
+          "answer": 0,
+          "explanation": "Baking soda has both kitchen and health-related uses.",
+          "id": "science_complete_m4_q2"
+        },
+        {
+          "question": "Which substance is useful for cleaning and softening hard water?",
+          "options": [
+            "Washing soda",
+            "Lime water",
+            "Hydrogen gas",
+            "Nitrogen gas"
+          ],
+          "answer": 0,
+          "explanation": "Washing soda is used in cleaning and water treatment.",
+          "id": "science_complete_m4_q3"
+        },
+        {
+          "question": "What does POP stand for?",
+          "options": [
+            "Plaster of Paris",
+            "Power of Pressure",
+            "Point of pH",
+            "Part of Plastic"
+          ],
+          "answer": 0,
+          "explanation": "POP is the short form of Plaster of Paris.",
+          "id": "science_complete_m4_q4"
+        },
+        {
+          "question": "Plaster of Paris is useful for making",
+          "options": [
+            "casts and moulds",
+            "electric current",
+            "rainbows",
+            "oxygen cylinders"
+          ],
+          "answer": 0,
+          "explanation": "POP is widely used for casts, moulds, and decorative items.",
+          "id": "science_complete_m4_q5"
+        },
+        {
+          "question": "Which product is often used for sanitation and disinfection?",
+          "options": [
+            "Bleaching powder",
+            "Sugar",
+            "Iron nails",
+            "Chalk dust"
+          ],
+          "answer": 0,
+          "explanation": "Bleaching powder is used in sanitation-related work.",
+          "id": "science_complete_m4_q6"
+        },
+        {
+          "question": "What is one reason salts are interesting in science?",
+          "options": [
+            "They can have very different uses in daily life",
+            "They never react",
+            "They only exist in gases",
+            "They always taste sweet"
+          ],
+          "answer": 0,
+          "explanation": "Different salts have very different properties and uses.",
+          "id": "science_complete_m4_q7"
+        },
+        {
+          "question": "Which gas can be released from baking soda in some reactions?",
+          "options": [
+            "Carbon dioxide",
+            "Hydrogen",
+            "Neon",
+            "Helium"
+          ],
+          "answer": 0,
+          "explanation": "Baking soda can release carbon dioxide in suitable reactions.",
+          "id": "science_complete_m4_q8"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Metals and Non-metals - M0: Spotting Metals",
+      "questions": [
+        {
+          "question": "What does metallic lustre mean?",
+          "options": [
+            "A shiny surface",
+            "A rough surface",
+            "A sour taste",
+            "A gas bubble"
+          ],
+          "answer": 0,
+          "explanation": "Lustre means shine.",
+          "id": "science_complete_m5_q1"
+        },
+        {
+          "question": "Which property allows a metal to be hammered into sheets?",
+          "options": [
+            "Malleability",
+            "Brittleness",
+            "Acidity",
+            "Neutrality"
+          ],
+          "answer": 0,
+          "explanation": "Malleability is the ability to form sheets.",
+          "id": "science_complete_m5_q2"
+        },
+        {
+          "question": "Which property allows a metal to be drawn into wires?",
+          "options": [
+            "Ductility",
+            "Rusting",
+            "Softness",
+            "Transparency"
+          ],
+          "answer": 0,
+          "explanation": "Ductility is needed for making wires.",
+          "id": "science_complete_m5_q3"
+        },
+        {
+          "question": "Why is copper widely used in electrical wiring?",
+          "options": [
+            "It conducts electricity well",
+            "It is a gas",
+            "It is always colourless",
+            "It is softer than wax"
+          ],
+          "answer": 0,
+          "explanation": "Copper is an excellent conductor.",
+          "id": "science_complete_m5_q4"
+        },
+        {
+          "question": "Which metal is liquid at room temperature?",
+          "options": [
+            "Mercury",
+            "Iron",
+            "Copper",
+            "Magnesium"
+          ],
+          "answer": 0,
+          "explanation": "Mercury is the common liquid metal.",
+          "id": "science_complete_m5_q5"
+        },
+        {
+          "question": "Which metal is soft enough to cut with a knife?",
+          "options": [
+            "Sodium",
+            "Gold",
+            "Iron",
+            "Zinc"
+          ],
+          "answer": 0,
+          "explanation": "Sodium is unusually soft for a metal.",
+          "id": "science_complete_m5_q6"
+        },
+        {
+          "question": "What does sonorous mean?",
+          "options": [
+            "Makes a ringing sound when struck",
+            "Turns litmus red",
+            "Breaks into powder in water",
+            "Always floats"
+          ],
+          "answer": 0,
+          "explanation": "Metals such as bells are described as sonorous.",
+          "id": "science_complete_m5_q7"
+        },
+        {
+          "question": "Which non-metal is a well-known conductor exception?",
+          "options": [
+            "Graphite",
+            "Sulphur",
+            "Phosphorus",
+            "Iodine"
+          ],
+          "answer": 0,
+          "explanation": "Graphite conducts electricity even though it is a non-metal.",
+          "id": "science_complete_m5_q8"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Metals and Non-metals - M1: Reactions of Metals and Non-metals",
+      "questions": [
+        {
+          "question": "When a metal reacts with oxygen, what is commonly formed?",
+          "options": [
+            "Metal oxide",
+            "Metal chloride only",
+            "Sugar",
+            "Soap"
+          ],
+          "answer": 0,
+          "explanation": "Metal + oxygen usually forms a metal oxide.",
+          "id": "science_complete_m6_q1"
+        },
+        {
+          "question": "What gas is often produced when a metal reacts with an acid?",
+          "options": [
+            "Hydrogen",
+            "Neon",
+            "Oxygen only",
+            "Carbon monoxide"
+          ],
+          "answer": 0,
+          "explanation": "Metal-acid reactions commonly release hydrogen.",
+          "id": "science_complete_m6_q2"
+        },
+        {
+          "question": "Which pair of metals is stored carefully because it reacts very strongly?",
+          "options": [
+            "Sodium and potassium",
+            "Gold and silver",
+            "Copper and iron",
+            "Lead and tin"
+          ],
+          "answer": 0,
+          "explanation": "Sodium and potassium are highly reactive.",
+          "id": "science_complete_m6_q3"
+        },
+        {
+          "question": "Many metal oxides are",
+          "options": [
+            "basic",
+            "always neutral",
+            "always acidic",
+            "living"
+          ],
+          "answer": 0,
+          "explanation": "Metal oxides often show basic character.",
+          "id": "science_complete_m6_q4"
+        },
+        {
+          "question": "Many non-metal oxides are",
+          "options": [
+            "acidic",
+            "always metallic",
+            "always neutral",
+            "always liquid"
+          ],
+          "answer": 0,
+          "explanation": "Non-metal oxides commonly show acidic character.",
+          "id": "science_complete_m6_q5"
+        },
+        {
+          "question": "An oxide that reacts with both acids and bases is called",
+          "options": [
+            "amphoteric",
+            "neutral only",
+            "inert",
+            "radioactive"
+          ],
+          "answer": 0,
+          "explanation": "Aluminium oxide and zinc oxide are common amphoteric examples.",
+          "id": "science_complete_m6_q6"
+        },
+        {
+          "question": "Why do metals show different speeds of reaction?",
+          "options": [
+            "Because they have different reactivities",
+            "Because they all have the same reactivity",
+            "Because oxygen changes into metal",
+            "Because acids disappear"
+          ],
+          "answer": 0,
+          "explanation": "Reactivity differences explain reaction speed.",
+          "id": "science_complete_m6_q7"
+        },
+        {
+          "question": "Which metal reaction clue may show that hydrogen is being produced?",
+          "options": [
+            "Bubbling or fizzing",
+            "The metal becomes invisible",
+            "The beaker becomes magnetic",
+            "Everything freezes instantly"
+          ],
+          "answer": 0,
+          "explanation": "Gas release is often seen as fizzing.",
+          "id": "science_complete_m6_q8"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Metals and Non-metals - M2: Reactivity and Ionic Compounds",
+      "questions": [
+        {
+          "question": "What can a more reactive metal do to a less reactive metal in a compound?",
+          "options": [
+            "Displace it",
+            "Turn it into water",
+            "Make it disappear completely",
+            "Always freeze it"
+          ],
+          "answer": 0,
+          "explanation": "Displacement depends on reactivity order.",
+          "id": "science_complete_m7_q1"
+        },
+        {
+          "question": "Highly reactive metals are usually found in nature as",
+          "options": [
+            "compounds",
+            "free shining pieces",
+            "gases only",
+            "plants"
+          ],
+          "answer": 0,
+          "explanation": "Highly reactive metals usually combine with other substances.",
+          "id": "science_complete_m7_q2"
+        },
+        {
+          "question": "Less reactive metals may sometimes be found",
+          "options": [
+            "in free state",
+            "only in acids",
+            "only in water",
+            "inside indicators"
+          ],
+          "answer": 0,
+          "explanation": "Gold and similar metals can occur free in nature.",
+          "id": "science_complete_m7_q3"
+        },
+        {
+          "question": "What type of compound often forms when metals react with non-metals?",
+          "options": [
+            "Ionic compound",
+            "Only organic compound",
+            "Protein",
+            "Plastic"
+          ],
+          "answer": 0,
+          "explanation": "Metal-non-metal reactions often produce ionic compounds.",
+          "id": "science_complete_m7_q4"
+        },
+        {
+          "question": "Ionic compounds usually have",
+          "options": [
+            "high melting points",
+            "very low melting points like ice cream",
+            "no solid form",
+            "no charged particles"
+          ],
+          "answer": 0,
+          "explanation": "Strong ionic attraction gives high melting points.",
+          "id": "science_complete_m7_q5"
+        },
+        {
+          "question": "When do ionic compounds conduct electricity well?",
+          "options": [
+            "When molten or dissolved in water",
+            "Only as solid blocks",
+            "Only when frozen",
+            "Never"
+          ],
+          "answer": 0,
+          "explanation": "Ions need freedom to move in order to conduct.",
+          "id": "science_complete_m7_q6"
+        },
+        {
+          "question": "Why do solid ionic compounds conduct poorly?",
+          "options": [
+            "Their ions cannot move freely",
+            "They have no charges at all",
+            "They become wood",
+            "They lose all atoms"
+          ],
+          "answer": 0,
+          "explanation": "In the solid state the ions are fixed in place.",
+          "id": "science_complete_m7_q7"
+        },
+        {
+          "question": "Which idea helps explain both metal extraction and displacement reactions?",
+          "options": [
+            "Reactivity",
+            "Colour alone",
+            "Taste alone",
+            "Shape alone"
+          ],
+          "answer": 0,
+          "explanation": "Reactivity is the connecting idea.",
+          "id": "science_complete_m7_q8"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Metals and Non-metals - M3: Corrosion, Alloys and Uses",
+      "questions": [
+        {
+          "question": "What is rusting?",
+          "options": [
+            "Corrosion of iron",
+            "Melting of copper",
+            "Freezing of mercury",
+            "A neutralisation reaction"
+          ],
+          "answer": 0,
+          "explanation": "Rusting is the corrosion of iron.",
+          "id": "science_complete_m8_q1"
+        },
+        {
+          "question": "Which two things are important for rusting iron?",
+          "options": [
+            "Oxygen and moisture",
+            "Sunlight and sand",
+            "Only nitrogen",
+            "Only carbon dioxide"
+          ],
+          "answer": 0,
+          "explanation": "Rusting needs both oxygen and moisture.",
+          "id": "science_complete_m8_q2"
+        },
+        {
+          "question": "Which method can help protect iron from rusting?",
+          "options": [
+            "Painting or galvanising",
+            "Cutting it into smaller pieces",
+            "Adding sugar",
+            "Heating it every hour"
+          ],
+          "answer": 0,
+          "explanation": "Protective coatings reduce contact with air and water.",
+          "id": "science_complete_m8_q3"
+        },
+        {
+          "question": "What is an alloy?",
+          "options": [
+            "A mixture made to improve metal properties",
+            "A single pure metal only",
+            "A type of gas",
+            "A kind of acid"
+          ],
+          "answer": 0,
+          "explanation": "Alloys are designed mixtures.",
+          "id": "science_complete_m8_q4"
+        },
+        {
+          "question": "Why is pure gold often mixed with other metals?",
+          "options": [
+            "To make it harder",
+            "To turn it into a gas",
+            "To make it sour",
+            "To remove shine"
+          ],
+          "answer": 0,
+          "explanation": "Pure gold is soft, so jewellery uses harder mixtures.",
+          "id": "science_complete_m8_q5"
+        },
+        {
+          "question": "Which material is an alloy widely used for strength?",
+          "options": [
+            "Steel",
+            "Oxygen",
+            "Graphite",
+            "Chlorophyll"
+          ],
+          "answer": 0,
+          "explanation": "Steel is a useful strong alloy.",
+          "id": "science_complete_m8_q6"
+        },
+        {
+          "question": "Why do engineers use alloys?",
+          "options": [
+            "To get better properties than pure metals",
+            "To remove all atoms",
+            "To stop metals from existing",
+            "To make everything acidic"
+          ],
+          "answer": 0,
+          "explanation": "Alloys can be stronger or more corrosion-resistant.",
+          "id": "science_complete_m8_q7"
+        },
+        {
+          "question": "Corrosion is a problem because it",
+          "options": [
+            "damages useful metal objects",
+            "always improves strength",
+            "creates food",
+            "turns metal into plants"
+          ],
+          "answer": 0,
+          "explanation": "Corrosion weakens and damages metal structures.",
+          "id": "science_complete_m8_q8"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Carbon and its Compounds - M0: Why Carbon Is Special",
+      "questions": [
+        {
+          "question": "What does tetravalency of carbon mean?",
+          "options": [
+            "Carbon forms four bonds",
+            "Carbon has four colours",
+            "Carbon is always a gas",
+            "Carbon dissolves every metal"
+          ],
+          "answer": 0,
+          "explanation": "Tetravalency means carbon has combining capacity of four.",
+          "id": "science_complete_m9_q1"
+        },
+        {
+          "question": "What does catenation mean?",
+          "options": [
+            "Carbon atoms link to each other",
+            "Carbon turns into oxygen",
+            "Carbon becomes an acid",
+            "Carbon loses all bonds"
+          ],
+          "answer": 0,
+          "explanation": "Catenation is the ability to form chains with itself.",
+          "id": "science_complete_m9_q2"
+        },
+        {
+          "question": "Why can carbon form so many compounds?",
+          "options": [
+            "Because of tetravalency and catenation",
+            "Because it is always molten",
+            "Because it never bonds",
+            "Because it has only one valency"
+          ],
+          "answer": 0,
+          "explanation": "Those two features together create huge variety.",
+          "id": "science_complete_m9_q3"
+        },
+        {
+          "question": "A covalent bond is formed by",
+          "options": [
+            "sharing electrons",
+            "throwing away all electrons",
+            "only transferring neutrons",
+            "breaking the atom completely"
+          ],
+          "answer": 0,
+          "explanation": "Covalent bonding involves sharing electrons.",
+          "id": "science_complete_m9_q4"
+        },
+        {
+          "question": "Many carbon compounds are poor conductors because they are mainly",
+          "options": [
+            "covalent",
+            "metallic",
+            "radio waves",
+            "alloys"
+          ],
+          "answer": 0,
+          "explanation": "Covalent compounds generally conduct poorly.",
+          "id": "science_complete_m9_q5"
+        },
+        {
+          "question": "Which element is central in food, fuels, and many living structures?",
+          "options": [
+            "Carbon",
+            "Helium",
+            "Neon",
+            "Argon"
+          ],
+          "answer": 0,
+          "explanation": "Carbon chemistry is everywhere in daily life.",
+          "id": "science_complete_m9_q6"
+        },
+        {
+          "question": "What kind of shapes can carbon skeletons form?",
+          "options": [
+            "Chains, branches, and rings",
+            "Only squares",
+            "Only triangles",
+            "Only liquids"
+          ],
+          "answer": 0,
+          "explanation": "Carbon can build many structural patterns.",
+          "id": "science_complete_m9_q7"
+        },
+        {
+          "question": "Which type of compounds often has lower melting points than ionic compounds?",
+          "options": [
+            "Many covalent carbon compounds",
+            "All metal oxides",
+            "Alloys only",
+            "Salts only"
+          ],
+          "answer": 0,
+          "explanation": "Covalent compounds often melt more easily than ionic ones.",
+          "id": "science_complete_m9_q8"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Carbon and its Compounds - M1: Hydrocarbons and Families",
+      "questions": [
+        {
+          "question": "A hydrocarbon contains only",
+          "options": [
+            "carbon and hydrogen",
+            "carbon and oxygen",
+            "hydrogen and nitrogen",
+            "carbon and iron"
+          ],
+          "answer": 0,
+          "explanation": "Hydrocarbons are made only of carbon and hydrogen.",
+          "id": "science_complete_m10_q1"
+        },
+        {
+          "question": "A saturated hydrocarbon has",
+          "options": [
+            "only single bonds between carbon atoms",
+            "only triple bonds",
+            "only ionic bonds",
+            "no hydrogen atoms"
+          ],
+          "answer": 0,
+          "explanation": "Saturated hydrocarbons contain only single carbon-carbon bonds.",
+          "id": "science_complete_m10_q2"
+        },
+        {
+          "question": "An unsaturated hydrocarbon may contain",
+          "options": [
+            "double or triple bonds",
+            "only sodium",
+            "only oxygen gas",
+            "only single bonds and no carbon"
+          ],
+          "answer": 0,
+          "explanation": "Unsaturated hydrocarbons include multiple bonds.",
+          "id": "science_complete_m10_q3"
+        },
+        {
+          "question": "Which type of hydrocarbon usually undergoes addition reactions more easily?",
+          "options": [
+            "Unsaturated hydrocarbon",
+            "Saturated hydrocarbon",
+            "Noble gas",
+            "Salt crystal"
+          ],
+          "answer": 0,
+          "explanation": "Multiple bonds make addition easier.",
+          "id": "science_complete_m10_q4"
+        },
+        {
+          "question": "What is a homologous series?",
+          "options": [
+            "A family of compounds with similar structures and patterns",
+            "A type of rust",
+            "A pH scale colour",
+            "A metal alloy"
+          ],
+          "answer": 0,
+          "explanation": "Homologous series organise compounds into related families.",
+          "id": "science_complete_m10_q5"
+        },
+        {
+          "question": "Why are homologous series useful?",
+          "options": [
+            "They help you see patterns instead of memorising each compound separately",
+            "They remove all carbon",
+            "They stop reactions",
+            "They make metals softer"
+          ],
+          "answer": 0,
+          "explanation": "Pattern recognition is the key benefit.",
+          "id": "science_complete_m10_q6"
+        },
+        {
+          "question": "Which statement fits saturated compounds best?",
+          "options": [
+            "They are full of single carbon-carbon bonds",
+            "They always contain chlorine",
+            "They are metals",
+            "They never burn"
+          ],
+          "answer": 0,
+          "explanation": "Single bonds define saturation.",
+          "id": "science_complete_m10_q7"
+        },
+        {
+          "question": "Which statement fits unsaturated compounds best?",
+          "options": [
+            "They contain at least one multiple bond",
+            "They contain no carbon",
+            "They are always solids",
+            "They always have pH 7"
+          ],
+          "answer": 0,
+          "explanation": "Multiple bonds define unsaturation.",
+          "id": "science_complete_m10_q8"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Carbon and its Compounds - M2: Useful Reactions of Carbon Compounds",
+      "questions": [
+        {
+          "question": "What is combustion?",
+          "options": [
+            "Burning of a substance in oxygen",
+            "Freezing of a liquid",
+            "Mixing salt with water",
+            "Only dissolving sugar"
+          ],
+          "answer": 0,
+          "explanation": "Combustion means burning.",
+          "id": "science_complete_m11_q1"
+        },
+        {
+          "question": "A clean blue flame usually suggests",
+          "options": [
+            "more complete burning",
+            "no burning at all",
+            "only water formation",
+            "a magnetic reaction"
+          ],
+          "answer": 0,
+          "explanation": "Blue flames usually indicate better combustion.",
+          "id": "science_complete_m11_q2"
+        },
+        {
+          "question": "A smoky yellow flame suggests",
+          "options": [
+            "incomplete combustion",
+            "neutralisation",
+            "electrolysis",
+            "no carbon present"
+          ],
+          "answer": 0,
+          "explanation": "Soot and smoke indicate incomplete combustion.",
+          "id": "science_complete_m11_q3"
+        },
+        {
+          "question": "What does oxidation often involve?",
+          "options": [
+            "Gain of oxygen or loss of hydrogen",
+            "Gain of sand",
+            "Loss of all atoms",
+            "Only turning into a metal"
+          ],
+          "answer": 0,
+          "explanation": "Oxidation changes substances through oxygen or hydrogen changes.",
+          "id": "science_complete_m11_q4"
+        },
+        {
+          "question": "Which type of compound often undergoes addition reactions?",
+          "options": [
+            "Unsaturated compound",
+            "Noble gas",
+            "Salt only",
+            "Pure metal"
+          ],
+          "answer": 0,
+          "explanation": "Multiple bonds support addition reactions.",
+          "id": "science_complete_m11_q5"
+        },
+        {
+          "question": "What happens in a substitution reaction?",
+          "options": [
+            "One atom or group is replaced by another",
+            "All atoms vanish",
+            "Only heat is removed",
+            "The substance becomes a planet"
+          ],
+          "answer": 0,
+          "explanation": "Substitution means replacement.",
+          "id": "science_complete_m11_q6"
+        },
+        {
+          "question": "Why does bond type matter in carbon chemistry?",
+          "options": [
+            "It affects how compounds react",
+            "It changes gravity",
+            "It removes carbon",
+            "It stops all burning"
+          ],
+          "answer": 0,
+          "explanation": "Structure controls reactivity.",
+          "id": "science_complete_m11_q7"
+        },
+        {
+          "question": "Which reaction type best matches “new atoms join across a multiple bond”?",
+          "options": [
+            "Addition",
+            "Rusting",
+            "Neutralisation",
+            "Filtration"
+          ],
+          "answer": 0,
+          "explanation": "That is the idea of an addition reaction.",
+          "id": "science_complete_m11_q8"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Carbon and its Compounds - M3: Ethanol, Ethanoic Acid and Soap",
+      "questions": [
+        {
+          "question": "Which carbon compound is related to vinegar in dilute form?",
+          "options": [
+            "Ethanoic acid",
+            "Methane",
+            "Carbon dioxide",
+            "Graphite"
+          ],
+          "answer": 0,
+          "explanation": "Vinegar contains dilute ethanoic acid.",
+          "id": "science_complete_m12_q1"
+        },
+        {
+          "question": "Which statement about ethanol is correct?",
+          "options": [
+            "It is flammable",
+            "It is a metal",
+            "It cannot burn",
+            "It is always solid"
+          ],
+          "answer": 0,
+          "explanation": "Ethanol is flammable and must be handled carefully.",
+          "id": "science_complete_m12_q2"
+        },
+        {
+          "question": "Why is safe handling important even for useful chemicals?",
+          "options": [
+            "Because usefulness does not remove risk",
+            "Because useful chemicals can never react",
+            "Because all chemicals are sweet",
+            "Because risk only exists in space"
+          ],
+          "answer": 0,
+          "explanation": "Safety remains important for all chemicals.",
+          "id": "science_complete_m12_q3"
+        },
+        {
+          "question": "Why can soap remove oily dirt better than plain water?",
+          "options": [
+            "Soap interacts with both water and oil",
+            "Soap turns oil into metal",
+            "Soap removes all oxygen",
+            "Soap freezes water instantly"
+          ],
+          "answer": 0,
+          "explanation": "Soap molecules have two different helpful ends.",
+          "id": "science_complete_m12_q4"
+        },
+        {
+          "question": "What is a micelle?",
+          "options": [
+            "A tiny droplet structure that traps oily dirt",
+            "A type of metal wire",
+            "A pH paper",
+            "A salt crystal"
+          ],
+          "answer": 0,
+          "explanation": "Soap forms micelles around oily dirt.",
+          "id": "science_complete_m12_q5"
+        },
+        {
+          "question": "Which part of soap helps connect to oil?",
+          "options": [
+            "The oil-loving end of the soap molecule",
+            "Only the water-loving end",
+            "The QR code",
+            "The indicator colour"
+          ],
+          "answer": 0,
+          "explanation": "Soap has one end that is attracted to oil.",
+          "id": "science_complete_m12_q6"
+        },
+        {
+          "question": "What makes soap a great example in science?",
+          "options": [
+            "Its cleaning action is explained by molecular structure",
+            "It never mixes with water",
+            "It removes all atoms",
+            "It behaves like a noble gas"
+          ],
+          "answer": 0,
+          "explanation": "Soap links molecular design with visible effects.",
+          "id": "science_complete_m12_q7"
+        },
+        {
+          "question": "Ethanoic acid belongs to which broad class of substances in this workshop?",
+          "options": [
+            "Carbon compounds",
+            "Metals",
+            "Noble gases",
+            "Salts only"
+          ],
+          "answer": 0,
+          "explanation": "Ethanoic acid is an important carbon compound.",
+          "id": "science_complete_m12_q8"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Life Processes - M0: What Keeps Living Things Alive",
+      "questions": [
+        {
+          "question": "Why are life processes important?",
+          "options": [
+            "They maintain the body and keep it alive",
+            "They only help in sleeping",
+            "They are needed only for machines",
+            "They remove all molecules"
+          ],
+          "answer": 0,
+          "explanation": "Life processes are the maintenance jobs of living organisms.",
+          "id": "science_complete_m13_q1"
+        },
+        {
+          "question": "Why is visible movement not enough to define life?",
+          "options": [
+            "Because many important life activities are hidden inside the body",
+            "Because all living things are always still",
+            "Because plants are metals",
+            "Because movement does not exist"
+          ],
+          "answer": 0,
+          "explanation": "Internal molecular and cellular activity matters.",
+          "id": "science_complete_m13_q2"
+        },
+        {
+          "question": "Which organisms make their own food?",
+          "options": [
+            "Autotrophs",
+            "Heterotrophs",
+            "Only animals",
+            "Only fungi in this lesson"
+          ],
+          "answer": 0,
+          "explanation": "Autotrophs prepare their own food.",
+          "id": "science_complete_m13_q3"
+        },
+        {
+          "question": "Green plants make food mainly by",
+          "options": [
+            "photosynthesis",
+            "rusting",
+            "neutralisation",
+            "distillation"
+          ],
+          "answer": 0,
+          "explanation": "Photosynthesis is the food-making process in plants.",
+          "id": "science_complete_m13_q4"
+        },
+        {
+          "question": "Which organisms depend on ready-made food?",
+          "options": [
+            "Heterotrophs",
+            "Autotrophs",
+            "Only stones",
+            "Only gases"
+          ],
+          "answer": 0,
+          "explanation": "Heterotrophs depend on other organisms for food.",
+          "id": "science_complete_m13_q5"
+        },
+        {
+          "question": "What does food supply for the body?",
+          "options": [
+            "Energy, growth, and repair materials",
+            "Only colour",
+            "Only sound",
+            "Only magnets"
+          ],
+          "answer": 0,
+          "explanation": "Food supports multiple life needs.",
+          "id": "science_complete_m13_q6"
+        },
+        {
+          "question": "A sleeping person is still alive because",
+          "options": [
+            "life processes continue inside the body",
+            "all cells stop working",
+            "oxygen is no longer needed",
+            "the heart becomes metal"
+          ],
+          "answer": 0,
+          "explanation": "Hidden maintenance processes keep running.",
+          "id": "science_complete_m13_q7"
+        },
+        {
+          "question": "What does the word autotroph suggest?",
+          "options": [
+            "Self-feeding or self-nourishing",
+            "Always moving fast",
+            "Made of metal",
+            "Having no cells"
+          ],
+          "answer": 0,
+          "explanation": "“Auto” helps remember self-made food.",
+          "id": "science_complete_m13_q8"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Life Processes - M1: Respiration and Breathing",
+      "questions": [
+        {
+          "question": "What is respiration mainly about?",
+          "options": [
+            "Releasing energy from food",
+            "Only drinking water",
+            "Only movement of legs",
+            "Only sleeping"
+          ],
+          "answer": 0,
+          "explanation": "Respiration makes food energy usable.",
+          "id": "science_complete_m14_q1"
+        },
+        {
+          "question": "What is breathing?",
+          "options": [
+            "Movement of air in and out of the body",
+            "Breaking down food inside cells",
+            "A kind of alloy",
+            "A neutralisation reaction"
+          ],
+          "answer": 0,
+          "explanation": "Breathing is physical movement of air.",
+          "id": "science_complete_m14_q2"
+        },
+        {
+          "question": "Which process directly releases usable energy inside cells?",
+          "options": [
+            "Respiration",
+            "Breathing only",
+            "Rusting",
+            "Melting"
+          ],
+          "answer": 0,
+          "explanation": "Respiration is the energy-releasing process.",
+          "id": "science_complete_m14_q3"
+        },
+        {
+          "question": "Aerobic respiration needs",
+          "options": [
+            "oxygen",
+            "only salt",
+            "graphite",
+            "kerosene"
+          ],
+          "answer": 0,
+          "explanation": "Aerobic respiration uses oxygen.",
+          "id": "science_complete_m14_q4"
+        },
+        {
+          "question": "Anaerobic respiration happens when",
+          "options": [
+            "oxygen is absent or insufficient",
+            "oxygen is very abundant",
+            "water is solid",
+            "all cells stop"
+          ],
+          "answer": 0,
+          "explanation": "Anaerobic pathways work without enough oxygen.",
+          "id": "science_complete_m14_q5"
+        },
+        {
+          "question": "Why can intense exercise make muscles feel strained?",
+          "options": [
+            "Oxygen supply may not keep up fully with demand",
+            "Because muscles become wooden",
+            "Because breathing stops forever",
+            "Because all food disappears"
+          ],
+          "answer": 0,
+          "explanation": "Hard-working muscles can face oxygen shortage.",
+          "id": "science_complete_m14_q6"
+        },
+        {
+          "question": "Which statement is correct?",
+          "options": [
+            "Breathing and respiration are related but not identical",
+            "They are exactly the same word",
+            "Breathing happens only in plants",
+            "Respiration happens only outside the body"
+          ],
+          "answer": 0,
+          "explanation": "One is movement of air, the other is cellular energy release.",
+          "id": "science_complete_m14_q7"
+        },
+        {
+          "question": "Why does the body need respiration?",
+          "options": [
+            "To make stored food energy usable",
+            "To turn bones into gas",
+            "To create litmus paper",
+            "To stop the heart"
+          ],
+          "answer": 0,
+          "explanation": "Respiration keeps energy available for life processes.",
+          "id": "science_complete_m14_q8"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Life Processes - M2: Transport in Bodies and Plants",
+      "questions": [
+        {
+          "question": "Why does the body need a transport system?",
+          "options": [
+            "To move materials to and from cells",
+            "To change metals into plants",
+            "To stop respiration",
+            "To remove all water"
+          ],
+          "answer": 0,
+          "explanation": "Cells need a delivery system.",
+          "id": "science_complete_m15_q1"
+        },
+        {
+          "question": "Which organ pumps blood through the body?",
+          "options": [
+            "Heart",
+            "Liver",
+            "Kidney",
+            "Stomach"
+          ],
+          "answer": 0,
+          "explanation": "The heart is the main pump.",
+          "id": "science_complete_m15_q2"
+        },
+        {
+          "question": "What does blood carry?",
+          "options": [
+            "Oxygen, nutrients, and wastes",
+            "Only bones",
+            "Only sound",
+            "Only acids"
+          ],
+          "answer": 0,
+          "explanation": "Blood transports many important materials.",
+          "id": "science_complete_m15_q3"
+        },
+        {
+          "question": "Which plant tissue mainly carries water and minerals?",
+          "options": [
+            "Xylem",
+            "Phloem",
+            "Epidermis",
+            "Petal"
+          ],
+          "answer": 0,
+          "explanation": "Xylem is the water-carrying tissue.",
+          "id": "science_complete_m15_q4"
+        },
+        {
+          "question": "Which plant tissue carries prepared food?",
+          "options": [
+            "Phloem",
+            "Xylem",
+            "Bark only",
+            "Root cap only"
+          ],
+          "answer": 0,
+          "explanation": "Phloem transports food.",
+          "id": "science_complete_m15_q5"
+        },
+        {
+          "question": "Why is transport important even in plants?",
+          "options": [
+            "Because different parts need water, minerals, and food",
+            "Because plants do not have cells",
+            "Because roots can fly",
+            "Because leaves are metals"
+          ],
+          "answer": 0,
+          "explanation": "Plants also need internal distribution.",
+          "id": "science_complete_m15_q6"
+        },
+        {
+          "question": "Which statement is true?",
+          "options": [
+            "Transport helps with both supply and waste removal",
+            "Transport only brings colour",
+            "Transport happens only during sleep",
+            "Transport is not needed in multicellular organisms"
+          ],
+          "answer": 0,
+          "explanation": "Delivery and cleanup are both transport roles.",
+          "id": "science_complete_m15_q7"
+        },
+        {
+          "question": "What does the heart mainly act like?",
+          "options": [
+            "A pump",
+            "A magnet",
+            "A pH paper",
+            "A beaker"
+          ],
+          "answer": 0,
+          "explanation": "The heart drives circulation by pumping blood.",
+          "id": "science_complete_m15_q8"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Life Processes - M3: Excretion and Balance",
+      "questions": [
+        {
+          "question": "Why is excretion important?",
+          "options": [
+            "It removes harmful wastes from the body",
+            "It creates all food",
+            "It turns blood into bones",
+            "It stops all movement"
+          ],
+          "answer": 0,
+          "explanation": "Excretion protects the body by removing wastes.",
+          "id": "science_complete_m16_q1"
+        },
+        {
+          "question": "Which organs mainly filter blood to form urine?",
+          "options": [
+            "Kidneys",
+            "Lungs",
+            "Eyes",
+            "Skin only"
+          ],
+          "answer": 0,
+          "explanation": "Kidneys are the main excretory organs.",
+          "id": "science_complete_m16_q2"
+        },
+        {
+          "question": "What is a nephron?",
+          "options": [
+            "A tiny filtering unit in the kidney",
+            "A type of blood vessel",
+            "A food molecule",
+            "A metal alloy"
+          ],
+          "answer": 0,
+          "explanation": "Nephrons do the filtering work.",
+          "id": "science_complete_m16_q3"
+        },
+        {
+          "question": "What can happen if harmful wastes are not removed?",
+          "options": [
+            "They can damage the body",
+            "They become food",
+            "They increase photosynthesis",
+            "They become magnets"
+          ],
+          "answer": 0,
+          "explanation": "Waste buildup is harmful.",
+          "id": "science_complete_m16_q4"
+        },
+        {
+          "question": "Which plant structures help in gas exchange and water loss?",
+          "options": [
+            "Stomata",
+            "Nephrons",
+            "Ribosomes",
+            "Bones"
+          ],
+          "answer": 0,
+          "explanation": "Stomata are important openings in leaves.",
+          "id": "science_complete_m16_q5"
+        },
+        {
+          "question": "Which statement fits life processes best?",
+          "options": [
+            "They work together to maintain balance",
+            "They are all unrelated",
+            "Only nutrition matters",
+            "Only excretion matters"
+          ],
+          "answer": 0,
+          "explanation": "Life processes are connected systems.",
+          "id": "science_complete_m16_q6"
+        },
+        {
+          "question": "What is one major job of the urinary system?",
+          "options": [
+            "Removing dissolved wastes",
+            "Making chlorophyll",
+            "Producing metal sheets",
+            "Raising pH paper"
+          ],
+          "answer": 0,
+          "explanation": "Urine formation helps remove wastes.",
+          "id": "science_complete_m16_q7"
+        },
+        {
+          "question": "Why are nephrons important even though they are tiny?",
+          "options": [
+            "Small structures can perform essential body functions",
+            "Tiny things are never useful",
+            "They replace the heart",
+            "They only store oxygen"
+          ],
+          "answer": 0,
+          "explanation": "Nephrons show how microscopic units do vital work.",
+          "id": "science_complete_m16_q8"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "name": "Control and Coordination Workshop - M0: Why the Body Needs Control",
+      "questions": [
+        {
+          "id": "science_complete_m17_q1",
+          "question": "What do receptors do in the nervous system?",
+          "options": [
+            "They detect changes in the environment",
+            "They make food for the body",
+            "They pump blood through the body",
+            "They store bones in the brain"
+          ],
+          "answer": 0,
+          "explanation": "Receptors are the body's first detectors."
+        },
+        {
+          "id": "science_complete_m17_q2",
+          "question": "Which part of a neuron receives information first?",
+          "options": [
+            "Dendrite",
+            "Axon",
+            "Cell wall",
+            "Nucleus of a leaf cell"
+          ],
+          "answer": 0,
+          "explanation": "The dendrite is where information is first acquired."
+        },
+        {
+          "id": "science_complete_m17_q3",
+          "question": "What is the gap between two neurons called?",
+          "options": [
+            "Synapse",
+            "Pupil",
+            "Valve",
+            "Capillary"
+          ],
+          "answer": 0,
+          "explanation": "The chapter names the tiny gap between neurons as a synapse."
+        },
+        {
+          "id": "science_complete_m17_q4",
+          "question": "Which receptors help you notice taste?",
+          "options": [
+            "Gustatory receptors",
+            "Olfactory receptors",
+            "Reproductive receptors",
+            "Joint receptors"
+          ],
+          "answer": 0,
+          "explanation": "Gustatory receptors detect taste."
+        },
+        {
+          "id": "science_complete_m17_q5",
+          "question": "How does the nervous system send a fast message?",
+          "options": [
+            "By electrical impulses",
+            "By growing new leaves",
+            "By melting proteins",
+            "By turning water into metal"
+          ],
+          "answer": 0,
+          "explanation": "The nervous system uses electrical impulses to carry information."
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "name": "Control and Coordination Workshop - M1: Reflexes and the Brain",
+      "questions": [
+        {
+          "id": "science_complete_m18_q1",
+          "question": "What is a reflex action?",
+          "options": [
+            "A quick automatic response",
+            "A slow writing exercise",
+            "A kind of plant seed",
+            "A stomach juice"
+          ],
+          "answer": 0,
+          "explanation": "The textbook defines reflex action as a quick, automatic response."
+        },
+        {
+          "id": "science_complete_m18_q2",
+          "question": "Which part of the body helps make reflex responses fast?",
+          "options": [
+            "Spinal cord",
+            "Tooth enamel",
+            "Ear lobe",
+            "Rib cage only"
+          ],
+          "answer": 0,
+          "explanation": "The spinal cord handles the shortcut response in a reflex arc."
+        },
+        {
+          "id": "science_complete_m18_q3",
+          "question": "Which brain part helps with balance?",
+          "options": [
+            "Cerebellum",
+            "Retina",
+            "Alveolus",
+            "Stigma"
+          ],
+          "answer": 0,
+          "explanation": "The cerebellum helps coordinate body balance and movement."
+        },
+        {
+          "id": "science_complete_m18_q4",
+          "question": "Which is an involuntary action?",
+          "options": [
+            "Heartbeat",
+            "Drawing a picture",
+            "Clapping on purpose",
+            "Walking to a friend"
+          ],
+          "answer": 0,
+          "explanation": "The chapter lists heartbeat as one of the actions the body controls on its own."
+        },
+        {
+          "id": "science_complete_m18_q5",
+          "question": "Why is the brain protected by the skull and meninges?",
+          "options": [
+            "Because it is delicate and important",
+            "Because it needs sunlight",
+            "Because it is a bone",
+            "Because it can swim"
+          ],
+          "answer": 0,
+          "explanation": "The brain needs strong protection because it controls many body functions."
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "name": "Control and Coordination Workshop - M2: Plants Respond Too",
+      "questions": [
+        {
+          "id": "science_complete_m19_q1",
+          "question": "What does the sensitive plant show when touched?",
+          "options": [
+            "Its leaves fold quickly",
+            "Its roots become wings",
+            "Its flowers turn into fruit",
+            "Its stem becomes metal"
+          ],
+          "answer": 0,
+          "explanation": "The chapter uses the sensitive plant as an example of a quick response to touch."
+        },
+        {
+          "id": "science_complete_m19_q2",
+          "question": "What is a movement caused by growth in a plant called?",
+          "options": [
+            "Tropism",
+            "Synapse",
+            "Reflex arc",
+            "Hormone rush"
+          ],
+          "answer": 0,
+          "explanation": "Growth-based directional movement in plants is called tropism."
+        },
+        {
+          "id": "science_complete_m19_q3",
+          "question": "What is phototropism?",
+          "options": [
+            "Growth in response to light",
+            "Growth in response to sound",
+            "Growth in response to hunger",
+            "Growth in response to metal"
+          ],
+          "answer": 0,
+          "explanation": "Phototropism means the plant grows toward light."
+        },
+        {
+          "id": "science_complete_m19_q4",
+          "question": "What is geotropism?",
+          "options": [
+            "Growth in response to gravity",
+            "Growth in response to colour",
+            "Growth in response to taste",
+            "Growth in response to wind only"
+          ],
+          "answer": 0,
+          "explanation": "Geotropism is the growth response to gravity."
+        },
+        {
+          "id": "science_complete_m19_q5",
+          "question": "Which plant part usually grows downward because of gravity?",
+          "options": [
+            "Root",
+            "Petal",
+            "Leaf blade",
+            "Pollen grain"
+          ],
+          "answer": 0,
+          "explanation": "Roots commonly show positive geotropism and grow downward."
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "name": "Control and Coordination Workshop - M3: Hormones Do the Long-Range Work",
+      "questions": [
+        {
+          "id": "science_complete_m20_q1",
+          "question": "What is the main job of hormones?",
+          "options": [
+            "To carry chemical messages",
+            "To make bones turn into water",
+            "To cut paper in the brain",
+            "To paint the skin blue"
+          ],
+          "answer": 0,
+          "explanation": "Hormones are chemical messengers used for coordination."
+        },
+        {
+          "id": "science_complete_m20_q2",
+          "question": "Which hormone helps control blood sugar?",
+          "options": [
+            "Insulin",
+            "Adrenaline",
+            "Growth hormone",
+            "Olfactory hormone"
+          ],
+          "answer": 0,
+          "explanation": "Insulin helps regulate the sugar level in blood."
+        },
+        {
+          "id": "science_complete_m20_q3",
+          "question": "Which hormone helps the body react in an emergency?",
+          "options": [
+            "Adrenaline",
+            "Insulin",
+            "Digestive juice",
+            "Meninges"
+          ],
+          "answer": 0,
+          "explanation": "Adrenaline prepares the body for quick action in danger."
+        },
+        {
+          "id": "science_complete_m20_q4",
+          "question": "What does feedback help the body do?",
+          "options": [
+            "Keep hormone action balanced",
+            "Make all hormones stop forever",
+            "Turn nerves into bones",
+            "Erase all blood"
+          ],
+          "answer": 0,
+          "explanation": "Feedback keeps hormone levels from going too high or too low."
+        },
+        {
+          "id": "science_complete_m20_q5",
+          "question": "Which system is fast and uses electrical impulses?",
+          "options": [
+            "Nervous system",
+            "Respiratory system",
+            "Digestive system",
+            "Skeleton system"
+          ],
+          "answer": 0,
+          "explanation": "The nervous system sends quick messages as electrical impulses."
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "name": "How Do Organisms Reproduce? Workshop - M0: Why Reproduction Matters",
+      "questions": [
+        {
+          "id": "science_complete_m21_q1",
+          "question": "Why do organisms reproduce?",
+          "options": [
+            "To keep their species going",
+            "To stop all growth",
+            "To turn into rocks",
+            "To erase DNA"
+          ],
+          "answer": 0,
+          "explanation": "Reproduction is needed for the species, even though one individual can stay alive without it."
+        },
+        {
+          "id": "science_complete_m21_q2",
+          "question": "What is the first basic event in reproduction?",
+          "options": [
+            "DNA copying",
+            "Melting of bones",
+            "Colour change in leaves",
+            "Loss of water from air"
+          ],
+          "answer": 0,
+          "explanation": "The chapter says reproduction starts with a copy of DNA."
+        },
+        {
+          "id": "science_complete_m21_q3",
+          "question": "What are small differences in copied DNA called?",
+          "options": [
+            "Variations",
+            "Synapses",
+            "Reflexes",
+            "Roots"
+          ],
+          "answer": 0,
+          "explanation": "Small changes during DNA copying are called variations."
+        },
+        {
+          "id": "science_complete_m21_q4",
+          "question": "Why can variation be useful for a species?",
+          "options": [
+            "It may help some members survive change",
+            "It always destroys the species",
+            "It removes the need for DNA",
+            "It makes all organisms identical"
+          ],
+          "answer": 0,
+          "explanation": "Variation can help a species survive when conditions change."
+        },
+        {
+          "id": "science_complete_m21_q5",
+          "question": "Do all reproducing organisms make perfect copies?",
+          "options": [
+            "No, small changes can happen",
+            "Yes, every copy is perfect",
+            "Only plants make copies",
+            "Only animals make copies"
+          ],
+          "answer": 0,
+          "explanation": "The chapter explains that DNA copying is never absolutely perfect."
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "name": "How Do Organisms Reproduce? Workshop - M1: Asexual Reproduction",
+      "questions": [
+        {
+          "id": "science_complete_m22_q1",
+          "question": "Which kind of reproduction uses only one parent?",
+          "options": [
+            "Asexual reproduction",
+            "Sexual reproduction",
+            "Leaf colouring",
+            "Blood circulation"
+          ],
+          "answer": 0,
+          "explanation": "Asexual reproduction needs only one parent."
+        },
+        {
+          "id": "science_complete_m22_q2",
+          "question": "What happens in fission?",
+          "options": [
+            "One organism divides into two or more parts",
+            "Two adults merge into one",
+            "Seeds turn into metal",
+            "Leaves become water"
+          ],
+          "answer": 0,
+          "explanation": "Fission is simple splitting, common in bacteria and protozoa."
+        },
+        {
+          "id": "science_complete_m22_q3",
+          "question": "Which organism is famous for budding?",
+          "options": [
+            "Hydra",
+            "Amoeba",
+            "Mango tree",
+            "Human being"
+          ],
+          "answer": 0,
+          "explanation": "Hydra is the classic budding example in the chapter."
+        },
+        {
+          "id": "science_complete_m22_q4",
+          "question": "What is regeneration?",
+          "options": [
+            "Growing a whole body from a piece",
+            "Stopping all growth",
+            "Mixing pollen with water",
+            "Turning light into heat"
+          ],
+          "answer": 0,
+          "explanation": "Regeneration means a body part or piece can grow into a complete organism."
+        },
+        {
+          "id": "science_complete_m22_q5",
+          "question": "Which plant method uses roots, stems, or leaves to make new plants?",
+          "options": [
+            "Vegetative propagation",
+            "Reflex action",
+            "Synapse jumping",
+            "Sex determination"
+          ],
+          "answer": 0,
+          "explanation": "Vegetative propagation is asexual reproduction in plants using plant parts."
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "name": "How Do Organisms Reproduce? Workshop - M2: Sexual Reproduction in Flowering Plants",
+      "questions": [
+        {
+          "id": "science_complete_m23_q1",
+          "question": "What is pollination?",
+          "options": [
+            "Transfer of pollen from anther to stigma",
+            "Transfer of water from root to leaf",
+            "Breaking a stem into pieces",
+            "Turning a seed into a fruit"
+          ],
+          "answer": 0,
+          "explanation": "Pollination is the movement of pollen grains from anther to stigma."
+        },
+        {
+          "id": "science_complete_m23_q2",
+          "question": "What happens after pollination in flowering plants?",
+          "options": [
+            "Fertilisation",
+            "Digestion",
+            "Reflex action",
+            "Spore release only"
+          ],
+          "answer": 0,
+          "explanation": "The next main step after pollination is fertilisation."
+        },
+        {
+          "id": "science_complete_m23_q3",
+          "question": "Which flower part receives pollen?",
+          "options": [
+            "Stigma",
+            "Root hair",
+            "Petiole",
+            "Stamen only"
+          ],
+          "answer": 0,
+          "explanation": "The stigma is the pollen-receiving part of the flower."
+        },
+        {
+          "id": "science_complete_m23_q4",
+          "question": "What does the ovule become after fertilisation?",
+          "options": [
+            "Seed",
+            "Leaf",
+            "Stem",
+            "Petal"
+          ],
+          "answer": 0,
+          "explanation": "The chapter explains that the ovule develops into a seed."
+        },
+        {
+          "id": "science_complete_m23_q5",
+          "question": "Why does sexual reproduction usually create more variation?",
+          "options": [
+            "It combines genetic material from two parents",
+            "It never uses DNA",
+            "It always makes identical copies",
+            "It only happens in one cell"
+          ],
+          "answer": 0,
+          "explanation": "Mixing material from two parents creates more variety in offspring."
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "name": "How Do Organisms Reproduce? Workshop - M3: Human Reproduction and Health",
+      "questions": [
+        {
+          "id": "science_complete_m24_q1",
+          "question": "What is puberty?",
+          "options": [
+            "The stage when the body becomes sexually mature",
+            "A type of spore",
+            "A reflex in plants",
+            "A chemical equation"
+          ],
+          "answer": 0,
+          "explanation": "Puberty is the stage when the body matures for reproduction."
+        },
+        {
+          "id": "science_complete_m24_q2",
+          "question": "Where does fertilisation usually happen in human beings?",
+          "options": [
+            "Fallopian tube",
+            "Mouth",
+            "Skin",
+            "Stomach"
+          ],
+          "answer": 0,
+          "explanation": "The chapter says fertilisation in humans usually happens in the fallopian tube."
+        },
+        {
+          "id": "science_complete_m24_q3",
+          "question": "Which organ produces sperms in males?",
+          "options": [
+            "Testes",
+            "Ovary",
+            "Uterus",
+            "Pancreas"
+          ],
+          "answer": 0,
+          "explanation": "The testes are the male reproductive organs that produce sperm."
+        },
+        {
+          "id": "science_complete_m24_q4",
+          "question": "Which organ produces eggs in females?",
+          "options": [
+            "Ovaries",
+            "Testes",
+            "Vas deferens",
+            "Spinal cord"
+          ],
+          "answer": 0,
+          "explanation": "The ovaries are the female reproductive organs that produce eggs."
+        },
+        {
+          "id": "science_complete_m24_q5",
+          "question": "What does a copper-T help with?",
+          "options": [
+            "Preventing pregnancy",
+            "Making bones grow",
+            "Turning pollen to fruit",
+            "Speeding up reflexes"
+          ],
+          "answer": 0,
+          "explanation": "The chapter lists copper-T as one of the methods used to avoid pregnancy."
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "name": "Heredity Workshop - M0: Variation and Inheritance",
+      "questions": [
+        {
+          "id": "science_complete_m25_q1",
+          "question": "What is variation?",
+          "options": [
+            "Small differences among individuals",
+            "A type of hormone",
+            "A bone in the ear",
+            "A gas from plants"
+          ],
+          "answer": 0,
+          "explanation": "Variation means the small differences we see among individuals."
+        },
+        {
+          "id": "science_complete_m25_q2",
+          "question": "Why can variation help a species survive?",
+          "options": [
+            "Some members may fit new conditions better",
+            "It always stops growth",
+            "It makes all organisms identical",
+            "It removes DNA"
+          ],
+          "answer": 0,
+          "explanation": "Variation gives at least some individuals a better survival chance when conditions change."
+        },
+        {
+          "id": "science_complete_m25_q3",
+          "question": "What does heredity do?",
+          "options": [
+            "Passes traits from parents to offspring",
+            "Turns plants into animals",
+            "Creates only water",
+            "Removes chromosomes"
+          ],
+          "answer": 0,
+          "explanation": "Heredity is the passing of traits from one generation to the next."
+        },
+        {
+          "id": "science_complete_m25_q4",
+          "question": "Are offspring usually exact copies of their parents?",
+          "options": [
+            "No, they are similar but not identical",
+            "Yes, always exact copies",
+            "Only in flowering plants",
+            "Only in reptiles"
+          ],
+          "answer": 0,
+          "explanation": "The chapter keeps stressing that offspring are similar, but not exact copies."
+        },
+        {
+          "id": "science_complete_m25_q5",
+          "question": "Which trait is an example often used in the chapter?",
+          "options": [
+            "Earlobes",
+            "Clouds",
+            "Rivers",
+            "Sand grains"
+          ],
+          "answer": 0,
+          "explanation": "The chapter uses earlobe type as one example of inherited variation."
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "name": "Heredity Workshop - M1: Mendel's Pea Experiments",
+      "questions": [
+        {
+          "id": "science_complete_m26_q1",
+          "question": "What did Mendel study?",
+          "options": [
+            "Contrasting traits in pea plants",
+            "Only rainfall patterns",
+            "Only bird songs",
+            "Only rock colours"
+          ],
+          "answer": 0,
+          "explanation": "Mendel used pea plants with different visible traits."
+        },
+        {
+          "id": "science_complete_m26_q2",
+          "question": "What did the first generation of Mendel's tall and short cross show?",
+          "options": [
+            "All the plants were tall",
+            "All the plants were short",
+            "All the plants were blue",
+            "No plants grew"
+          ],
+          "answer": 0,
+          "explanation": "The first generation showed only the tall trait."
+        },
+        {
+          "id": "science_complete_m26_q3",
+          "question": "What is a dominant trait?",
+          "options": [
+            "A trait that shows with one copy",
+            "A trait that never appears",
+            "A trait made only of water",
+            "A trait found only in plants"
+          ],
+          "answer": 0,
+          "explanation": "A dominant trait appears when a single copy is present."
+        },
+        {
+          "id": "science_complete_m26_q4",
+          "question": "What is a recessive trait?",
+          "options": [
+            "A trait that appears only when both copies match",
+            "A trait that always wins instantly",
+            "A trait made by sunlight",
+            "A trait with no genes"
+          ],
+          "answer": 0,
+          "explanation": "A recessive trait shows only when both copies are the same."
+        },
+        {
+          "id": "science_complete_m26_q5",
+          "question": "What kind of new offspring can independent inheritance produce?",
+          "options": [
+            "New combinations of traits",
+            "Only exact copies",
+            "Only metals",
+            "Only clouds"
+          ],
+          "answer": 0,
+          "explanation": "Independent inheritance mixes traits into new combinations."
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "name": "Heredity Workshop - M2: Genes, Chromosomes, and Sex Determination",
+      "questions": [
+        {
+          "id": "science_complete_m27_q1",
+          "question": "What is a gene?",
+          "options": [
+            "A section of DNA that gives instructions for a protein",
+            "A type of flower petal",
+            "A body bone",
+            "A kind of sugar cube"
+          ],
+          "answer": 0,
+          "explanation": "The chapter defines a gene as a DNA section that provides information for one protein."
+        },
+        {
+          "id": "science_complete_m27_q2",
+          "question": "What do chromosomes carry?",
+          "options": [
+            "Genes",
+            "Only water",
+            "Only sound",
+            "Only leaves"
+          ],
+          "answer": 0,
+          "explanation": "Chromosomes are the structures that carry genes."
+        },
+        {
+          "id": "science_complete_m27_q3",
+          "question": "How many copies of each gene do sexually reproducing organisms usually have?",
+          "options": [
+            "Two",
+            "One",
+            "Five",
+            "None"
+          ],
+          "answer": 0,
+          "explanation": "The chapter says sexually reproducing organisms have two copies of genes for the same trait."
+        },
+        {
+          "id": "science_complete_m27_q4",
+          "question": "What sex chromosome pair do females have in humans?",
+          "options": [
+            "XX",
+            "XY",
+            "YY",
+            "XZ"
+          ],
+          "answer": 0,
+          "explanation": "Females in humans have XX sex chromosomes."
+        },
+        {
+          "id": "science_complete_m27_q5",
+          "question": "What sex chromosome pair do males have in humans?",
+          "options": [
+            "XY",
+            "XX",
+            "XO",
+            "ZZ"
+          ],
+          "answer": 0,
+          "explanation": "Males in humans have XY sex chromosomes."
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "name": "Light - M0: Light Helps Us See",
+      "questions": [
+        {
+          "question": "How do we usually see an object?",
+          "options": [
+            "Light from the object reaches our eyes",
+            "The object makes sound only",
+            "The object always glows by itself",
+            "The object turns into air"
+          ],
+          "answer": 0,
+          "explanation": "We see because reflected or transmitted light enters the eye.",
+          "id": "science_complete_m28_q1"
+        },
+        {
+          "question": "What is reflection of light?",
+          "options": [
+            "Light bouncing from a surface",
+            "Light melting into water",
+            "Light disappearing completely",
+            "Light becoming a sound wave"
+          ],
+          "answer": 0,
+          "explanation": "Reflection is the bouncing back of light from a surface.",
+          "id": "science_complete_m28_q2"
+        },
+        {
+          "question": "Which law says the incoming angle equals the outgoing angle?",
+          "options": [
+            "Angle of incidence equals angle of reflection",
+            "Angle of incidence is always zero",
+            "The normal is a mirror",
+            "The reflected ray bends toward the mirror"
+          ],
+          "answer": 0,
+          "explanation": "This is one of the two laws of reflection.",
+          "id": "science_complete_m28_q3"
+        },
+        {
+          "question": "What do the incident ray, normal, and reflected ray do?",
+          "options": [
+            "They lie in the same plane",
+            "They make a triangle only",
+            "They must be parallel",
+            "They cannot touch the mirror"
+          ],
+          "answer": 0,
+          "explanation": "The chapter states this as the second law of reflection.",
+          "id": "science_complete_m28_q4"
+        },
+        {
+          "question": "What kind of image is formed by a plane mirror?",
+          "options": [
+            "Virtual and erect",
+            "Real and upside down only",
+            "Always tiny and black",
+            "Only a shadow"
+          ],
+          "answer": 0,
+          "explanation": "A plane mirror forms a virtual, erect image.",
+          "id": "science_complete_m28_q5"
+        },
+        {
+          "question": "What does lateral inversion mean?",
+          "options": [
+            "Left and right appear swapped",
+            "The image becomes invisible",
+            "Top and bottom disappear",
+            "The mirror changes color"
+          ],
+          "answer": 0,
+          "explanation": "Plane mirrors reverse left-right appearance.",
+          "id": "science_complete_m28_q6"
+        },
+        {
+          "question": "Why is a dark room hard to see in?",
+          "options": [
+            "Not enough light reaches the eyes",
+            "The walls become liquid",
+            "Sound stops working",
+            "The mirror laws change"
+          ],
+          "answer": 0,
+          "explanation": "Visibility depends on light reaching the eye.",
+          "id": "science_complete_m28_q7"
+        },
+        {
+          "question": "Which word best matches light bouncing off a polished surface?",
+          "options": [
+            "Reflection",
+            "Evaporation",
+            "Freezing",
+            "Filtration"
+          ],
+          "answer": 0,
+          "explanation": "Reflection is the correct term.",
+          "id": "science_complete_m28_q8"
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "name": "Light - M1: Curved Mirrors and Images",
+      "questions": [
+        {
+          "question": "Which curved mirror bends inward like the inside of a spoon?",
+          "options": [
+            "Concave mirror",
+            "Convex mirror",
+            "Flat mirror",
+            "Broken mirror"
+          ],
+          "answer": 0,
+          "explanation": "A concave mirror curves inward.",
+          "id": "science_complete_m29_q1"
+        },
+        {
+          "question": "Which curved mirror bends outward like the back of a spoon?",
+          "options": [
+            "Convex mirror",
+            "Concave mirror",
+            "Plane mirror",
+            "Polished stone"
+          ],
+          "answer": 0,
+          "explanation": "A convex mirror curves outward.",
+          "id": "science_complete_m29_q2"
+        },
+        {
+          "question": "What is the point at the middle of a spherical mirror called?",
+          "options": [
+            "Pole",
+            "Pupil",
+            "Pixel",
+            "Prism"
+          ],
+          "answer": 0,
+          "explanation": "The pole is the centre point of the mirror surface.",
+          "id": "science_complete_m29_q3"
+        },
+        {
+          "question": "What does a concave mirror do to rays parallel to its axis?",
+          "options": [
+            "It can bring them together at the focus",
+            "It always sends them straight through",
+            "It makes them stop",
+            "It turns them into sound"
+          ],
+          "answer": 0,
+          "explanation": "A concave mirror can converge parallel rays.",
+          "id": "science_complete_m29_q4"
+        },
+        {
+          "question": "Why are convex mirrors used as rear-view mirrors?",
+          "options": [
+            "They give a wider field of view",
+            "They make everything huge",
+            "They reverse electricity",
+            "They remove reflections"
+          ],
+          "answer": 0,
+          "explanation": "Convex mirrors help drivers see more behind them.",
+          "id": "science_complete_m29_q5"
+        },
+        {
+          "question": "What does magnification compare?",
+          "options": [
+            "Image height with object height",
+            "Mirror size with room size",
+            "Light speed with sound speed",
+            "Colour with temperature"
+          ],
+          "answer": 0,
+          "explanation": "Magnification is the ratio of image height to object height.",
+          "id": "science_complete_m29_q6"
+        },
+        {
+          "question": "Which mirror usually forms a virtual and smaller image?",
+          "options": [
+            "Convex mirror",
+            "Concave mirror",
+            "Plane mirror",
+            "Water surface"
+          ],
+          "answer": 0,
+          "explanation": "Convex mirrors usually form virtual, erect, diminished images.",
+          "id": "science_complete_m29_q7"
+        },
+        {
+          "question": "In the mirror formula 1/v + 1/u = 1/f, what does f mean?",
+          "options": [
+            "Focal length",
+            "Field length",
+            "Final angle",
+            "Frame size"
+          ],
+          "answer": 0,
+          "explanation": "f stands for focal length.",
+          "id": "science_complete_m29_q8"
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "name": "Light - M2: Refraction in Glass",
+      "questions": [
+        {
+          "question": "What is refraction?",
+          "options": [
+            "Bending of light when it enters a new medium",
+            "Light turning into heat only",
+            "Light vanishing completely",
+            "Light stopping at the surface"
+          ],
+          "answer": 0,
+          "explanation": "Refraction is the bending of light at a boundary.",
+          "id": "science_complete_m30_q1"
+        },
+        {
+          "question": "When light goes from air to glass, it usually bends",
+          "options": [
+            "Toward the normal",
+            "Away from the normal",
+            "Into a circle",
+            "It does not bend at all"
+          ],
+          "answer": 0,
+          "explanation": "Air to glass is from rarer to denser, so the ray bends toward the normal.",
+          "id": "science_complete_m30_q2"
+        },
+        {
+          "question": "When light goes from glass to air, it usually bends",
+          "options": [
+            "Away from the normal",
+            "Toward the normal",
+            "Only upward",
+            "Only downward"
+          ],
+          "answer": 0,
+          "explanation": "Glass to air is from denser to rarer, so the ray bends away from the normal.",
+          "id": "science_complete_m30_q3"
+        },
+        {
+          "question": "What does a rectangular glass slab do to the emergent ray?",
+          "options": [
+            "It makes it parallel to the incident ray",
+            "It makes it always perpendicular",
+            "It turns it into a shadow",
+            "It removes the ray"
+          ],
+          "answer": 0,
+          "explanation": "The emergent ray is parallel, but laterally displaced.",
+          "id": "science_complete_m30_q4"
+        },
+        {
+          "question": "Why does a pencil in water look bent?",
+          "options": [
+            "Light from the submerged part changes direction",
+            "The pencil becomes soft",
+            "Water pushes the pencil",
+            "The eye closes one side"
+          ],
+          "answer": 0,
+          "explanation": "Refraction makes the underwater part appear shifted.",
+          "id": "science_complete_m30_q5"
+        },
+        {
+          "question": "What is lateral displacement?",
+          "options": [
+            "A sideways shift of the emergent ray",
+            "A change in colour",
+            "A change in mass",
+            "A change in sound"
+          ],
+          "answer": 0,
+          "explanation": "A glass slab shifts the ray sideways.",
+          "id": "science_complete_m30_q6"
+        },
+        {
+          "question": "What does refractive index help compare?",
+          "options": [
+            "How strongly different media bend light",
+            "How loud different media are",
+            "How hot different media are",
+            "How fast a pencil floats"
+          ],
+          "answer": 0,
+          "explanation": "Refractive index is tied to how much a medium slows light.",
+          "id": "science_complete_m30_q7"
+        },
+        {
+          "question": "Why do different materials bend light by different amounts?",
+          "options": [
+            "Because their refractive indices differ",
+            "Because all light is the same everywhere",
+            "Because mirrors are inside them",
+            "Because temperature is always zero"
+          ],
+          "answer": 0,
+          "explanation": "Different media have different refractive indices.",
+          "id": "science_complete_m30_q8"
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "name": "Light - M3: Lenses and Focus",
+      "questions": [
+        {
+          "question": "Which lens type converges light rays?",
+          "options": [
+            "Convex lens",
+            "Concave lens",
+            "Plane glass sheet",
+            "Water puddle"
+          ],
+          "answer": 0,
+          "explanation": "A convex lens brings rays together.",
+          "id": "science_complete_m31_q1"
+        },
+        {
+          "question": "Which lens type diverges light rays?",
+          "options": [
+            "Concave lens",
+            "Convex lens",
+            "Mirror lens",
+            "Pencil lens"
+          ],
+          "answer": 0,
+          "explanation": "A concave lens spreads rays apart.",
+          "id": "science_complete_m31_q2"
+        },
+        {
+          "question": "What is the lens formula given in the chapter?",
+          "options": [
+            "1/v - 1/u = 1/f",
+            "1/u + 1/v = f",
+            "u/v = f",
+            "P = VI"
+          ],
+          "answer": 0,
+          "explanation": "The chapter states the lens formula as 1/v - 1/u = 1/f.",
+          "id": "science_complete_m31_q3"
+        },
+        {
+          "question": "What does lens power measure?",
+          "options": [
+            "How strongly the lens bends light",
+            "How heavy the lens is",
+            "How bright the room is",
+            "How loud the lens is"
+          ],
+          "answer": 0,
+          "explanation": "Power tells the converging or diverging strength of a lens.",
+          "id": "science_complete_m31_q4"
+        },
+        {
+          "question": "What is the SI unit of lens power?",
+          "options": [
+            "Dioptre",
+            "Newton",
+            "Joule",
+            "Metre per second"
+          ],
+          "answer": 0,
+          "explanation": "Lens power is measured in dioptres.",
+          "id": "science_complete_m31_q5"
+        },
+        {
+          "question": "What sign does a convex lens have for power?",
+          "options": [
+            "Positive",
+            "Negative",
+            "Zero always",
+            "No sign is allowed"
+          ],
+          "answer": 0,
+          "explanation": "A convex lens has positive power.",
+          "id": "science_complete_m31_q6"
+        },
+        {
+          "question": "What sign does a concave lens have for power?",
+          "options": [
+            "Negative",
+            "Positive",
+            "Always zero",
+            "No sign"
+          ],
+          "answer": 0,
+          "explanation": "A concave lens has negative power.",
+          "id": "science_complete_m31_q7"
+        },
+        {
+          "question": "Why is a lens with a short focal length considered strong?",
+          "options": [
+            "It bends light through larger angles",
+            "It weighs more",
+            "It is always thicker",
+            "It makes shadows disappear"
+          ],
+          "answer": 0,
+          "explanation": "Short focal length means stronger convergence or divergence.",
+          "id": "science_complete_m31_q8"
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "name": "The Human Eye and the Colourful World - M0: Meet the Human Eye",
+      "questions": [
+        {
+          "question": "Which part of the eye receives the image?",
+          "options": [
+            "Retina",
+            "Iris",
+            "Pupil",
+            "Eyelid"
+          ],
+          "answer": 0,
+          "explanation": "The retina is the light-sensitive surface of the eye.",
+          "id": "science_complete_m32_q1"
+        },
+        {
+          "question": "What is the cornea's main job in vision?",
+          "options": [
+            "It bends light entering the eye",
+            "It stores food",
+            "It makes the pupil",
+            "It turns light into sound"
+          ],
+          "answer": 0,
+          "explanation": "The cornea does much of the refraction at the front of the eye.",
+          "id": "science_complete_m32_q2"
+        },
+        {
+          "question": "What does the pupil control?",
+          "options": [
+            "How much light enters the eye",
+            "How tall a person is",
+            "The size of the retina",
+            "The colour of the iris only"
+          ],
+          "answer": 0,
+          "explanation": "The pupil regulates light entering the eye.",
+          "id": "science_complete_m32_q3"
+        },
+        {
+          "question": "What is accommodation?",
+          "options": [
+            "The eye lens changing its focal length",
+            "The eye closing forever",
+            "The retina moving away",
+            "The iris becoming a mirror"
+          ],
+          "answer": 0,
+          "explanation": "Accommodation is the eye's ability to adjust focus.",
+          "id": "science_complete_m32_q4"
+        },
+        {
+          "question": "Which muscle helps change the lens shape?",
+          "options": [
+            "Ciliary muscles",
+            "Biceps",
+            "Heart muscles",
+            "Toe muscles"
+          ],
+          "answer": 0,
+          "explanation": "Ciliary muscles control the lens curvature.",
+          "id": "science_complete_m32_q5"
+        },
+        {
+          "question": "For a normal young eye, the near point is about",
+          "options": [
+            "25 cm",
+            "25 m",
+            "2.5 cm",
+            "2.5 m"
+          ],
+          "answer": 0,
+          "explanation": "The source chapter gives about 25 cm.",
+          "id": "science_complete_m32_q6"
+        },
+        {
+          "question": "Why is the human eye compared to a camera?",
+          "options": [
+            "Both form images on a light-sensitive surface",
+            "Both use fuel",
+            "Both can fly",
+            "Both always magnify"
+          ],
+          "answer": 0,
+          "explanation": "The retina acts like a camera screen.",
+          "id": "science_complete_m32_q7"
+        },
+        {
+          "question": "What happens to signals from the retina?",
+          "options": [
+            "They go to the brain through optic nerves",
+            "They stay in the pupil",
+            "They turn into bones",
+            "They leave as steam"
+          ],
+          "answer": 0,
+          "explanation": "The optic nerves carry signals from eye to brain.",
+          "id": "science_complete_m32_q8"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "name": "The Human Eye and the Colourful World - M1: Vision Problems and Fixes",
+      "questions": [
+        {
+          "question": "Myopia is also called",
+          "options": [
+            "Near-sightedness",
+            "Far-sightedness",
+            "Colour blindness",
+            "Night blindness"
+          ],
+          "answer": 0,
+          "explanation": "Myopia means nearby objects are seen more clearly than distant ones.",
+          "id": "science_complete_m33_q1"
+        },
+        {
+          "question": "Which lens corrects myopia?",
+          "options": [
+            "Concave lens",
+            "Convex lens",
+            "Plane mirror",
+            "Prism"
+          ],
+          "answer": 0,
+          "explanation": "A concave lens helps the myopic eye focus distant objects on the retina.",
+          "id": "science_complete_m33_q2"
+        },
+        {
+          "question": "Hypermetropia is also called",
+          "options": [
+            "Far-sightedness",
+            "Near-sightedness",
+            "Twinkling",
+            "Dispersion"
+          ],
+          "answer": 0,
+          "explanation": "Hypermetropia means nearby objects are hard to see clearly.",
+          "id": "science_complete_m33_q3"
+        },
+        {
+          "question": "Which lens corrects hypermetropia?",
+          "options": [
+            "Convex lens",
+            "Concave lens",
+            "Flat glass",
+            "Magnet"
+          ],
+          "answer": 0,
+          "explanation": "A convex lens adds the needed convergence.",
+          "id": "science_complete_m33_q4"
+        },
+        {
+          "question": "What is presbyopia?",
+          "options": [
+            "Loss of accommodation with age",
+            "A type of mirror",
+            "A colour in the rainbow",
+            "A kind of battery"
+          ],
+          "answer": 0,
+          "explanation": "Presbyopia is age-related weakening of focusing ability.",
+          "id": "science_complete_m33_q5"
+        },
+        {
+          "question": "What is cataract?",
+          "options": [
+            "Clouding of the eye lens",
+            "A bent pencil in water",
+            "A bright star",
+            "A glass slab"
+          ],
+          "answer": 0,
+          "explanation": "Cataract makes the lens cloudy.",
+          "id": "science_complete_m33_q6"
+        },
+        {
+          "question": "If a student cannot read the blackboard from the last row, which defect may be present?",
+          "options": [
+            "Myopia",
+            "Hypermetropia always",
+            "A prism effect",
+            "A heating effect"
+          ],
+          "answer": 0,
+          "explanation": "Difficulty seeing distant objects points to myopia.",
+          "id": "science_complete_m33_q7"
+        },
+        {
+          "question": "Which part of the eye changes lens curvature?",
+          "options": [
+            "Ciliary muscles",
+            "The pupil",
+            "The retina",
+            "The cornea"
+          ],
+          "answer": 0,
+          "explanation": "Ciliary muscles help adjust focus.",
+          "id": "science_complete_m33_q8"
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "name": "The Human Eye and the Colourful World - M2: Prism Colors and Rainbows",
+      "questions": [
+        {
+          "question": "What is dispersion of light?",
+          "options": [
+            "Splitting white light into colours",
+            "Making light louder",
+            "Turning light into heat",
+            "Stopping the sun"
+          ],
+          "answer": 0,
+          "explanation": "Dispersion is the separation of white light into its component colours.",
+          "id": "science_complete_m34_q1"
+        },
+        {
+          "question": "What device in the chapter is used to show dispersion?",
+          "options": [
+            "Prism",
+            "Lens",
+            "Mirror",
+            "Thermometer"
+          ],
+          "answer": 0,
+          "explanation": "A prism separates white light into a colour band.",
+          "id": "science_complete_m34_q2"
+        },
+        {
+          "question": "What is the angle of deviation?",
+          "options": [
+            "The angle between the original and emergent ray directions",
+            "The colour of the sky",
+            "The size of the prism",
+            "The speed of sound"
+          ],
+          "answer": 0,
+          "explanation": "It measures how much the ray is turned by the prism.",
+          "id": "science_complete_m34_q3"
+        },
+        {
+          "question": "Which effect helps explain a rainbow?",
+          "options": [
+            "Dispersion",
+            "Freezing",
+            "Filtration",
+            "Magnetism"
+          ],
+          "answer": 0,
+          "explanation": "A rainbow is tied to dispersion and refraction.",
+          "id": "science_complete_m34_q4"
+        },
+        {
+          "question": "Why do different colours separate in a prism?",
+          "options": [
+            "They bend by different amounts",
+            "They all have the same speed",
+            "They are different metals",
+            "They are heavier"
+          ],
+          "answer": 0,
+          "explanation": "Different colours refract differently in the prism.",
+          "id": "science_complete_m34_q5"
+        },
+        {
+          "question": "What happens to white light in dispersion?",
+          "options": [
+            "It splits into a band of colours",
+            "It becomes invisible",
+            "It turns into sound",
+            "It freezes into ice"
+          ],
+          "answer": 0,
+          "explanation": "White light separates into its colours.",
+          "id": "science_complete_m34_q6"
+        },
+        {
+          "question": "Which natural scene is often used as a rainbow example?",
+          "options": [
+            "A rainbow in the sky",
+            "A cracked wall",
+            "A metal spoon",
+            "A chalk board"
+          ],
+          "answer": 0,
+          "explanation": "Rainbows are the classic dispersion example.",
+          "id": "science_complete_m34_q7"
+        },
+        {
+          "question": "Which three ideas are linked to colourful sky and rainbow scenes?",
+          "options": [
+            "Refraction, dispersion, and scattering",
+            "Melting, freezing, and boiling",
+            "Force, mass, and speed",
+            "Charging, discharging, and fusing"
+          ],
+          "answer": 0,
+          "explanation": "The chapter connects these light phenomena.",
+          "id": "science_complete_m34_q8"
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "name": "The Human Eye and the Colourful World - M3: Twinkling and Blue Sky",
+      "questions": [
+        {
+          "question": "Why do stars twinkle?",
+          "options": [
+            "Atmospheric refraction changes their apparent brightness and position",
+            "Because stars blink on purpose",
+            "Because the Moon pushes them",
+            "Because they are underwater"
+          ],
+          "answer": 0,
+          "explanation": "Twinkling comes from changing refraction in the atmosphere.",
+          "id": "science_complete_m35_q1"
+        },
+        {
+          "question": "Why do we see the Sun a little before actual sunrise?",
+          "options": [
+            "Atmospheric refraction bends sunlight",
+            "The Earth stops rotating",
+            "The Sun moves faster",
+            "The clouds turn into mirrors"
+          ],
+          "answer": 0,
+          "explanation": "Refraction makes the Sun appear slightly higher than it really is.",
+          "id": "science_complete_m35_q2"
+        },
+        {
+          "question": "Why is the clear sky blue?",
+          "options": [
+            "Blue light is scattered more strongly by air",
+            "Blue paint is in the clouds",
+            "The ocean reflects the sky",
+            "The Sun is blue"
+          ],
+          "answer": 0,
+          "explanation": "Shorter wavelengths are scattered more strongly.",
+          "id": "science_complete_m35_q3"
+        },
+        {
+          "question": "What is the Tyndall effect?",
+          "options": [
+            "Visibility of a light beam due to scattering",
+            "A lens formula",
+            "A mirror law",
+            "A sound wave"
+          ],
+          "answer": 0,
+          "explanation": "Tyndall effect is seen when scattered light makes the beam path visible.",
+          "id": "science_complete_m35_q4"
+        },
+        {
+          "question": "Why are danger signals often red?",
+          "options": [
+            "Red light is scattered less and stays visible farther away",
+            "Red light is the brightest color in all weather",
+            "Red light has no wavelength",
+            "Red light makes fog disappear"
+          ],
+          "answer": 0,
+          "explanation": "Red is least scattered by fog or smoke.",
+          "id": "science_complete_m35_q5"
+        },
+        {
+          "question": "Which phenomenon explains the wavering of hot air above a fire?",
+          "options": [
+            "Atmospheric refraction",
+            "Fusion",
+            "Condensation",
+            "Magnetism"
+          ],
+          "answer": 0,
+          "explanation": "Hot air changes density and bends light differently.",
+          "id": "science_complete_m35_q6"
+        },
+        {
+          "question": "Why do planets not twinkle much?",
+          "options": [
+            "They appear as extended sources, so variations average out",
+            "They make no light at all",
+            "They are closer to the Sun only",
+            "They are made of glass"
+          ],
+          "answer": 0,
+          "explanation": "Planets are not point-like, so twinkling averages away.",
+          "id": "science_complete_m35_q7"
+        },
+        {
+          "question": "If Earth had no atmosphere, the sky would look",
+          "options": [
+            "Dark",
+            "Always green",
+            "Perfectly red",
+            "Exactly white"
+          ],
+          "answer": 0,
+          "explanation": "Without scattering in air, the sky would not appear blue.",
+          "id": "science_complete_m35_q8"
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "name": "Electricity - M0: Current and Circuits",
+      "questions": [
+        {
+          "question": "What is electric current?",
+          "options": [
+            "Flow of electric charge",
+            "A type of light bulb",
+            "A kind of magnet",
+            "A sound signal"
+          ],
+          "answer": 0,
+          "explanation": "Current is the rate of flow of charge.",
+          "id": "science_complete_m36_q1"
+        },
+        {
+          "question": "What is needed for current to flow in a simple circuit?",
+          "options": [
+            "A closed path",
+            "An open gap",
+            "A painted wire",
+            "A warm desk"
+          ],
+          "answer": 0,
+          "explanation": "Current flows only when the circuit is complete.",
+          "id": "science_complete_m36_q2"
+        },
+        {
+          "question": "Which device measures current?",
+          "options": [
+            "Ammeter",
+            "Voltmeter",
+            "Thermometer",
+            "Barometer"
+          ],
+          "answer": 0,
+          "explanation": "An ammeter measures electric current.",
+          "id": "science_complete_m36_q3"
+        },
+        {
+          "question": "How is an ammeter connected?",
+          "options": [
+            "In series",
+            "In parallel only",
+            "Not connected at all",
+            "Inside the battery"
+          ],
+          "answer": 0,
+          "explanation": "The ammeter must be in series with the circuit.",
+          "id": "science_complete_m36_q4"
+        },
+        {
+          "question": "Which device measures potential difference?",
+          "options": [
+            "Voltmeter",
+            "Ammeter",
+            "Ruler",
+            "Compass"
+          ],
+          "answer": 0,
+          "explanation": "A voltmeter measures potential difference.",
+          "id": "science_complete_m36_q5"
+        },
+        {
+          "question": "How is a voltmeter connected?",
+          "options": [
+            "In parallel",
+            "In series only",
+            "Not connected at all",
+            "Across the sky"
+          ],
+          "answer": 0,
+          "explanation": "A voltmeter is connected in parallel across the points.",
+          "id": "science_complete_m36_q6"
+        },
+        {
+          "question": "What does a cell or battery provide in a circuit?",
+          "options": [
+            "Potential difference",
+            "Only colour",
+            "Only resistance",
+            "Only sound"
+          ],
+          "answer": 0,
+          "explanation": "The battery provides the push that moves charges.",
+          "id": "science_complete_m36_q7"
+        },
+        {
+          "question": "What happens when the circuit is broken?",
+          "options": [
+            "Current stops flowing",
+            "Current gets faster",
+            "Voltage becomes sound",
+            "The wire turns into glass"
+          ],
+          "answer": 0,
+          "explanation": "A broken circuit cannot carry current.",
+          "id": "science_complete_m36_q8"
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "name": "Electricity - M1: Ohm's Law and Resistance",
+      "questions": [
+        {
+          "question": "What does Ohm's law say?",
+          "options": [
+            "Voltage is directly proportional to current at constant temperature",
+            "Current is always zero",
+            "Resistance equals voltage squared",
+            "Power is the same as charge"
+          ],
+          "answer": 0,
+          "explanation": "The chapter states V is directly proportional to I when temperature stays the same.",
+          "id": "science_complete_m37_q1"
+        },
+        {
+          "question": "What is the formula for Ohm's law?",
+          "options": [
+            "V = IR",
+            "V = I/R",
+            "R = VI",
+            "P = I/t"
+          ],
+          "answer": 0,
+          "explanation": "Ohm's law is written V = IR.",
+          "id": "science_complete_m37_q2"
+        },
+        {
+          "question": "What is resistance?",
+          "options": [
+            "Opposition to the flow of current",
+            "A kind of battery",
+            "A type of wire color",
+            "A form of light"
+          ],
+          "answer": 0,
+          "explanation": "Resistance resists the flow of charges.",
+          "id": "science_complete_m37_q3"
+        },
+        {
+          "question": "Which wire usually has greater resistance?",
+          "options": [
+            "A longer wire",
+            "A shorter wire",
+            "A thicker wire only",
+            "A wet paper strip"
+          ],
+          "answer": 0,
+          "explanation": "Resistance increases with length.",
+          "id": "science_complete_m37_q4"
+        },
+        {
+          "question": "Which wire usually has less resistance?",
+          "options": [
+            "A thicker wire",
+            "A thinner wire",
+            "A longer wire",
+            "A broken wire"
+          ],
+          "answer": 0,
+          "explanation": "Greater area of cross-section lowers resistance.",
+          "id": "science_complete_m37_q5"
+        },
+        {
+          "question": "What is resistivity?",
+          "options": [
+            "A material property related to resistance",
+            "The voltage of a battery",
+            "The speed of electrons in a bulb",
+            "The colour of a wire"
+          ],
+          "answer": 0,
+          "explanation": "Resistivity helps compare materials.",
+          "id": "science_complete_m37_q6"
+        },
+        {
+          "question": "Why is a V-I graph useful?",
+          "options": [
+            "It shows whether V and I are proportional",
+            "It tells the weather",
+            "It removes resistance",
+            "It makes a circuit open"
+          ],
+          "answer": 0,
+          "explanation": "A straight V-I line is evidence of Ohm's law.",
+          "id": "science_complete_m37_q7"
+        },
+        {
+          "question": "If resistance increases and voltage stays fixed, current usually",
+          "options": [
+            "Decreases",
+            "Increases",
+            "Becomes light",
+            "Stops being measured"
+          ],
+          "answer": 0,
+          "explanation": "From V = IR, larger R gives smaller I for fixed V.",
+          "id": "science_complete_m37_q8"
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "name": "Electricity - M2: Series and Parallel Resistors",
+      "questions": [
+        {
+          "question": "What happens to resistances in series?",
+          "options": [
+            "They add up",
+            "They cancel out",
+            "They become zero",
+            "They turn into voltage"
+          ],
+          "answer": 0,
+          "explanation": "In series, equivalent resistance is the sum of all resistances.",
+          "id": "science_complete_m38_q1"
+        },
+        {
+          "question": "In a series circuit, the current through each resistor is",
+          "options": [
+            "The same",
+            "Always different",
+            "Always zero",
+            "Not measurable"
+          ],
+          "answer": 0,
+          "explanation": "The same current flows through the whole series path.",
+          "id": "science_complete_m38_q2"
+        },
+        {
+          "question": "What happens to current in a parallel circuit?",
+          "options": [
+            "It splits among branches",
+            "It disappears",
+            "It becomes negative",
+            "It always stays in one wire"
+          ],
+          "answer": 0,
+          "explanation": "Parallel paths divide the current.",
+          "id": "science_complete_m38_q3"
+        },
+        {
+          "question": "Why is home wiring done in parallel?",
+          "options": [
+            "Each appliance can work independently",
+            "Because parallel circuits have no current",
+            "Because resistors become infinite",
+            "Because switches are removed"
+          ],
+          "answer": 0,
+          "explanation": "Parallel wiring gives separate control to each device.",
+          "id": "science_complete_m38_q4"
+        },
+        {
+          "question": "What is the equivalent resistance of resistors in series?",
+          "options": [
+            "Sum of the individual resistances",
+            "Product of the resistances",
+            "Always the smallest resistance",
+            "Always zero"
+          ],
+          "answer": 0,
+          "explanation": "Series resistance adds directly.",
+          "id": "science_complete_m38_q5"
+        },
+        {
+          "question": "How does equivalent resistance in parallel compare with the smallest branch resistance?",
+          "options": [
+            "It is smaller",
+            "It is always larger",
+            "It is equal to the largest",
+            "It becomes infinite"
+          ],
+          "answer": 0,
+          "explanation": "Parallel combinations reduce total resistance.",
+          "id": "science_complete_m38_q6"
+        },
+        {
+          "question": "What happens if one device fails in a series circuit?",
+          "options": [
+            "The whole circuit can stop",
+            "All other devices get brighter",
+            "Resistance disappears",
+            "The battery vanishes"
+          ],
+          "answer": 0,
+          "explanation": "A break in a series path stops current everywhere.",
+          "id": "science_complete_m38_q7"
+        },
+        {
+          "question": "Which connection gives multiple paths for current?",
+          "options": [
+            "Parallel",
+            "Series",
+            "No connection",
+            "Open switch only"
+          ],
+          "answer": 0,
+          "explanation": "Parallel circuits provide more than one path.",
+          "id": "science_complete_m38_q8"
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "name": "Electricity - M3: Heating Effect and Power",
+      "questions": [
+        {
+          "question": "What is the heating effect of electric current?",
+          "options": [
+            "Electrical energy changing into heat",
+            "Heat turning into light only",
+            "A battery making water",
+            "A magnet becoming charged"
+          ],
+          "answer": 0,
+          "explanation": "Current through a resistor can dissipate energy as heat.",
+          "id": "science_complete_m39_q1"
+        },
+        {
+          "question": "What is Joule's law of heating?",
+          "options": [
+            "H = I2Rt",
+            "H = V/I",
+            "H = R/I",
+            "H = P/t"
+          ],
+          "answer": 0,
+          "explanation": "The chapter states heat produced is proportional to I2, R, and t.",
+          "id": "science_complete_m39_q2"
+        },
+        {
+          "question": "What does electric power tell us?",
+          "options": [
+            "How fast electrical energy is used",
+            "How long a wire is",
+            "How heavy a bulb is",
+            "How red the current looks"
+          ],
+          "answer": 0,
+          "explanation": "Power is the rate of energy consumption.",
+          "id": "science_complete_m39_q3"
+        },
+        {
+          "question": "What is the formula for electric power?",
+          "options": [
+            "P = VI",
+            "P = I/R",
+            "P = V + I",
+            "P = Rt"
+          ],
+          "answer": 0,
+          "explanation": "The chapter gives P = VI.",
+          "id": "science_complete_m39_q4"
+        },
+        {
+          "question": "Which unit is used for power?",
+          "options": [
+            "Watt",
+            "Volt",
+            "Ohm",
+            "Coulomb"
+          ],
+          "answer": 0,
+          "explanation": "Power is measured in watts.",
+          "id": "science_complete_m39_q5"
+        },
+        {
+          "question": "What is 1 kWh?",
+          "options": [
+            "Energy used by 1 kW for 1 hour",
+            "Current in one wire",
+            "Voltage in one cell",
+            "Resistance of one bulb"
+          ],
+          "answer": 0,
+          "explanation": "Kilowatt-hour is the commercial unit of energy.",
+          "id": "science_complete_m39_q6"
+        },
+        {
+          "question": "Which appliance is a good example of the heating effect?",
+          "options": [
+            "Electric iron",
+            "Paper clip",
+            "Pencil eraser",
+            "Glass marble"
+          ],
+          "answer": 0,
+          "explanation": "An iron uses heating effect on purpose.",
+          "id": "science_complete_m39_q7"
+        },
+        {
+          "question": "If current increases in a resistor, the heat produced usually",
+          "options": [
+            "Increases",
+            "Decreases to zero",
+            "Cannot be measured",
+            "Changes into sound only"
+          ],
+          "answer": 0,
+          "explanation": "From H = I2Rt, more current means more heat.",
+          "id": "science_complete_m39_q8"
+        }
+      ]
+    },
+    {
+      "id": 40,
+      "name": "Magnetic Effects of Electric Current - Current and magnetism",
+      "questions": [
+        {
+          "id": "science_complete_m40_q1",
+          "question": "What happens when current flows through a wire?",
+          "options": [
+            "It creates a magnetic effect",
+            "It becomes glass",
+            "It stops all movement",
+            "It loses all heat"
+          ],
+          "answer": 0,
+          "explanation": "A current-carrying wire creates a magnetic field around it."
+        },
+        {
+          "id": "science_complete_m40_q2",
+          "question": "Which scientist showed the compass deflection near a wire?",
+          "options": [
+            "Oersted",
+            "Newton",
+            "Curie",
+            "Galileo"
+          ],
+          "answer": 0,
+          "explanation": "Oersted connected electricity and magnetism in the experiment."
+        }
+      ]
+    },
+    {
+      "id": 41,
+      "name": "Magnetic Effects of Electric Current - Magnetic field lines",
+      "questions": [
+        {
+          "id": "science_complete_m41_q1",
+          "question": "Outside a bar magnet, field lines go from",
+          "options": [
+            "north to south",
+            "south to north",
+            "top to bottom",
+            "middle to edge"
+          ],
+          "answer": 0,
+          "explanation": "That is the direction used outside the magnet."
+        },
+        {
+          "id": "science_complete_m41_q2",
+          "question": "When field lines are crowded together, the field is",
+          "options": [
+            "stronger",
+            "weaker",
+            "gone",
+            "backwards"
+          ],
+          "answer": 0,
+          "explanation": "Crowded lines mean a stronger magnetic field."
+        }
+      ]
+    },
+    {
+      "id": 42,
+      "name": "Magnetic Effects of Electric Current - Wires and coils",
+      "questions": [
+        {
+          "id": "science_complete_m42_q1",
+          "question": "The field lines around a straight current-carrying wire are",
+          "options": [
+            "concentric circles",
+            "straight stripes",
+            "triangles",
+            "random dots"
+          ],
+          "answer": 0,
+          "explanation": "A straight wire gives circular field lines."
+        },
+        {
+          "id": "science_complete_m42_q2",
+          "question": "An electromagnet is made from a coil around",
+          "options": [
+            "soft iron",
+            "rubber",
+            "wood",
+            "plastic"
+          ],
+          "answer": 0,
+          "explanation": "Soft iron helps the coil become a strong magnet."
+        }
+      ]
+    },
+    {
+      "id": 43,
+      "name": "Magnetic Effects of Electric Current - Safety",
+      "questions": [
+        {
+          "id": "science_complete_m43_q1",
+          "question": "Which part protects a circuit from too much current?",
+          "options": [
+            "A fuse",
+            "A spoon",
+            "A book",
+            "A fan blade"
+          ],
+          "answer": 0,
+          "explanation": "A fuse breaks the circuit when current gets too high."
+        },
+        {
+          "id": "science_complete_m43_q2",
+          "question": "What does the earth wire do?",
+          "options": [
+            "Carries leaking current safely to the ground",
+            "Makes bulbs blue",
+            "Stores food energy",
+            "Changes wire colour"
+          ],
+          "answer": 0,
+          "explanation": "Earthing is a safety path for leakage current."
+        }
+      ]
+    },
+    {
+      "id": 44,
+      "name": "Our Environment - Ecosystems",
+      "questions": [
+        {
+          "id": "science_complete_m44_q1",
+          "question": "What is an ecosystem made of?",
+          "options": [
+            "Living things and non-living surroundings",
+            "Only animals",
+            "Only rocks",
+            "Only one plant"
+          ],
+          "answer": 0,
+          "explanation": "Ecosystems include biotic and abiotic parts."
+        },
+        {
+          "id": "science_complete_m44_q2",
+          "question": "An aquarium is a",
+          "options": [
+            "human-made ecosystem",
+            "desert",
+            "mountain",
+            "machine"
+          ],
+          "answer": 0,
+          "explanation": "People set it up, so it is human-made."
+        }
+      ]
+    },
+    {
+      "id": 45,
+      "name": "Our Environment - Food chains and webs",
+      "questions": [
+        {
+          "id": "science_complete_m45_q1",
+          "question": "Which sequence is a food chain?",
+          "options": [
+            "Grass -> goat -> human",
+            "Stone -> cloud -> chair",
+            "Pen -> bag -> book",
+            "Sun -> rain -> soil"
+          ],
+          "answer": 0,
+          "explanation": "It shows who eats whom."
+        },
+        {
+          "id": "science_complete_m45_q2",
+          "question": "What does a food web show?",
+          "options": [
+            "Many connected food chains",
+            "Only one animal",
+            "A map of roads",
+            "A weather chart"
+          ],
+          "answer": 0,
+          "explanation": "Food webs connect lots of chains together."
+        }
+      ]
+    },
+    {
+      "id": 46,
+      "name": "Our Environment - Energy flow",
+      "questions": [
+        {
+          "id": "science_complete_m46_q1",
+          "question": "About how much sunlight energy do plants capture?",
+          "options": [
+            "About 1%",
+            "About 50%",
+            "About 100%",
+            "About 0%"
+          ],
+          "answer": 0,
+          "explanation": "The chapter says plants capture only a small part of sunlight."
+        },
+        {
+          "id": "science_complete_m46_q2",
+          "question": "About how much food energy goes to the next level?",
+          "options": [
+            "About 10%",
+            "About 90%",
+            "About 50%",
+            "Exactly 100%"
+          ],
+          "answer": 0,
+          "explanation": "The 10% rule is the chapter's easy memory trick."
+        }
+      ]
+    },
+    {
+      "id": 47,
+      "name": "Our Environment - Clean habits",
+      "questions": [
+        {
+          "id": "science_complete_m47_q1",
+          "question": "Which item is biodegradable?",
+          "options": [
+            "Fruit peels",
+            "Plastic bag",
+            "Glass bottle",
+            "Metal spoon"
+          ],
+          "answer": 0,
+          "explanation": "Fruit peels break down naturally."
+        },
+        {
+          "id": "science_complete_m47_q2",
+          "question": "Why is the ozone layer important?",
+          "options": [
+            "It blocks harmful UV radiation",
+            "It makes food sweeter",
+            "It creates wind",
+            "It stores water"
+          ],
+          "answer": 0,
+          "explanation": "The ozone layer protects living things from ultraviolet rays."
+        }
+      ]
+    },
+    {
+      "id": 48,
+      "name": "Answer Key Revision Workshop - Using the key",
+      "questions": [
+        {
+          "id": "science_complete_m48_q1",
+          "question": "What is this PDF mostly for?",
+          "options": [
+            "Checking your own answers",
+            "Watching cartoons",
+            "Drawing maps",
+            "Counting pencils"
+          ],
+          "answer": 0,
+          "explanation": "It is an answer resource for self-checking."
+        },
+        {
+          "id": "science_complete_m48_q2",
+          "question": "When should you use the answer key?",
+          "options": [
+            "After you try the work",
+            "Before reading the question",
+            "Instead of studying",
+            "Only when bored"
+          ],
+          "answer": 0,
+          "explanation": "Trying first makes the check useful."
+        }
+      ]
+    },
+    {
+      "id": 49,
+      "name": "Answer Key Revision Workshop - Reading patterns",
+      "questions": [
+        {
+          "id": "science_complete_m49_q1",
+          "question": "If the key shows more than one letter, that usually means",
+          "options": [
+            "More than one option may be correct",
+            "The page is broken",
+            "The chapter has no answers",
+            "The pencil is dull"
+          ],
+          "answer": 0,
+          "explanation": "Multiple letters usually mean a multi-answer question."
+        },
+        {
+          "id": "science_complete_m49_q2",
+          "question": "If the key says True/False, the question was probably a",
+          "options": [
+            "statement to judge",
+            "picture puzzle",
+            "music task",
+            "labelling race"
+          ],
+          "answer": 0,
+          "explanation": "True/False belongs to statement questions."
+        }
+      ]
+    },
+    {
+      "id": 50,
+      "name": "Answer Key Revision Workshop - Fixing mistakes",
+      "questions": [
+        {
+          "id": "science_complete_m50_q1",
+          "question": "What should you do after finding a wrong answer?",
+          "options": [
+            "Read the explanation and retry",
+            "Hide the notebook",
+            "Stop studying",
+            "Ignore it"
+          ],
+          "answer": 0,
+          "explanation": "Retrying helps the idea stick."
+        },
+        {
+          "id": "science_complete_m50_q2",
+          "question": "Why is retrying helpful?",
+          "options": [
+            "It helps you remember later",
+            "It changes the answer key",
+            "It makes pages vanish",
+            "It removes homework"
+          ],
+          "answer": 0,
+          "explanation": "A second attempt builds stronger memory."
+        }
+      ]
+    },
+    {
+      "id": 51,
+      "name": "Answer Key Revision Workshop - Revision habits",
+      "questions": [
+        {
+          "id": "science_complete_m51_q1",
+          "question": "What is the main job of a revision resource?",
+          "options": [
+            "Help you check and remember",
+            "Decorate the desk",
+            "Replace all practice",
+            "Hide the syllabus"
+          ],
+          "answer": 0,
+          "explanation": "A revision resource supports honest study."
+        },
+        {
+          "id": "science_complete_m51_q2",
+          "question": "What is the best study habit here?",
+          "options": [
+            "Try first, check second, retry third",
+            "Open answers first",
+            "Skip revision",
+            "Read once and stop"
+          ],
+          "answer": 0,
+          "explanation": "That routine keeps practice real."
+        }
+      ]
+    }
+  ]
+}
