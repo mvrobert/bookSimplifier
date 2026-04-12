@@ -1,0 +1,17 @@
+Session 1 User Request Log
+Workspace: C:\Users\Robert\Downloads\jesc1dd
+
+1. can you read and execute requiremment.md
+2. can you read and execute requiremment.md
+3. can you read and execute requiremment.md
+4. can you read and execute requiremment1.md
+5. can you do this for all the other pdf files the same exercise and generate the content. use sub agent to do it parallel
+6. give me a skill file which should have all these requirements.  It should not refer to any other mark down. based on todays conversation, markdown should contain all knowledge you gathered what language used and what libraries doesnt use including workshop slides. Keep the name as bookSimplifier.md
+7. pdf will change every time and subject will change. so dont hardcode and recreate the file
+8. use bookSimplifier.md and extract and create slide for effectiveJava.pdf
+9. use bookSimplifier.md and extract and create slide for effectiveJava.pdf we need all chapters use subagent for each and every chapter try pedantic extract as much as possible
+10. i want all the above chapters to be merged into 1 file dont delete the old one also adjust TOC and everything else. so user could access in 1 place
+11. yes
+12. why in TOC numbers are repeating in left nav bar
+13. https://github.com/mvrobert/bookSimplifier/blob/main/output/EffectiveJava/effective_java_complete_workshop.html how to render as html using internet 3rd party service
+14. in this session, whatever request i gave you from the beginning., can you write it in a text file and name it as session1.log
