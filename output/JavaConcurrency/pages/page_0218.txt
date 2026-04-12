@@ -1,0 +1,60 @@
+201 
+7BPart IV: Advanced Topics ‐ 27BChapter 15. Atomic Variables and Non‐blocking Synchronization
+Listing 15.5. Random Number Generator Using AtomicInteger. 
+@ThreadSafe 
+public class AtomicPseudoRandom extends PseudoRandom { 
+    private AtomicInteger seed; 
+ 
+    AtomicPseudoRandom(int seed) { 
+        this.seed = new AtomicInteger(seed); 
+    } 
+ 
+    public int nextInt(int n) { 
+        while (true) { 
+            int s = seed.get(); 
+            int nextSeed = calculateNext(s); 
+            if (seed.compareAndSet(s, nextSeed)) { 
+                int remainder = s % n; 
+                return remainder > 0 ? remainder : remainder + n; 
+            } 
+        } 
+    } 
+} 
+As these graphs show, at high contention levels  locking tends  to outperform atomic variables, but at more realistic 
+contention levels atomic variables outperform locks.[6] This is because a lock reacts to contention by suspending threads, 
+reducing CPU usage and synchronization traffic on the shared memory bus. (This is similar to how blocking producers in 
+a producer‐consumer design reduces the load on consumers and thereby lets them catch up.) On the other hand, with 
+atomic  variables,  contention  management  is  pushed  back  to  the  calling  class.  Like  most  CAS‐based  algorithms, 
+AtomicPseudoRandom reacts to contention by trying again immediately, which is usually the right approach but in a 
+high‐contention environment just creates more contention. 
+[6] The same holds true in other domains: traffic lights provide better throughput for high traffic but rotaries provide better throughput for low 
+traffic; the contention scheme used by Ethernet networks performs better at low traffic levels, but the token‐passing scheme used by token ring 
+networks does better with heavy traffic. 
+Before we condemn AtomicPseudoRandom as poorly written or atomic variables as a poor choice compared to locks, we 
+should  realize  that  the  level  of  contention  in  Figure  15.1  is  unrealistically  high:  no  real  program  does  nothing  but 
+contend for a lock or atomic variable. In practice, atomics tend to scale better than locks because atomics deal more 
+effectively with typical contention levels. 
+The  performance  reversal  between  locks  and  atomics  at  differing  levels  of  contention  illustrates  the  strengths  and 
+weaknesses of each. With low to moderate contention, atomics offer better scalability; with high contention, locks offer 
+better contention avoidance. (CAS‐based algorithms also outperform lock‐based ones on single‐CPU systems, since a 
+CAS always succeeds on a single‐CPU system except in the unlikely case that a thread is preempted in the middle of the 
+read‐modify‐write operation.) 
+Figures 15.1 and 15.2 include a third curve; an implementation of PseudoRandom that uses a ThreadLocal for the PRNG 
+state. This implementation approach changes the behavior of the classeach thread sees its own private sequence of 
+pseudorandom numbers, instead of all threads sharing one sequencebut illustrates that it is often cheaper to not share 
+state  at  all  if  it  can  be  avoided.  We  can  improve  scalability  by  dealing  more  effectively  with  contention,  but  true 
+scalability is achieved only by eliminating contention entirely. 
+15.4. Non­blocking Algorithms 
+Lock‐based algorithms are at risk for a number of liveness failures. If a thread holding a lock is delayed due to blocking 
+I/O, page fault, or other delay, it is possible that no thread will make progress. An algorithm is called non‐blocking if 
+failure or suspension of any thread cannot cause failure or suspension of another thread; an algorithm is called lock‐free 
+if, at each step, some thread can make progress. Algorithms that use CAS exclusively for coordination between threads 
+can, if constructed correctly, be both non‐blocking and lock‐free. An uncontended CAS always succeeds, and if multiple 
+threads contend for a CAS, one always wins and therefore makes progress. Non‐blocking algorithms are also immune to 
+deadlock or priority inversion (though they can exhibit starvation or livelock because they can involve repeated retries). 
+We've  seen  one  non‐blocking  algorithm  so  far:  CasCounter.  Good  non‐blocking  algorithms  are  known  for  many 
+common data structures, including stacks, queues, priority queues, and hash tables ‐ though designing new ones is a 
+task best left to experts. 
+15.4.1. A Non­blocking Stack 
+Non‐blocking algorithms are considerably more complicated than their lock‐based equivalents. The key to creating non‐
+blocking algorithms is figuring out how to limit the scope of atomic changes to a single variable while maintaining data

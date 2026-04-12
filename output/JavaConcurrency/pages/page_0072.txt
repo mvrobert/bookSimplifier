@@ -1,0 +1,52 @@
+55 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 17BChapter 5. Building 
+Blocks
+ConcurrentHashMap is a hash‐based Map like HashMap, but it uses an entirely different locking strategy that offers better 
+concurrency and scalability. Instead of synchronizing every method on a common lock, restricting access to a single 
+thread at a time, it uses a finer‐grained locking mechanism called lock striping (see Section 11.4.3) to allow a greater 
+degree of shared access. Arbitrarily many reading threads can access the map concurrently, readers can access the map 
+concurrently with writers, and a limited number of writers can modify the map concurrently. The result is far higher 
+throughput under concurrent access, with little performance penalty for single‐threaded access. 
+ConcurrentHashMap,  along  with  the  other  concurrent  collections,  further  improve  on  the  synchronized  collection 
+classes by providing iterators that do not throw ConcurrentModificationException, thus eliminating the need to lock 
+the collection during iteration. The iterators returned by ConcurrentHashMap are weakly consistent instead of fail‐fast. 
+A weakly consistent iterator can tolerate concurrent modification, traverses elements as they existed when the iterator 
+was constructed, and may (but is not guaranteed to) reflect modifications to the collection after the construction of the 
+iterator. 
+As with all improvements, there are still a few tradeoffs. The semantics of methods that operate on the entire Map, such 
+as size and isEmpty, have been slightly weakened to reflect the concurrent nature of the collection. Since the result of 
+size could be out of date by the time it is computed, it is really only an estimate, so  size is allowed to return an 
+approximation  instead  of  an  exact  count.  While  at  first  this  may  seem  disturbing,  in  reality  methods  like  size  and 
+isEmpty  are  far  less  useful  in  concurrent  environments  because  these  quantities  are  moving  targets.  So  the 
+requirements  for  these  operations  were  weakened  to  enable  performance  optimizations  for  the  most  important 
+operations, primarily get, put, containsKey, and remove. 
+The one feature offered by the synchronized Map implementations but not by ConcurrentHashMap is the ability to lock 
+the map for exclusive access. With Hashtable and synchronizedMap, acquiring the Map lock prevents any other thread 
+from accessing it. This might be necessary in unusual cases such as adding several mappings atomically, or iterating the 
+Map several times and needing to see the same elements in the same order. On the whole, though, this is a reasonable 
+tradeoff: concurrent collections should be expected to change their contents continuously. 
+Because it has so many advantages and so few disadvantages compared to Hashtable or synchronizedMap, replacing 
+synchronized Map implementations with ConcurrentHashMap in most cases results only in better scalability. Only if your 
+application  needs  to  lock  the  map  for  exclusive  access  [3]  is  ConcurrentHashMap  not  an  appropriate  drop‐in 
+replacement. 
+[3] Or if you are relying on the synchronization side effects of the synchronized Map implementations. 
+5.2.2. Additional Atomic Map Operations 
+Since  a  ConcurrentHashMap  cannot  be  locked  for  exclusive  access,  we  cannot  use  client‐side  locking  to  create  new 
+atomic operations such as put‐if‐absent, as we did for Vector in Section 4.4.1. Instead, a number of common compound 
+operations  such  as  put‐if‐absent,  remove‐if‐equal,  and  replace‐if‐equal  are  implemented  as  atomic  operations  and 
+specified  by  the  ConcurrentMap  interface,  shown  in  Listing  5.7.  If  you  find  yourself  adding  such  functionality  to  an 
+existing synchronized Map implementation, it is probably a sign that you should consider using a ConcurrentMap instead. 
+5.2.3. CopyOnWriteArrayList 
+CopyOnWriteArrayList is a concurrent replacement for a synchronized List that offers better concurrency in some 
+common  situations  and  eliminates  the  need  to  lock  or  copy  the  collection  during  iteration.  (Similarly, 
+CopyOnWriteArraySet is a concurrent replacement for a synchronized Set.) 
+The copy‐on‐write collections derive their thread safety from the fact that as long as an effectively immutable object is 
+properly published, no further synchronization is required when accessing it. They implement mutability by creating and 
+republishing a new copy of the collection every time it is modified. Iterators for the copy‐on‐write collections retain a 
+reference to the backing array that was current at the start of iteration, and since this will never change, they need to 
+synchronize only briefly to ensure visibility of the array contents. As a result, multiple threads can iterate the collection 
+without interference from one another or from threads wanting to modify the collection. The iterators returned by the 
+copy‐on‐write collections do not throw ConcurrentModificationException and return the elements exactly as they 
+were at the time the iterator was created, regardless of subsequent modifications.

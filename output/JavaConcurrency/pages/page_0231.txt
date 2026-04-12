@@ -1,0 +1,54 @@
+214 
+Java Concurrency In Practice 
+method  requires  synchronization.  But  at  the  time,  synchronization  was slow  and,  more  importantly,  not  completely 
+understood: the exclusion aspects were well enough understood, but the visibility aspects were not. 
+DCL purported to offer the best of both worlds ‐ lazy initialization without paying the synchronization penalty on the 
+common code path. The way it worked was first to check whether initialization was needed without synchronizing, and 
+if the resource reference was not null, use it. Otherwise, synchronize and check again if the Resource is initialized, 
+ensuring that only one thread actually initializes the shared Resource. The common code path ‐ fetching a reference to 
+an already constructed Resource doesn't use synchronization. And that's where the problem is: as described in Section 
+16.2.1, it is possible for a thread to see a partially constructed Resource. 
+The  real  problem  with  DCL  is  the  assumption  that  the  worst  thing  that  can  happen  when  reading  a  shared  object 
+reference without synchronization is to erroneously see a stale value (in this case,  null); in that case the DCL idiom 
+compensates for this risk by trying again with the lock held. But the worst case is actually considerably worse ‐ it is 
+possible to see a current value of the reference but stale values for the object's state, meaning that the object could be 
+seen to be in an invalid or incorrect state. 
+Subsequent changes in the JMM (Java 5.0 and later) have enabled DCL to work if resource is made volatile, and the 
+performance impact of this is small since volatile reads are usually only slightly more expensive than nonvolatile reads. 
+However,  this  is  an  idiom  whose  utility  has  largely  passed  ‐  the  forces  that  motivated  it  (slow  uncontended 
+synchronization,  slow  JVM  startup)  are  no  longer  in  play,  making  it  less  effective  as  an  optimization.  The  lazy 
+initialization holder idiom offers the same benefits and is easier to understand.  
+Listing 16.7. Double­checked­locking Anti­pattern. Don't Do this. 
+ 
+@NotThreadSafe 
+public class DoubleCheckedLocking { 
+    private static Resource resource; 
+ 
+    public static Resource getInstance() { 
+        if (resource == null) { 
+            synchronized (DoubleCheckedLocking.class) { 
+                if (resource == null) 
+                    resource = new Resource(); 
+            } 
+        } 
+        return resource; 
+    } 
+} 
+ 16.3. Initialization Safety 
+The guarantee of initialization safety allows properly constructed immutable objects to be safely shared across threads 
+without synchronization,  regardless of how they are publishedeven if  published  using a  data race.  (This means  that 
+UnsafeLazyInitialization is actually safe if Resource is immutable.) 
+Without  initialization  safety,  supposedly  immutable  objects  like  String  can  appear  to  change  their  value  if 
+synchronization  is  not  used  by  both  the  publishing  and  consuming  threads.  The  security  architecture  relies  on  the 
+immutability of String; the lack of initialization safety could create security vulnerabilities that allow malicious code to 
+bypass security checks. 
+Initialization safety guarantees that for properly constructed objects, all threads will see the correct values of final fields 
+that were set by the constructor, regardless of how the object is published. Further, any variables that can be reached 
+through a final field of a properly constructed object (such as the elements of a final array or the contents of a HashMap 
+referenced by a final field) are also guaranteed to be visible to other threads. [6] 
+[6] This applies only to objects that are reachable only through final fields of the object under construction. 
+For objects with final fields, initialization safety prohibits reordering any part of construction with the initial load of a 
+reference to that object. All writes to final fields made by the constructor, as well as to any variables reachable through 
+those fields, become "frozen" when the constructor completes, and any thread that obtains a reference to that object is 
+guaranteed to see a value that is at least as up to date as the frozen value. Writes that initialize variables reachable 
+through final fields are not reordered with operations following the post‐construction freeze.

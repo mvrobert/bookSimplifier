@@ -1,0 +1,51 @@
+114 
+Java Concurrency In Practice 
+because tasks share some mutable state, such as the set of seen positions.) If multiple processors are available, this 
+could reduce the time it takes to find a solution. 
+ConcurrentPuzzleSolver in Listing 8.16 uses an inner SolverTask class that extends Node and implements Runnable. 
+Most  of  the  work  is  done  in  run:  evaluating  the  set  of  possible  next  positions,  pruning  positions  already  searched, 
+evaluating whether success has yet been achieved (by  this  task or by some  other task),  and submitting unsearched 
+positions to an Executor. 
+To  avoid  infinite  loops,  the  sequential  version  maintained  a 
+Set  of  previously  searched  positions; 
+ConcurrentPuzzleSolver uses a ConcurrentHashMap for this purpose. This provides thread safety and avoids the race 
+condition inherent in conditionally updating a shared collection by using putIfAbsent to atomically add a position only 
+if it was not previously known. ConcurrentPuzzleSolver uses the internal work queue of the thread pool instead of 
+the call stack to hold the state of the search. 
+Listing 8.14. Link Node for the Puzzle Solver Framework. 
+@Immutable 
+static class Node<P, M> { 
+    final P pos; 
+    final M move; 
+    final Node<P, M> prev; 
+ 
+    Node(P pos, M move, Node<P, M> prev) {...} 
+ 
+    List<M> asMoveList() { 
+        List<M> solution = new LinkedList<M>(); 
+        for (Node<P, M> n = this; n.move != null; n = n.prev) 
+            solution.add(0, n.move); 
+        return solution; 
+    } 
+} 
+The concurrent approach also trades one form of limitation for another that might be more suitable to the problem 
+domain. The sequential version performs a depth‐first search, so the search is bounded by the available stack size. The 
+concurrent version performs a breadth‐first search and is therefore free of the stack size restriction (but can still run out 
+of memory if the set of positions to be searched or already searched exceeds the available memory). 
+In  order  to  stop  searching  when  we  find  a  solution,  we  need  a  way  to  determine  whether  any  thread  has  found  a 
+solution yet. If we want to accept the first solution found, we also need to update the solution only if no other task has 
+already found one. These requirements describe a sort of latch (see Section 5.5.1) and in particular, a result‐bearing 
+latch. We could easily build a blocking resultbearing latch using the techniques in Chapter 14, but it is often easier and 
+less error‐prone to use existing library classes rather than low‐level language mechanisms. ValueLatch in Listing 8.17 
+uses a CountDownLatch to provide the needed latching behavior, and uses locking to ensure that the solution is set only 
+once. 
+Each task first consults the solution latch and stops if a solution has already been found. The main thread needs to wait 
+until a solution is found; getValue in ValueLatch blocks until some thread has set the value. ValueLatch provides a 
+way to hold a value such that only the first call actually sets the value, callers can test whether it has been set, and 
+callers can block waiting for it to be set. On the first call to setValue, the solution is updated and the CountDownLatch is 
+decremented, releasing the main solver thread from getValue. 
+The first thread to find a solution also shuts down the Executor, to prevent new tasks from being accepted. To avoid 
+having to deal with RejectedExecutionException, the rejected execution handler should be set to discard submitted 
+tasks. Then, all unfinished tasks eventually run to completion and any subsequent attempts to execute new tasks fail 
+silently, allowing the executor to terminate. (If the tasks took longer to run, we might want to interrupt them instead of 
+letting them finish.)

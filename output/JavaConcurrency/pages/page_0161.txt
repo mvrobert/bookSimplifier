@@ -1,0 +1,51 @@
+144 
+Java Concurrency In Practice 
+11.3.3. Blocking 
+Uncontended synchronization can be handled entirely within the JVM (Bacon et al., 1998); contended synchronization 
+may require OS activity, which adds to the cost. When locking is contended, the losing thread(s) must block. The JVM 
+can implement blocking either via spin‐waiting (repeatedly trying to acquire the lock until it succeeds) or by suspending 
+the blocked thread through the operating system. Which is more efficient depends on the relationship between context 
+switch overhead and the time until the lock becomes available; spin‐waiting is preferable for short waits and suspension 
+is preferable for long waits. Some JVMs choose between the two adaptively based on profiling data of past wait times, 
+but most just suspend threads waiting for a lock. 
+Suspending a thread because it could not get a lock, or because it blocked on a condition wait or blocking I/O operation, 
+entails two additional context switches and all the attendant OS and cache activity: the blocked thread is switched out 
+before its quantum has expired, and is then switched back in later after the lock or other resource becomes available. 
+(Blocking due to lock contention also has a cost for the thread holding the lock: when it releases the lock, it must then 
+ask the OS to resume the blocked thread.) 
+11.4. Reducing Lock Contention 
+We've seen that serialization hurts scalability and that context switches hurt performance. Contended locking causes 
+both, so reducing lock contention can improve both performance and scalability. 
+Access to resources guarded by an exclusive lock is serializedonly one thread at a time may access it. Of course, we use 
+locks for good reasons, such as preventing data corruption, but this safety comes at a price. Persistent contention for a 
+lock limits scalability. 
+The principal threat to scalability in concurrent applications is the exclusive resource lock. 
+Two factors influence the likelihood of contention for a lock: how often that lock is requested and how long it is held 
+once acquired.[7] If the product of these factors is sufficiently small, then most attempts to acquire the lock will  be 
+uncontended,  and  lock  contention  will  not  pose  a  significant  scalability  impediment.  If,  however,  the  lock  is  in 
+sufficiently high demand, threads will block waiting for it; in the extreme case, processors will sit idle even though there 
+is plenty of work to do. 
+[7] This is a corollary of Little's law, a result from queuing theory that says "the average number of customers in a stable system is equal to their 
+average arrival rate multiplied by their average time in the system". (Little, 1961) 
+There are three ways to reduce lock contention: 
+• 
+Reduce the duration for which locks are held; 
+• 
+Reduce the frequency with which locks are requested; or 
+• 
+Replace exclusive locks with coordination mechanisms that permit greater concurrency. 
+11.4.1. Narrowing Lock Scope ("Get in, Get Out") 
+An effective way to reduce the likelihood of contention is to hold locks as briefly as possible. This can be done by moving 
+code  that  doesn't  require  the  lock  out  of  synchronized  blocks,  especially  for  expensive  operations  and  potentially 
+blocking operations such as I/O. 
+It  is  easy  to  see  how  holding  a  "hot"  lock  for  too  long  can  limit  scalability;  we  saw  an  example  of  this  in 
+SynchronizedFactorizer in Chapter 2. If an operation holds a lock for 2 milliseconds and every operation requires that 
+lock, throughput can be no greater than 500 operations per second, no matter how many processors are available. 
+Reducing the time the lock is held to 1 millisecond improves the lock‐induced throughput limit to 1000 operations per 
+second.[8] 
+[8] Actually, this calculation understates the cost of holding locks for too long because it doesn't take into account the context switch overhead 
+generated by increased lock contention. 
+AttributeStore in Listing 11.4 shows an example of holding a lock longer than necessary. The userLocationMatches 
+method looks up the user's location in a Map and uses regular expression matching to see if the resulting value matches 
+the supplied pattern. The entire userLocationMatches method is synchronized, but the only portion of the code that 
+actually needs the lock is the call to Map.get.

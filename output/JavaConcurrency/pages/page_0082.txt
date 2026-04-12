@@ -1,0 +1,58 @@
+65 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 17BChapter 5. Building 
+Blocks
+public class CellularAutomata { 
+    private final Board mainBoard; 
+    private final CyclicBarrier barrier; 
+    private final Worker[] workers; 
+ 
+    public CellularAutomata(Board board) { 
+        this.mainBoard = board; 
+        int count = Runtime.getRuntime().availableProcessors(); 
+        this.barrier = new CyclicBarrier(count, 
+                new Runnable() { 
+                    public void run() { 
+                        mainBoard.commitNewValues(); 
+                    }}); 
+        this.workers = new Worker[count]; 
+        for (int i = 0; i < count; i++) 
+            workers[i] = new Worker(mainBoard.getSubBoard(count, i)); 
+    } 
+ 
+    private class Worker implements Runnable { 
+        private final Board board; 
+ 
+        public Worker(Board board) { this.board = board; } 
+        public void run() { 
+            while (!board.hasConverged()) { 
+                for (int x = 0; x < board.getMaxX(); x++) 
+                    for (int y = 0; y < board.getMaxY(); y++) 
+                        board.setNewValue(x, y, computeValue(x, y)); 
+                try { 
+                    barrier.await(); 
+                } catch (InterruptedException ex) { 
+                    return; 
+                } catch (BrokenBarrierException ex) { 
+                    return; 
+                } 
+            } 
+        } 
+    } 
+ 
+    public void start() { 
+        for (int i = 0; i < workers.length; i++) 
+            new Thread(workers[i]).start(); 
+        mainBoard.waitForConvergence();} 
+    } 
+} 
+Like many other frequently reinvented wheels, caching often looks simpler than it is. A naive cache implementation is 
+likely  to  turn  a  performance  bottleneck  into  a  scalability  bottleneck,  even  if  it  does  improve  single‐threaded 
+performance. In this section we develop an efficient and scalable result cache for a computationally expensive function. 
+Let's start with the obvious approach ‐ a simple HashMapand then look at some of its concurrency disadvantages and 
+how to fix them. 
+The  Computable<A,V>  interface  in  Listing  5.16  describes  a  function  with  input  of  type  A  and  result  of  type  V. 
+ExpensiveFunction,  which  implements  Computable,  takes  a  long  time  to  compute  its  result;  we'd  like  to  create  a 
+Computable wrapper that remembers the results of previous computations and encapsulates the caching process. (This 
+technique is known as Memorization.)

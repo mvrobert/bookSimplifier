@@ -1,0 +1,54 @@
+76 
+Java Concurrency In Practice 
+and you think you might at some point want a more flexible execution policy, seriously consider replacing it with the use 
+of an Executor. 
+6.2.3. Thread Pools 
+A thread pool, as its name suggests, manages a homogeneous pool of worker threads. A thread pool is tightly bound to 
+a work queue holding tasks waiting to be executed. Worker threads have a simple life: request the next task from the 
+work queue, execute it, and go back to waiting for another task. 
+Executing tasks in pool threads has a number of advantages over the thread‐per‐task approach. Reusing an existing 
+thread instead of creating a new one amortizes thread creation and teardown costs over multiple requests. As an added 
+bonus, since the worker thread often already exists at the time the request arrives, the latency associated with thread 
+creation does not delay task execution, thus improving responsiveness. By properly tuning the size of the thread pool, 
+you can have enough threads to keep the processors busy while not having so many that your application runs out of 
+memory or thrashes due to competition among threads for resources. 
+The class library provides a flexible thread pool implementation along with some useful predefined configurations. You 
+can create a thread pool by calling one of the static factory methods in Executors: 
+newFixedThreadPool. A fixed‐size thread pool creates threads as tasks are submitted, up to the maximum pool size, 
+and  then  attempts  to  keep  the  pool  size  constant  (adding  new  threads  if  a  thread  dies  due  to  an  unexpected 
+Exception). 
+newCachedThreadPool. A cached thread pool has more flexibility to reap idle threads when the current size of the pool 
+exceeds the demand for processing, and to add new threads when demand increases, but places no bounds on the size 
+of the pool. 
+newSingleThreadExecutor. A single‐threaded executor creates a single worker thread to process tasks, replacing it if it 
+dies unexpectedly. Tasks are guaranteed to be processed sequentially according to the order imposed by the task queue 
+(FIFO, LIFO, priority order).[4] 
+[4] Single‐threaded executors also provide sufficient internal synchronization to guarantee that any memory writes made by tasks are visible to 
+subsequent tasks; this means that objects can be safely confined to the "task thread" even though that thread may be replaced with another from 
+time to time. 
+newScheduledThreadPool. A fixed‐size thread pool that supports delayed and periodic task execution, similar to Timer. 
+(See Section 6.2.5.) 
+The 
+newFixedThreadPool  and 
+newCachedThreadPool  factories  return  instances  of  the  general‐purpose 
+ThreadPoolExecutor, which can also be used directly to construct more specialized executors. We discuss thread pool 
+configuration options in depth in Chapter 8. 
+The web server in TaskExecutionWebServer uses an Executor with a bounded pool of worker threads. Submitting a 
+task with execute adds the task to the work queue, and the worker threads repeatedly dequeue tasks from the work 
+queue and execute them. 
+Switching from a thread‐per‐task policy to a pool‐based policy has a big effect on application stability: the web server 
+will no longer fail under heavy load.[5] It also degrades more gracefully, since it does not create thousands of threads 
+that compete for limited CPU and memory resources. And using an Executor opens the door to all sorts of additional 
+opportunities  for  tuning,  management,  monitoring,  logging,  error  reporting,  and  other  possibilities  that  would  have 
+been far more difficult to add without a task execution framework. 
+[5] While the server may not fail due to the creation of too many threads, if the task arrival rate exceeds the task service rate for long enough it is 
+still possible (just harder) to run out of memory because of the growing queue of Runnables awaiting execution. This can be addressed within 
+the Executor framework by using a bounded work queue ‐ see Section 8.3.2. 
+6.2.4. Executor Lifecycle 
+We've seen how to create an Executor but not how to shut one down. An Executor implementation is likely to create 
+threads for processing tasks. But the JVM can't exit until all the (non‐daemon) threads have terminated, so failing to 
+shut down an Executor could prevent the JVM from exiting. 
+Because an Executor processes tasks asynchronously, at any given time the state of previously submitted tasks is not 
+immediately obvious. Some may have completed, some may be currently running, and others may be queued awaiting 
+execution. In shutting down an application, there is a spectrum from graceful shutdown (finish what you've started but 
+don't  accept  any  new  work)  to  abrupt  shutdown  (turn  off  the  power  to  the  machine  room),  and  various  points  in

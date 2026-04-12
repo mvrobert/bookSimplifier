@@ -1,0 +1,51 @@
+108 
+Java Concurrency In Practice 
+For  very  large  or  unbounded  pools,  you  can  also  bypass  queuing  entirely  and  instead  hand  off  tasks  directly  from 
+producers  to  worker  threads  using  a  SynchronousQueue.  A  SynchronousQueue  is  not  really  a  queue  at  all,  but  a 
+mechanism  for  managing  handoffs  between  threads.  In  order  to  put  an  element  on  a  SynchronousQueue,  another 
+thread must already be waiting to accept the handoff. If no thread is waiting but the current pool size is less than the 
+maximum,  Thread-PoolExecutor  creates  a  new  thread;  otherwise  the  task  is  rejected  according  to  the  saturation 
+policy. Using a direct handoff is more efficient because the task can be handed right to the thread that will execute it, 
+rather than first placing it on a queue and then having the worker thread fetch it from the queue. SynchronousQueue is 
+a practical choice only if the pool is unbounded or if rejecting excess tasks is acceptable. The  newCachedThreadPool 
+factory uses a SynchronousQueue. 
+Using a FIFO queue like LinkedBlockingQueue or ArrayBlockingQueue causes tasks to be started in the order in which 
+they arrived. For more control over task execution order, you can use a PriorityBlockingQueue, which orders tasks 
+according to priority. Priority can be defined by natural order (if tasks implement Comparable) or by a Comparator. 
+The  newCachedThreadPool factory is a good default choice for  an  Executor, providing better queuing performance 
+than a fixed thread pool.[5] A fixed size thread pool is a good choice when you need to limit the number of concurrent 
+tasks for resource‐management purposes, as in a server application that accepts requests from network clients and 
+would otherwise be vulnerable to overload. 
+[5] This performance difference comes from the use of SynchronousQueue instead of LinkedBlocking-Queue. SynchronousQueue 
+was replaced in Java 6 with a new non‐blocking algorithm that improved throughput in Executor benchmarks by a factor of three over the Java 
+5.0 SynchronousQueue implementation (Scherer et al., 2006). 
+Bounding either the thread pool or the work queue is suitable only when tasks are independent. With tasks that depend 
+on other tasks, bounded thread pools or queues can cause thread starvation deadlock; instead, use an unbounded pool 
+configuration like newCachedThreadPool.[6] 
+[6]  An  alternative  configuration  for  tasks  that  submit  other  tasks  and  wait  for  their  results  is  to  use  a  bounded  thread  pool,  a 
+SynchronousQueue as the work queue, and the caller‐runs saturation policy. 
+8.3.3. Saturation Policies 
+When  a  bounded  work  queue  fills  up,  the  saturation  policy  comes  into  play.  The  saturation  policy  for  a 
+ThreadPoolExecutor can be modified by calling  setRejectedExecutionHandler. (The saturation policy is also used 
+when  a  task  is  submitted  to  an 
+Executor  that  has  been  shut  down.)  Several  implementations  of 
+RejectedExecutionHandler  are  provided,  each  implementing  a  different  saturation  policy:  AbortPolicy, 
+CallerRunsPolicy, DiscardPolicy, and DiscardOldestPolicy. 
+The default policy, abort, causes execute to throw the unchecked Rejected-ExecutionException; the caller can catch 
+this exception and implement its own overflow handling as it sees fit. The discard policy silently discards the newly 
+submitted task if it cannot be queued for execution; the discard‐oldest policy discards the task that would otherwise be 
+executed next and tries to resubmit the new task. (If the work queue is a priority queue, this discards the highest‐
+priority element, so the combination of a discard‐oldest saturation policy and a priority queue is not a good one.) 
+The caller‐runs policy implements a form of throttling that neither discards tasks nor throws an exception, but instead 
+tries  to  slow  down  the  flow  of  new  tasks  by  pushing  some  of  the  work  back  to  the  caller.  It  executes  the  newly 
+submitted task not in a pool thread, but in the thread that calls execute. If we modified our WebServer example to use 
+a bounded queue and the caller‐runs policy, after all the pool threads were occupied and the work queue filled up the 
+next task would be executed in the main thread during the call to execute. Since this would probably take some time, 
+the main thread cannot submit any more tasks for at least a little while, giving the worker threads some time to catch 
+up on the backlog. The main thread would also not be calling accept during this time, so incoming requests will queue 
+up in the TCP layer instead of in the application. If the overload persisted, eventually the TCP layer would decide it has 
+queued  enough  connection  requests  and  begin  discarding  connection  requests  as  well.  As  the  server  becomes 
+overloaded, the overload is gradually pushed outward ‐ from the pool threads to the work queue to the application to 
+the TCP layer, and eventually to the client ‐ enabling more graceful degradation under load. 
+Choosing  a  saturation  policy  or  making  other  changes  to  the  execution  policy  can  be  done  when  the  Executor  is 
+created. Listing 8.3 illustrates creating a fixed size thread pool with the caller‐runs saturation policy.

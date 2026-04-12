@@ -1,0 +1,9 @@
+7 
+3BChapter 1 ‐ Introduction ‐ 12B1.3. Risks of Threads
+In well designed concurrent applications the use of threads is a net performance gain, but threads nevertheless carry 
+some degree of runtime overhead. Context switches ‐ when the scheduler suspends the active thread temporarily so 
+another thread can run ‐ are more frequent in applications with many threads, and have significant costs: saving and 
+restoring execution context, loss of locality, and CPU time spent scheduling threads instead of running them. When 
+threads  share  data,  they  must  use  synchronization  mechanisms  that  can  inhibit  compiler  optimizations,  flush  or 
+invalidate memory caches, and create synchronization traffic on the shared memory bus. All these factors introduce 
+additional performance costs; Chapter 11 covers techniques for analyzing and reducing these costs.

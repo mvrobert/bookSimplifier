@@ -1,0 +1,60 @@
+28 
+Java Concurrency In Practice 
+Listing 3.7. Implicitly Allowing the this Reference to Escape. Don't Do this. 
+ 
+ 
+public class ThisEscape { 
+    public ThisEscape(EventSource source) { 
+        source.registerListener( 
+            new EventListener() { 
+                public void onEvent(Event e) { 
+                    doSomething(e); 
+                } 
+            }); 
+    } 
+} 
+3.2.1. Safe Construction Practices 
+ThisEscape illustrates an important special case of escape ‐ when the  this references escapes during construction. 
+When the inner  EventListener instance is published, so is the enclosing  ThisEscape instance. But an object is in a 
+predictable, consistent state only after its constructor returns, so publishing an object from within its constructor can 
+publish an incompletely constructed object. This is true even if the publication is the last statement in the constructor. If 
+the this reference escapes during construction, the object is considered not properly constructed.[8] 
+[8] More specifically, the this reference should not escape from the thread until after the constructor returns. The this reference can be stored 
+somewhere by the constructor as long as it is not used by another thread until after construction. SafeListener in Listing 3.8 uses this technique. 
+Do not allow the this reference to escape during construction. 
+A common mistake that can let the this reference escape during construction is to start a thread from a constructor. 
+When an object creates a thread from its constructor, it almost always shares its this reference with the new thread, 
+either explicitly (by passing it to the constructor) or implicitly (because the Thread or Runnable is an inner class of the 
+owning object).  The  new  thread  might then be able to see the owning object before it is fully constructed.  There's 
+nothing wrong with creating a thread in a constructor, but it is best not to start the thread immediately. Instead, expose 
+a  start  or  initialize  method  that  starts  the  owned  thread.  (See  Chapter  7  for  more  on  service  lifecycle  issues.) 
+Calling an overrideable instance method (one that is neither private nor final) from the constructor can also allow the 
+this reference to escape. 
+If  you  are  tempted  to  register  an  event  listener  or  start  a  thread  from  a  constructor,  you  can  avoid  the  improper 
+construction by using a private constructor and a public factory method, as shown in SafeListener in Listing 3.8. 
+Listing 3.8. Using a Factory Method to Prevent the this Reference from Escaping During Construction. 
+public class SafeListener { 
+    private final EventListener listener; 
+ 
+    private SafeListener() { 
+        listener = new EventListener() { 
+            public void onEvent(Event e) { 
+                doSomething(e); 
+            } 
+        }; 
+    } 
+ 
+    public static SafeListener newInstance(EventSource source) { 
+        SafeListener safe = new SafeListener(); 
+        source.registerListener(safe.listener); 
+        return safe; 
+    } 
+} 
+3.3. Thread Confinement 
+Accessing shared, mutable data requires using synchronization; one way to avoid this requirement is to not share. If 
+data is only accessed from a single thread, no synchronization is needed. This technique, thread confinement, is one of 
+the simplest ways to achieve thread safety. When an object is confined to a thread, such usage is automatically thread‐
+safe even if the confined object itself is not [CPJ 2.3.2]. 
+Swing uses thread confinement extensively. The Swing visual components and data model objects are not thread safe; 
+instead, safety is achieved by confining them to the Swing event dispatch thread. To use Swing properly, code running in 
+threads  other  than  the  event  thread  should  not  access  these  objects.  (To  make  this  easier,  Swing  provides  the

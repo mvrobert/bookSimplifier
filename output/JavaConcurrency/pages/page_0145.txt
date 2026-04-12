@@ -1,0 +1,43 @@
+128 
+Java Concurrency In Practice 
+Chapter 10. Avoiding Liveness Hazards 
+There is often a tension between safety and liveness. We use locking to ensure thread safety, but indiscriminate use of 
+locking  can  cause  lock‐ordering  deadlocks.  Similarly,  we  use  thread  pools  and  semaphores  to  bound  resource 
+consumption, but failure to understand the activities being bounded can cause resource deadlocks. Java applications do 
+not recover from deadlock, so it is worthwhile to ensure that your design precludes the conditions that could cause it. 
+This chapter explores some of the causes of liveness failures and what can be done to prevent them. 
+10.1. Deadlock 
+Deadlock is illustrated by the classic, if somewhat unsanitary, "dining philosophers" problem. Five philosophers go out 
+for Chinese food and are seated at a circular table. There are five chopsticks (not five pairs), one placed between each 
+pair of diners. The philosophers alternate between thinking and eating. Each needs to acquire two chopsticks for long 
+enough to eat, but can then put the chopsticks back and return to thinking. There are some chopstick‐management 
+algorithms  that  let  everyone  eat  on  a  more  or  less  timely  basis  (a  hungry  philosopher  tries  to  grab  both  adjacent 
+chopsticks, but if one is not available, puts down the one that is available and waits a minute or so before trying again), 
+and some that can result in some or all of the philosophers dying of hunger (each philosopher immediately grabs the 
+chopstick to his left and waits for the chopstick to his right to be available before putting down the left). The latter 
+situation, where each has a resource needed by another and is waiting for a resource held by another, and will not 
+release the one they hold until they acquire the one they don't, illustrates deadlock. 
+When a thread holds a lock forever, other threads attempting to acquire that lock will block forever waiting. When 
+thread A holds lock L and tries to acquire lock M, but at the same time thread B holds M and tries to acquire L, both 
+threads will wait forever. This situation is the simplest case of deadlock (or deadly embrace), where multiple threads 
+wait forever due to a cyclic locking dependency. (Think of the threads as the nodes of a directed graph whose edges 
+represent the relation "Thread A is waiting for a resource held by thread B". If this graph is cyclical, there is a deadlock.) 
+Database systems are designed to detect and recover from deadlock. A transaction may acquire many locks, and locks 
+are  held  until  the  transaction  commits.  So  it  is  quite  possible,  and  in  fact  not  uncommon,  for  two  transactions  to 
+deadlock. Without intervention, they would wait forever (holding locks that are probably required by other transactions 
+as well). But the database server is not going to let this happen. When it detects that a set of transactions is deadlocked 
+(which it does by searching the is‐waiting‐for graph for cycles), it picks a victim and aborts that transaction. This releases 
+the locks held by the victim, allowing the other transactions to proceed. The application can then retry the aborted 
+transaction, which may be able to complete now that any competing transactions have completed. 
+The JVM is not nearly as helpful in resolving deadlocks as database servers are. When a set of Java threads deadlock, 
+that's the end of the gamethose threads are permanently out of commission. Depending on what those threads do, the 
+application  may  stall  completely,  or  a  particular  subsystem  may  stall,  or  performance  may  suffer.  The  only  way  to 
+restore the application to health is to abort and restart itand hope the same thing doesn't happen again. 
+Like many other concurrency hazards, deadlocks rarely manifest themselves immediately. The fact that a class has a 
+potential deadlock doesn't mean that it ever will deadlock, just that it can. When deadlocks do manifest themselves, it is 
+often at the worst possible timeunder heavy production load. 
+10.1.1. Lock­ordering Deadlocks 
+LeftRightDeadlock in Listing 10.1 is at risk for deadlock. The  leftRight and  rightLeft methods each acquire the 
+left and right locks. If one thread calls leftRight and another calls rightLeft, and their actions are interleaved as 
+shown in Figure 10.1, they will deadlock. 
+Figure 10.1. Unlucky Timing in LeftRightDeadlock.

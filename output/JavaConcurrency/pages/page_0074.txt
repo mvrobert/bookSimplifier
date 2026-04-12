@@ -1,0 +1,56 @@
+57 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 17BChapter 5. Building 
+Blocks
+Blocking queues also provide an  offer method, which returns a failure status if the item cannot be enqueued. This 
+enables you to create more flexible policies for dealing with overload, such as shedding load, serializing excess work 
+items  and  writing  them  to  disk,  reducing  the  number  of  producer  threads,  or  throttling  producers  in  some  other 
+manner. 
+Bounded queues are a powerful resource management tool for building reliable applications: they make your program 
+more robust to overload by throttling activities that threaten to produce more work than can be handled. 
+While the producer‐consumer pattern enables producer and consumer code to be decoupled from each other, their 
+behavior is still coupled indirectly through the shared work queue. It is tempting to assume that the consumers will 
+always  keep  up,  so  that  you  need  not  place  any  bounds  on  the  size  of  work  queues,  but  this  is  a  prescription  for 
+rearchitecting your system later. Build resource management into your design early using blocking queues ‐ it is a lot 
+easier to do this up front than to retrofit it later. Blocking queues make this easy for a number of situations, but if 
+blocking queues don't fit easily into your design, you can create other blocking data structures using Semaphore (see 
+Section 5.5.3). 
+The class library contains several implementations of BlockingQueue. LinkedBlockingQueue and ArrayBlockingQueue 
+are FIFO queues, analogous to LinkedList and ArrayList but with better concurrent performance than a synchronized 
+List. PriorityBlockingQueue is a priority‐ordered queue, which is useful when you want to process elements in an 
+order other than FIFO. Just like other sorted collections, PriorityBlockingQueue can compare elements according to 
+their natural order (if they implement Comparable) or using a Comparator. 
+The last BlockingQueue implementation, SynchronousQueue, is not really a queue at all, in that it maintains no storage 
+space for queued elements. Instead, it maintains a list of queued threads waiting to enqueue or dequeue an element. In 
+the dish‐washing analogy, this would be like having no dish rack, but instead handing the washed dishes directly to the 
+next available dryer. While this may seem a strange way to implement a queue, it reduces the latency associated with 
+moving  data  from  producer  to  consumer  because  the  work  can  be  handed  off  directly.  (In  a  traditional  queue,  the 
+enqueue and dequeue operations must complete sequentially before a unit  of work can be handed off.) The direct 
+handoff also feeds back more information about the state of the task to the producer; when the handoff is accepted, it 
+knows a consumer has taken responsibility for it, rather than simply letting it sit on a queue somewhere ‐ much like the 
+difference between handing a document to a colleague and merely putting it in her mailbox and hoping she gets it soon. 
+Since a SynchronousQueue has no storage capacity, put and take will block unless another thread is already waiting to 
+participate in the handoff. Synchronous queues are generally suitable only when there are enough consumers that there 
+nearly always will be one ready to take the handoff. 
+5.3.1. Example: Desktop Search 
+One type of program that is amenable to decomposition into producers and consumers is an agent that scans local 
+drives for documents and indexes them for later searching, similar to Google Desktop or the Windows Indexing service. 
+DiskCrawler in Listing 5.8 shows a producer task that searches a file hierarchy for files meeting an indexing criterion 
+and puts their names on the work queue; Indexer in Listing 5.8 shows the consumer task that takes file names from the 
+queue and indexes them. 
+The  producer‐consumer  pattern  offers  a  thread‐friendly  means  of  decomposing  the  desktop  search  problem  into 
+simpler components. Factoring file‐crawling and indexing into separate activities results in code that is more readable 
+and reusable than with a monolithic activity that does both; each of the activities has only a single task to do, and the 
+blocking queue handles all the flow control, so the code for each is simpler and clearer. 
+The  producer‐consumer  pattern  also  enables  several  performance  benefits.  Producers  and  consumers  can  execute 
+concurrently;  if  one  is  I/O‐bound  and  the  other  is  CPU‐bound,  executing  them  concurrently  yields  better  overall 
+throughput  than  executing  them  sequentially.  If  the  producer  and  consumer  activities  are  parallelizable  to  different 
+degrees, tightly coupling them reduces parallelizability to that of the less parallelizable activity. 
+Listing 5.9 starts several crawlers and indexers, each in their own thread. As written, the consumer threads never exit, 
+which prevents the program from terminating; we examine several techniques for addressing this problem in Chapter 7. 
+While  this  example  uses  explicitly  managed  threads,  many  producer‐consumer  designs  can  be  expressed  using  the 
+Executor task execution framework, which itself uses the producer‐consumer pattern. 
+5.3.2. Serial Thread Confinement 
+The blocking queue implementations in java.util.concurrent all contain sufficient internal synchronization to safely 
+publish objects from a producer thread to the consumer thread.

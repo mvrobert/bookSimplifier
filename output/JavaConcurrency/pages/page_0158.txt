@@ -1,0 +1,47 @@
+141 
+6BPart III: Liveness, Performance, and Testing ‐ 23BChapter 11. Performance and Scalability
+Listing 11.1. Serialized Access to a Task Queue. 
+public class WorkerThread extends Thread { 
+    private final BlockingQueue<Runnable> queue; 
+ 
+    public WorkerThread(BlockingQueue<Runnable> queue) { 
+        this.queue = queue; 
+    } 
+ 
+    public void run() { 
+        while (true) { 
+            try { 
+                Runnable task = queue.take(); 
+                task.run(); 
+            } catch (InterruptedException e) { 
+                break;  /*  Allow thread to exit  */ 
+            } 
+        } 
+    } 
+} 
+ 
+All concurrent applications have some sources of serialization; if you think yours does not, look again. 
+11.2.1. Example: Serialization Hidden in Frameworks 
+To see how serialization can be hidden in the structure of an application, we can compare throughput as threads are 
+added  and  infer  differences  in  serialization  based  on  observed  differences  in  scalability.  Figure  11.2  shows  a simple 
+application in which multiple threads repeatedly remove an element from a shared  Queue and process it, similar to 
+Listing 11.1. The processing step involves only thread‐local computation. If a thread finds the queue is empty, it puts a 
+batch of new elements on the queue so that other threads have something to process on their next iteration. Accessing 
+the shared queue clearly entails some degree of serialization, but the processing step is entirely parallelizable since it 
+involves no shared data. 
+Figure 11.2. Comparing Queue Implementations. 
+[View full size image] 
+ 
+ 
+The curves in Figure 11.2 compare throughput for two thread‐safe Queue implementations: a LinkedList wrapped with 
+synchronizedList, and a ConcurrentLinkedQueue. The tests were run on an 8‐way Sparc V880 system running Solaris. 
+While each run represents the same amount of "work", we can see that merely changing queue implementations can 
+have a big impact on scalability. 
+The  throughput  of  ConcurrentLinkedQueue  continues  to  improve  until  it  hits  the  number  of  processors  and  then 
+remains  mostly  constant.  On  the  other  hand,  the  throughput  of  the  synchronized  LinkedList  shows  some 
+improvement up to three threads, but then falls off as synchronization overhead increases. By the time it gets to four or 
+five threads, contention is so heavy that every access to the queue lock is contended and throughput is dominated by 
+context switching. 
+The difference in throughput comes from differing degrees of serialization between the two queue implementations. 
+The synchronized LinkedList guards the entire queue state with a single lock that is held for the duration of the offer 
+or remove call; ConcurrentLinkedQueue uses a sophisticated non‐blocking queue algorithm (see Section 15.4.2) that

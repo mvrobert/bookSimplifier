@@ -1,0 +1,61 @@
+135 
+6BPart III: Liveness, Performance, and Testing ‐ 22BChapter 10. Avoiding Liveness Hazards
+Listing 10.7. Portion of Thread Dump After Deadlock. 
+Found one Java-level deadlock: 
+============================= 
+"ApplicationServerThread": 
+  waiting to lock monitor 0x080f0cdc (a MumbleDBConnection), 
+  which is held by "ApplicationServerThread" 
+"ApplicationServerThread": 
+  waiting to lock monitor 0x080f0ed4 (a MumbleDBCallableStatement), 
+  which is held by "ApplicationServerThread" 
+ 
+Java stack information for the threads listed above: 
+"ApplicationServerThread": 
+        at MumbleDBConnection.remove_statement 
+        - waiting to lock <0x650f7f30> (a MumbleDBConnection) 
+        at MumbleDBStatement.close 
+        - locked <0x6024ffb0> (a MumbleDBCallableStatement) 
+     ... 
+ 
+"ApplicationServerThread": 
+        at MumbleDBCallableStatement.sendBatch 
+        - waiting to lock <0x6024ffb0> (a MumbleDBCallableStatement) 
+        at MumbleDBConnection.commit 
+        - locked <0x650f7f30> (a MumbleDBConnection) 
+     ... 
+The JDBC driver being used here clearly has a lock‐ordering bug: different call chains through the JDBC driver acquire 
+multiple  locks  in  different  orders.  But  this  problem  would  not  have  manifested  itself  were  it  not  for  another  bug: 
+multiple threads were trying to use the same JDBC Connection at the same time. This was not how the application was 
+supposed to workthe developers were surprised to see the same Connection used concurrently by two threads. There's 
+nothing in the JDBC specification that requires a Connection to be thread‐safe, and it is common to confine use of a 
+Connection  to  a  single  thread,  as  was  intended  here.  This  vendor  tried  to  deliver  a  thread‐safe  JDBC  driver,  as 
+evidenced by the synchronization on multiple JDBC objects within the driver code. Unfortunately, because the vendor 
+did  not  take  lock  ordering  into  account,  the  driver  was  prone  to  deadlock,  but  it  was  only  the  interaction  of  the 
+deadlock‐prone driver and the incorrect  Connection sharing by the application that disclosed the problem. Because 
+neither bug was fatal in isolation, both persisted despite extensive testing. 
+10.3. Other Liveness Hazards 
+While  deadlock  is  the  most  widely  encountered  liveness  hazard,  there  are  several  other  liveness  hazards  you  may 
+encounter  in  concurrent  programs  including  starvation,  missed  signals,  and  livelock.  (Missed  signals  are  covered  in 
+Section 14.2.3.) 
+10.3.1. Starvation 
+Starvation occurs when a thread is perpetually denied access to resources it needs in order to make progress; the most 
+commonly starved resource is CPU cycles. Starvation in Java applications can be caused by inappropriate use of thread 
+priorities. It can also be caused by executing nonterminating constructs (infinite loops or resource waits that do not 
+terminate) with a lock held, since other threads that need that lock will never be able to acquire it. 
+The thread priorities defined in the Thread API are merely scheduling hints. The Thread API defines ten priority levels 
+that the JVM can map to operating system scheduling priorities as it sees fit. This mapping is platform‐specific, so two 
+Java priorities can map to the same OS priority on one system and different OS priorities on another. Some operating 
+systems have fewer than ten priority levels, in which case multiple Java priorities map to the same OS priority. 
+Operating system schedulers go to great lengths to provide scheduling fairness and liveness beyond that required by the 
+Java  Language  Specification.  In  most  Java  applications,  all  application  threads  have  the  same  priority,  Thread. 
+NORM_PRIORITY. The thread priority mechanism is a blunt instrument, and it's not always obvious what effect changing 
+priorities will have; boosting a thread's priority might do nothing or might always cause one thread to be scheduled in 
+preference to the other, causing starvation. 
+It is generally wise to resist the temptation to tweak thread priorities. As soon as you start modifying priorities, the 
+behavior of your application becomes platform‐specific and you introduce the risk of starvation. You can often spot a 
+program  that  is  trying  to  recover  from  priority  tweaking  or  other  responsiveness  problems  by  the  presence  of 
+Thread.sleep or Thread.yield calls in odd places, in an attempt to give more time to lower‐priority threads.[5] 
+[5] The semantics of Thread.yield (and Thread.sleep(0)) are undefined [JLS 17.9]; the JVM is free to implement them as no‐ops or treat 
+them as scheduling hints. In particular, they are not required to have the semantics of sleep(0) on Unix systems ‐ put the current thread at the 
+end of the run queue for that priority, yielding to other threads of the same priority ‐ though some JVMs implement yield in this way.

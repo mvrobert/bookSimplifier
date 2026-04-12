@@ -1,0 +1,75 @@
+173 
+7BPart IV: Advanced Topics ‐ 25BChapter 13 ‐ Explicit Locks
+Listing 13.3. Avoiding Lock­ordering Deadlock Using trylock. 
+public boolean transferMoney(Account fromAcct, 
+                             Account toAcct, 
+                             DollarAmount amount, 
+                             long timeout, 
+                             TimeUnit unit) 
+        throws InsufficientFundsException, InterruptedException { 
+    long fixedDelay = getFixedDelayComponentNanos(timeout, unit); 
+    long randMod = getRandomDelayModulusNanos(timeout, unit); 
+    long stopTime = System.nanoTime() + unit.toNanos(timeout); 
+ 
+    while (true) { 
+        if (fromAcct.lock.tryLock()) { 
+            try { 
+                if (toAcct.lock.tryLock()) { 
+                    try { 
+                        if (fromAcct.getBalance().compareTo(amount) 
+                                < 0) 
+                            throw new InsufficientFundsException(); 
+                        else { 
+                            fromAcct.debit(amount); 
+                            toAcct.credit(amount); 
+                            return true; 
+                        } 
+                    } finally { 
+                        toAcct.lock.unlock(); 
+                    } 
+                 } 
+             } finally { 
+                 fromAcct.lock.unlock(); 
+             } 
+         } 
+         if (System.nanoTime() < stopTime) 
+             return false; 
+         NANOSECONDS.sleep(fixedDelay + rnd.nextLong() % randMod); 
+     } 
+} 
+Listing 13.4. Locking with a Time Budget. 
+public boolean trySendOnSharedLine(String message, 
+                                   long timeout, TimeUnit unit) 
+                                   throws InterruptedException { 
+    long nanosToLock = unit.toNanos(timeout) 
+                     - estimatedNanosToSend(message); 
+    if (!lock.tryLock(nanosToLock, NANOSECONDS)) 
+        return false; 
+    try { 
+        return sendOnSharedLine(message); 
+    } finally { 
+        lock.unlock(); 
+    } 
+} 
+The canonical structure of interruptible lock acquisition is slightly more complicated than normal lock acquisition, as two 
+TRy  blocks  are  needed.  (If  the  interruptible  lock  acquisition  can  throw  InterruptedException,  the  standard  try-
+finally locking idiom works.) Listing 13.5 uses lockInterruptibly to implement sendOnSharedLine from Listing 13.4 
+so that we can call it from a cancellable task. The timed TRyLock is also responsive to interruption and so can be used 
+when you need both timed and interruptible lock acquisition. 
+Listing 13.5. Interruptible Lock Acquisition. 
+public boolean sendOnSharedLine(String message) 
+        throws InterruptedException { 
+    lock.lockInterruptibly(); 
+    try { 
+        return cancellableSendOnSharedLine(message); 
+    } finally { 
+        lock.unlock(); 
+    } 
+} 
+ 
+private boolean cancellableSendOnSharedLine(String message) 
+    throws InterruptedException { ... } 
+13.1.3. Non­block­structured Locking 
+With intrinsic locks, acquire‐release pairs are block‐structureda lock is always released in the same basic block in which 
+it  was  acquired,  regardless  of  how  control  exits  the  block.  Automatic  lock  release  simplifies  analysis  and  prevents 
+potential coding errors, but sometimes a more flexible locking discipline is needed.

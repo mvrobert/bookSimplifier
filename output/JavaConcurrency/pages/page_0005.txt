@@ -1,0 +1,52 @@
+iv 
+Java Concurrency In Practice 
+13.4. Choosing Between Synchronized and ReentrantLock 
+176 
+13.5. Read‐write Locks 
+176 
+Summary 
+178 
+Chapter 14 - Building Custom Synchronizers 
+179 
+14.1. Managing State Dependence 
+179 
+14.2. Using Condition Queues 
+183 
+14.3. Explicit Condition Objects 
+188 
+14.4. Anatomy of a Synchronizer 
+189 
+14.5. AbstractQueuedSynchronizer 
+190 
+14.6. AQS in Java.util.concurrent Synchronizer Classes 
+192 
+Summary 
+194 
+Chapter 15. Atomic Variables and Non-blocking Synchronization 
+195 
+15.1. Disadvantages of Locking 
+195 
+15.2. Hardware Support for Concurrency 
+196 
+15.3. Atomic Variable Classes 
+198 
+15.4. Non‐blocking Algorithms 
+201 
+Summary 
+206 
+Chapter 16. The Java Memory Model 
+207 
+16.1. What is a Memory Model, and Why would I Want One? 
+207 
+16.2. Publication 
+211 
+Summary 
+215 
+Appendix A. Annotations for Concurrency 
+216 
+A.1. Class Annotations 
+216 
+A.2. Field and Method Annotations 
+216 
+Bibliography 
+217

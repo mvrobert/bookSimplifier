@@ -1,0 +1,51 @@
+167 
+6BPart III: Liveness, Performance, and Testing ‐ 24BChapter 12. Testing Concurrent Programs
+you're unlucky, dead‐code elimination will just speed up your program by some factor that could be explained by other 
+means. 
+Dead‐code elimination is a problem in benchmarking statically compiled languages too, but detecting that the compiler 
+has eliminated a good chunk of your benchmark is a lot easier because you can look at the machine code and see that a 
+part of your program is missing. With dynamically compiled languages, that information is not easily accessible. 
+Many micro‐benchmarks perform much "better" when run with HotSpot's -server compiler than with -client, not just 
+because the server compiler can produce more efficient code, but also because it is more adept at optimizing dead 
+code. Unfortunately, the dead‐code elimination that made such short work of your benchmark won't do quite as well 
+with code that actually does something. But you should still prefer -server to -client for both production and testing 
+on multiprocessor systems ‐ you just have to write your tests so that they are not susceptible to dead‐code elimination. 
+Writing effective performance tests requires tricking the optimizer into not optimizing away your benchmark as dead 
+code.  This  requires  every  computed  result  to  be  used  somehow  by  your  program  ‐  in  a  way  that  does  not  require 
+synchronization or substantial computation. 
+In PutTakeTest, we compute the checksum of elements added to and removed from the queue and combine these 
+checksums across all the threads, but this could still be optimized away if we do not actually use the checksum value. 
+We happen to need it to verify the correctness of the algorithm, but you can ensure that a value is used by printing it 
+out.  However,  you  should  avoid  doing  I/O  while  the  test  is  actually  running,  so  as  not  to  distort  the  run  time 
+measurement. 
+A  cheap  trick  for  preventing  a  calculation  from  being  optimized  away  without  introducing  too  much  overhead  is  to 
+compute the hashCode of the field of some derived object, compare it to an arbitrary value such as the current value of 
+System. nanoTime, and print a useless and ignorable message if they happen to match: 
+if (foo.x.hashCode() == System.nanoTime()) 
+    System.out.print(" "); 
+The comparison will rarely succeed, and if it does, its only effect will be to insert a harmless space character into the 
+output.  (The  print  method  buffers  output  until  println  is  called,  so  in  the  rare  case  that  hashCode  and 
+System.nanoTime are equal no I/O is actually performed.) 
+Not only should every computed result be used, but results should also be unguessable. Otherwise, a smart dynamic 
+optimizing compiler is allowed to replace actions with pre‐computed results. We addressed this in the construction of 
+PutTakeTest, but any test program whose input is static data is vulnerable to this optimization. 
+12.4. Complementary Testing Approaches 
+While we'd like to believe that an effective testing program should "find all the bugs", this is an unrealistic goal. NASA 
+devotes more of its engineering resources to testing (it is estimated they employ 20 testers for each developer) than any 
+commercial entity could afford toand the code produced is still not free of defects. In complex programs, no amount of 
+testing can find all coding errors. 
+The goal of testing is not so much to find errors as it is to increase confidence that the code works as expected. Since it 
+is unrealistic to assume you can find all the bugs, the goal of a quality assurance (QA) plan should be to achieve the 
+greatest possible confidence given the testing resources available. More things can go wrong in a concurrent program 
+than in a sequential one, and therefore more testing is required to achieve the same level of confidence. So far we've 
+focused primarily on techniques for constructing effective unit and performance tests. Testing is critically important for 
+building  confidence  that  concurrent  classes  behave  correctly,  but  should  be  only  one  of  the  QA  metholologies  you 
+employ. 
+Different QA methodologies are more effective at finding some types of defects and less effective at finding others. By 
+employing  complementary  testing  methodologies  such  as  code  review  and  static  analysis,  you  can  achieve  greater 
+confidence than you could with any single approach. 
+12.4.1. Code Review 
+As effective and important as unit and stress tests are for finding concurrency bugs, they are no substitute for rigorous 
+code review by multiple people. (On the other hand, code review is no substitute for testing either.) You can and should 
+design tests to maximize their chances of discovering safety errors, and you should run them frequently, but you should 
+not neglect to have concurrent code reviewed carefully by someone besides its author. Even concurrency experts make

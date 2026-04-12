@@ -1,0 +1,752 @@
+{
+  "source_pdf": "C:\\Users\\Robert\\Downloads\\jesc1dd\\JavaConcurrency.pdf",
+  "book_slug": "JavaConcurrency",
+  "page_count": 235,
+  "chapter_count": 16,
+  "chapters": [
+    {
+      "chapter_number": 1,
+      "title": "Introduction",
+      "full_title": "Chapter 1 - Introduction",
+      "start_page": 18,
+      "end_page": 27,
+      "items": [
+        {
+          "item_number": "1.1",
+          "title": "A (Very) Brief History of Concurrency",
+          "full_title": "1.1. A (Very) Brief History of Concurrency",
+          "start_page": 19,
+          "end_page": 19,
+          "slug": "section_1_1_a__very__brief_history_of_concurrency"
+        },
+        {
+          "item_number": "1.2",
+          "title": "Benefits of Threads",
+          "full_title": "1.2. Benefits of Threads",
+          "start_page": 20,
+          "end_page": 21,
+          "slug": "section_1_2_benefits_of_threads"
+        },
+        {
+          "item_number": "1.3",
+          "title": "Risks of Threads",
+          "full_title": "1.3. Risks of Threads",
+          "start_page": 22,
+          "end_page": 24,
+          "slug": "section_1_3_risks_of_threads"
+        },
+        {
+          "item_number": "1.4",
+          "title": "Threads are Everywhere",
+          "full_title": "1.4. Threads are Everywhere",
+          "start_page": 25,
+          "end_page": 27,
+          "slug": "section_1_4_threads_are_everywhere"
+        }
+      ],
+      "slug": "chapter_01_introduction",
+      "item_count": 4
+    },
+    {
+      "chapter_number": 2,
+      "title": "Thread Safety",
+      "full_title": "Chapter 2. Thread Safety",
+      "start_page": 28,
+      "end_page": 39,
+      "items": [
+        {
+          "item_number": "2.1",
+          "title": "What is Thread Safety?",
+          "full_title": "2.1. What is Thread Safety?",
+          "start_page": 29,
+          "end_page": 29,
+          "slug": "section_2_1_what_is_thread_safety_"
+        },
+        {
+          "item_number": "2.2",
+          "title": "Atomicity",
+          "full_title": "2.2. Atomicity",
+          "start_page": 30,
+          "end_page": 32,
+          "slug": "section_2_2_atomicity"
+        },
+        {
+          "item_number": "2.3",
+          "title": "Locking",
+          "full_title": "2.3. Locking",
+          "start_page": 33,
+          "end_page": 35,
+          "slug": "section_2_3_locking"
+        },
+        {
+          "item_number": "2.4",
+          "title": "Guarding State with Locks",
+          "full_title": "2.4. Guarding State with Locks",
+          "start_page": 36,
+          "end_page": 36,
+          "slug": "section_2_4_guarding_state_with_locks"
+        },
+        {
+          "item_number": "2.5",
+          "title": "Liveness and Performance",
+          "full_title": "2.5. Liveness and Performance",
+          "start_page": 37,
+          "end_page": 39,
+          "slug": "section_2_5_liveness_and_performance"
+        }
+      ],
+      "slug": "chapter_02_thread_safety",
+      "item_count": 5
+    },
+    {
+      "chapter_number": 3,
+      "title": "Sharing Objects",
+      "full_title": "Chapter 3. Sharing Objects",
+      "start_page": 40,
+      "end_page": 53,
+      "items": [
+        {
+          "item_number": "3.1",
+          "title": "Visibility",
+          "full_title": "3.1. Visibility",
+          "start_page": 40,
+          "end_page": 42,
+          "slug": "section_3_1_visibility"
+        },
+        {
+          "item_number": "3.2",
+          "title": "Publication and Escape",
+          "full_title": "3.2. Publication and Escape",
+          "start_page": 43,
+          "end_page": 44,
+          "slug": "section_3_2_publication_and_escape"
+        },
+        {
+          "item_number": "3.3",
+          "title": "Thread Confinement",
+          "full_title": "3.3. Thread Confinement",
+          "start_page": 45,
+          "end_page": 47,
+          "slug": "section_3_3_thread_confinement"
+        },
+        {
+          "item_number": "3.4",
+          "title": "Immutability",
+          "full_title": "3.4. Immutability",
+          "start_page": 48,
+          "end_page": 49,
+          "slug": "section_3_4_immutability"
+        },
+        {
+          "item_number": "3.5",
+          "title": "Safe Publication",
+          "full_title": "3.5. Safe Publication",
+          "start_page": 50,
+          "end_page": 53,
+          "slug": "section_3_5_safe_publication"
+        }
+      ],
+      "slug": "chapter_03_sharing_objects",
+      "item_count": 5
+    },
+    {
+      "chapter_number": 4,
+      "title": "Composing Objects",
+      "full_title": "Chapter 4. Composing Objects",
+      "start_page": 54,
+      "end_page": 67,
+      "items": [
+        {
+          "item_number": "4.1",
+          "title": "Designing a Thread-safe Class",
+          "full_title": "4.1. Designing a Thread-safe Class",
+          "start_page": 54,
+          "end_page": 55,
+          "slug": "section_4_1_designing_a_thread-safe_class"
+        },
+        {
+          "item_number": "4.2",
+          "title": "Instance Confinement",
+          "full_title": "4.2. Instance Confinement",
+          "start_page": 56,
+          "end_page": 57,
+          "slug": "section_4_2_instance_confinement"
+        },
+        {
+          "item_number": "4.3",
+          "title": "Delegating Thread Safety",
+          "full_title": "4.3. Delegating Thread Safety",
+          "start_page": 58,
+          "end_page": 63,
+          "slug": "section_4_3_delegating_thread_safety"
+        },
+        {
+          "item_number": "4.4",
+          "title": "Adding Functionality to Existing Thread-safe Classes",
+          "full_title": "4.4. Adding Functionality to Existing Thread-safe Classes",
+          "start_page": 64,
+          "end_page": 65,
+          "slug": "section_4_4_adding_functionality_to_existing_thread-safe_classes"
+        },
+        {
+          "item_number": "4.5",
+          "title": "Documenting Synchronization Policies",
+          "full_title": "4.5. Documenting Synchronization Policies",
+          "start_page": 66,
+          "end_page": 67,
+          "slug": "section_4_5_documenting_synchronization_policies"
+        }
+      ],
+      "slug": "chapter_04_composing_objects",
+      "item_count": 5
+    },
+    {
+      "chapter_number": 5,
+      "title": "Building Blocks",
+      "full_title": "Chapter 5. Building Blocks",
+      "start_page": 68,
+      "end_page": 88,
+      "items": [
+        {
+          "item_number": "5.1",
+          "title": "Synchronized Collections",
+          "full_title": "5.1. Synchronized Collections",
+          "start_page": 68,
+          "end_page": 70,
+          "slug": "section_5_1_synchronized_collections"
+        },
+        {
+          "item_number": "5.2",
+          "title": "Concurrent Collections",
+          "full_title": "5.2. Concurrent Collections",
+          "start_page": 71,
+          "end_page": 72,
+          "slug": "section_5_2_concurrent_collections"
+        },
+        {
+          "item_number": "5.3",
+          "title": "Blocking Queues and the Producer-consumer Pattern",
+          "full_title": "5.3. Blocking Queues and the Producer-consumer Pattern",
+          "start_page": 73,
+          "end_page": 75,
+          "slug": "section_5_3_blocking_queues_and_the_producer-consumer_pattern"
+        },
+        {
+          "item_number": "5.4",
+          "title": "Blocking and Interruptible Methods",
+          "full_title": "5.4. Blocking and Interruptible Methods",
+          "start_page": 76,
+          "end_page": 76,
+          "slug": "section_5_4_blocking_and_interruptible_methods"
+        },
+        {
+          "item_number": "5.5",
+          "title": "Synchronizers",
+          "full_title": "5.5. Synchronizers",
+          "start_page": 77,
+          "end_page": 80,
+          "slug": "section_5_5_synchronizers"
+        },
+        {
+          "item_number": "5.6",
+          "title": "Building an Efficient, Scalable Result Cache",
+          "full_title": "5.6. Building an Efficient, Scalable Result Cache",
+          "start_page": 81,
+          "end_page": 88,
+          "slug": "section_5_6_building_an_efficient__scalable_result_cache"
+        }
+      ],
+      "slug": "chapter_05_building_blocks",
+      "item_count": 6
+    },
+    {
+      "chapter_number": 6,
+      "title": "Task Execution",
+      "full_title": "Chapter 6. Task Execution",
+      "start_page": 89,
+      "end_page": 101,
+      "items": [
+        {
+          "item_number": "6.1",
+          "title": "Executing Tasks in Threads",
+          "full_title": "6.1. Executing Tasks in Threads",
+          "start_page": 89,
+          "end_page": 90,
+          "slug": "section_6_1_executing_tasks_in_threads"
+        },
+        {
+          "item_number": "6.2",
+          "title": "The Executor Framework",
+          "full_title": "6.2. The Executor Framework",
+          "start_page": 91,
+          "end_page": 94,
+          "slug": "section_6_2_the_executor_framework"
+        },
+        {
+          "item_number": "6.3",
+          "title": "Finding Exploitable Parallelism",
+          "full_title": "6.3. Finding Exploitable Parallelism",
+          "start_page": 95,
+          "end_page": 101,
+          "slug": "section_6_3_finding_exploitable_parallelism"
+        }
+      ],
+      "slug": "chapter_06_task_execution",
+      "item_count": 3
+    },
+    {
+      "chapter_number": 7,
+      "title": "Cancellation and Shutdown",
+      "full_title": "Chapter 7. Cancellation and Shutdown",
+      "start_page": 102,
+      "end_page": 120,
+      "items": [
+        {
+          "item_number": "7.1",
+          "title": "Task Cancellation",
+          "full_title": "7.1. Task Cancellation",
+          "start_page": 102,
+          "end_page": 109,
+          "slug": "section_7_1_task_cancellation"
+        },
+        {
+          "item_number": "7.2",
+          "title": "Stopping a Thread-based Service",
+          "full_title": "7.2. Stopping a Thread-based Service",
+          "start_page": 110,
+          "end_page": 116,
+          "slug": "section_7_2_stopping_a_thread-based_service"
+        },
+        {
+          "item_number": "7.3",
+          "title": "Handling Abnormal Thread Termination",
+          "full_title": "7.3. Handling Abnormal Thread Termination",
+          "start_page": 117,
+          "end_page": 118,
+          "slug": "section_7_3_handling_abnormal_thread_termination"
+        },
+        {
+          "item_number": "7.4",
+          "title": "JVM Shutdown",
+          "full_title": "7.4. JVM Shutdown",
+          "start_page": 119,
+          "end_page": 120,
+          "slug": "section_7_4_jvm_shutdown"
+        }
+      ],
+      "slug": "chapter_07_cancellation_and_shutdown",
+      "item_count": 4
+    },
+    {
+      "chapter_number": 8,
+      "title": "Applying Thread Pools",
+      "full_title": "Chapter 8. Applying Thread Pools",
+      "start_page": 121,
+      "end_page": 133,
+      "items": [
+        {
+          "item_number": "8.1",
+          "title": "Implicit Couplings Between Tasks and Execution Policies",
+          "full_title": "8.1. Implicit Couplings Between Tasks and Execution Policies",
+          "start_page": 121,
+          "end_page": 121,
+          "slug": "section_8_1_implicit_couplings_between_tasks_and_execution_policies"
+        },
+        {
+          "item_number": "8.2",
+          "title": "Sizing Thread Pools",
+          "full_title": "8.2. Sizing Thread Pools",
+          "start_page": 122,
+          "end_page": 122,
+          "slug": "section_8_2_sizing_thread_pools"
+        },
+        {
+          "item_number": "8.3",
+          "title": "Configuring ThreadPoolExecutor",
+          "full_title": "8.3. Configuring ThreadPoolExecutor",
+          "start_page": 123,
+          "end_page": 127,
+          "slug": "section_8_3_configuring_threadpoolexecutor"
+        },
+        {
+          "item_number": "8.4",
+          "title": "Extending ThreadPoolExecutor",
+          "full_title": "8.4. Extending ThreadPoolExecutor",
+          "start_page": 128,
+          "end_page": 128,
+          "slug": "section_8_4_extending_threadpoolexecutor"
+        },
+        {
+          "item_number": "8.5",
+          "title": "Parallelizing Recursive Algorithms",
+          "full_title": "8.5. Parallelizing Recursive Algorithms",
+          "start_page": 129,
+          "end_page": 133,
+          "slug": "section_8_5_parallelizing_recursive_algorithms"
+        }
+      ],
+      "slug": "chapter_08_applying_thread_pools",
+      "item_count": 5
+    },
+    {
+      "chapter_number": 9,
+      "title": "GUI Applications",
+      "full_title": "Chapter 9. GUI Applications",
+      "start_page": 134,
+      "end_page": 144,
+      "items": [
+        {
+          "item_number": "9.1",
+          "title": "Why are GUIs Single-threaded?",
+          "full_title": "9.1. Why are GUIs Single-threaded?",
+          "start_page": 134,
+          "end_page": 135,
+          "slug": "section_9_1_why_are_guis_single-threaded_"
+        },
+        {
+          "item_number": "9.2",
+          "title": "Short-running GUI Tasks",
+          "full_title": "9.2. Short-running GUI Tasks",
+          "start_page": 136,
+          "end_page": 137,
+          "slug": "section_9_2_short-running_gui_tasks"
+        },
+        {
+          "item_number": "9.3",
+          "title": "Long-running GUI Tasks",
+          "full_title": "9.3. Long-running GUI Tasks",
+          "start_page": 138,
+          "end_page": 139,
+          "slug": "section_9_3_long-running_gui_tasks"
+        },
+        {
+          "item_number": "9.4",
+          "title": "Shared Data Models",
+          "full_title": "9.4. Shared Data Models",
+          "start_page": 140,
+          "end_page": 141,
+          "slug": "section_9_4_shared_data_models"
+        },
+        {
+          "item_number": "9.5",
+          "title": "Other Forms of Single-threaded Subsystems",
+          "full_title": "9.5. Other Forms of Single-threaded Subsystems",
+          "start_page": 142,
+          "end_page": 144,
+          "slug": "section_9_5_other_forms_of_single-threaded_subsystems"
+        }
+      ],
+      "slug": "chapter_09_gui_applications",
+      "item_count": 5
+    },
+    {
+      "chapter_number": 10,
+      "title": "Avoiding Liveness Hazards",
+      "full_title": "Chapter 10. Avoiding Liveness Hazards",
+      "start_page": 145,
+      "end_page": 153,
+      "items": [
+        {
+          "item_number": "10.1",
+          "title": "Deadlock",
+          "full_title": "10.1. Deadlock",
+          "start_page": 145,
+          "end_page": 149,
+          "slug": "section_10_1_deadlock"
+        },
+        {
+          "item_number": "10.2",
+          "title": "Avoiding and Diagnosing Deadlocks",
+          "full_title": "10.2. Avoiding and Diagnosing Deadlocks",
+          "start_page": 150,
+          "end_page": 151,
+          "slug": "section_10_2_avoiding_and_diagnosing_deadlocks"
+        },
+        {
+          "item_number": "10.3",
+          "title": "Other Liveness Hazards",
+          "full_title": "10.3. Other Liveness Hazards",
+          "start_page": 152,
+          "end_page": 153,
+          "slug": "section_10_3_other_liveness_hazards"
+        }
+      ],
+      "slug": "chapter_10_avoiding_liveness_hazards",
+      "item_count": 3
+    },
+    {
+      "chapter_number": 11,
+      "title": "Performance and Scalability",
+      "full_title": "Chapter 11. Performance and Scalability",
+      "start_page": 154,
+      "end_page": 169,
+      "items": [
+        {
+          "item_number": "11.1",
+          "title": "Thinking about Performance",
+          "full_title": "11.1. Thinking about Performance",
+          "start_page": 154,
+          "end_page": 155,
+          "slug": "section_11_1_thinking_about_performance"
+        },
+        {
+          "item_number": "11.2",
+          "title": "Amdahl's Law",
+          "full_title": "11.2. Amdahl's Law",
+          "start_page": 156,
+          "end_page": 158,
+          "slug": "section_11_2_amdahl_s_law"
+        },
+        {
+          "item_number": "11.3",
+          "title": "Costs Introduced by Threads",
+          "full_title": "11.3. Costs Introduced by Threads",
+          "start_page": 159,
+          "end_page": 160,
+          "slug": "section_11_3_costs_introduced_by_threads"
+        },
+        {
+          "item_number": "11.4",
+          "title": "Reducing Lock Contention",
+          "full_title": "11.4. Reducing Lock Contention",
+          "start_page": 161,
+          "end_page": 166,
+          "slug": "section_11_4_reducing_lock_contention"
+        },
+        {
+          "item_number": "11.5",
+          "title": "Example: Comparing Map Performance",
+          "full_title": "11.5. Example: Comparing Map Performance",
+          "start_page": 167,
+          "end_page": 167,
+          "slug": "section_11_5_example__comparing_map_performance"
+        },
+        {
+          "item_number": "11.6",
+          "title": "Reducing Context Switch Overhead",
+          "full_title": "11.6. Reducing Context Switch Overhead",
+          "start_page": 168,
+          "end_page": 169,
+          "slug": "section_11_6_reducing_context_switch_overhead"
+        }
+      ],
+      "slug": "chapter_11_performance_and_scalability",
+      "item_count": 6
+    },
+    {
+      "chapter_number": 12,
+      "title": "Testing Concurrent Programs",
+      "full_title": "Chapter 12. Testing Concurrent Programs",
+      "start_page": 170,
+      "end_page": 187,
+      "items": [
+        {
+          "item_number": "12.1",
+          "title": "Testing for Correctness",
+          "full_title": "12.1. Testing for Correctness",
+          "start_page": 170,
+          "end_page": 176,
+          "slug": "section_12_1_testing_for_correctness"
+        },
+        {
+          "item_number": "12.2",
+          "title": "Testing for Performance",
+          "full_title": "12.2. Testing for Performance",
+          "start_page": 177,
+          "end_page": 181,
+          "slug": "section_12_2_testing_for_performance"
+        },
+        {
+          "item_number": "12.3",
+          "title": "Avoiding Performance Testing Pitfalls",
+          "full_title": "12.3. Avoiding Performance Testing Pitfalls",
+          "start_page": 182,
+          "end_page": 183,
+          "slug": "section_12_3_avoiding_performance_testing_pitfalls"
+        },
+        {
+          "item_number": "12.4",
+          "title": "Complementary Testing Approaches",
+          "full_title": "12.4. Complementary Testing Approaches",
+          "start_page": 184,
+          "end_page": 187,
+          "slug": "section_12_4_complementary_testing_approaches"
+        }
+      ],
+      "slug": "chapter_12_testing_concurrent_programs",
+      "item_count": 4
+    },
+    {
+      "chapter_number": 13,
+      "title": "Explicit Locks",
+      "full_title": "Chapter 13 - Explicit Locks",
+      "start_page": 188,
+      "end_page": 195,
+      "items": [
+        {
+          "item_number": "13.1",
+          "title": "Lock and ReentrantLock",
+          "full_title": "13.1. Lock and ReentrantLock",
+          "start_page": 188,
+          "end_page": 190,
+          "slug": "section_13_1_lock_and_reentrantlock"
+        },
+        {
+          "item_number": "13.2",
+          "title": "Performance Considerations",
+          "full_title": "13.2. Performance Considerations",
+          "start_page": 191,
+          "end_page": 191,
+          "slug": "section_13_2_performance_considerations"
+        },
+        {
+          "item_number": "13.3",
+          "title": "Fairness",
+          "full_title": "13.3. Fairness",
+          "start_page": 192,
+          "end_page": 192,
+          "slug": "section_13_3_fairness"
+        },
+        {
+          "item_number": "13.4",
+          "title": "Choosing Between Synchronized and ReentrantLock",
+          "full_title": "13.4. Choosing Between Synchronized and ReentrantLock",
+          "start_page": 193,
+          "end_page": 192,
+          "slug": "section_13_4_choosing_between_synchronized_and_reentrantlock"
+        },
+        {
+          "item_number": "13.5",
+          "title": "Read-write Locks",
+          "full_title": "13.5. Read-write Locks",
+          "start_page": 193,
+          "end_page": 195,
+          "slug": "section_13_5_read-write_locks"
+        }
+      ],
+      "slug": "chapter_13_explicit_locks",
+      "item_count": 5
+    },
+    {
+      "chapter_number": 14,
+      "title": "Building Custom Synchronizers",
+      "full_title": "Chapter 14 - Building Custom Synchronizers",
+      "start_page": 196,
+      "end_page": 211,
+      "items": [
+        {
+          "item_number": "14.1",
+          "title": "Managing State Dependence",
+          "full_title": "14.1. Managing State Dependence",
+          "start_page": 196,
+          "end_page": 199,
+          "slug": "section_14_1_managing_state_dependence"
+        },
+        {
+          "item_number": "14.2",
+          "title": "Using Condition Queues",
+          "full_title": "14.2. Using Condition Queues",
+          "start_page": 200,
+          "end_page": 204,
+          "slug": "section_14_2_using_condition_queues"
+        },
+        {
+          "item_number": "14.3",
+          "title": "Explicit Condition Objects",
+          "full_title": "14.3. Explicit Condition Objects",
+          "start_page": 205,
+          "end_page": 205,
+          "slug": "section_14_3_explicit_condition_objects"
+        },
+        {
+          "item_number": "14.4",
+          "title": "Anatomy of a Synchronizer",
+          "full_title": "14.4. Anatomy of a Synchronizer",
+          "start_page": 206,
+          "end_page": 206,
+          "slug": "section_14_4_anatomy_of_a_synchronizer"
+        },
+        {
+          "item_number": "14.5",
+          "title": "AbstractQueuedSynchronizer",
+          "full_title": "14.5. AbstractQueuedSynchronizer",
+          "start_page": 207,
+          "end_page": 208,
+          "slug": "section_14_5_abstractqueuedsynchronizer"
+        },
+        {
+          "item_number": "14.6",
+          "title": "AQS in Java.util.concurrent Synchronizer Classes",
+          "full_title": "14.6. AQS in Java.util.concurrent Synchronizer Classes",
+          "start_page": 209,
+          "end_page": 211,
+          "slug": "section_14_6_aqs_in_java_util_concurrent_synchronizer_classes"
+        }
+      ],
+      "slug": "chapter_14_building_custom_synchronizers",
+      "item_count": 6
+    },
+    {
+      "chapter_number": 15,
+      "title": "Atomic Variables and Non-blocking Synchronization",
+      "full_title": "Chapter 15. Atomic Variables and Non-blocking Synchronization",
+      "start_page": 212,
+      "end_page": 223,
+      "items": [
+        {
+          "item_number": "15.1",
+          "title": "Disadvantages of Locking",
+          "full_title": "15.1. Disadvantages of Locking",
+          "start_page": 212,
+          "end_page": 212,
+          "slug": "section_15_1_disadvantages_of_locking"
+        },
+        {
+          "item_number": "15.2",
+          "title": "Hardware Support for Concurrency",
+          "full_title": "15.2. Hardware Support for Concurrency",
+          "start_page": 213,
+          "end_page": 214,
+          "slug": "section_15_2_hardware_support_for_concurrency"
+        },
+        {
+          "item_number": "15.3",
+          "title": "Atomic Variable Classes",
+          "full_title": "15.3. Atomic Variable Classes",
+          "start_page": 215,
+          "end_page": 217,
+          "slug": "section_15_3_atomic_variable_classes"
+        },
+        {
+          "item_number": "15.4",
+          "title": "Non-blocking Algorithms",
+          "full_title": "15.4. Non-blocking Algorithms",
+          "start_page": 218,
+          "end_page": 223,
+          "slug": "section_15_4_non-blocking_algorithms"
+        }
+      ],
+      "slug": "chapter_15_atomic_variables_and_non-blocking_synchronization",
+      "item_count": 4
+    },
+    {
+      "chapter_number": 16,
+      "title": "The Java Memory Model",
+      "full_title": "Chapter 16. The Java Memory Model",
+      "start_page": 224,
+      "end_page": 235,
+      "items": [
+        {
+          "item_number": "16.2",
+          "title": "Publication",
+          "full_title": "16.2. Publication",
+          "start_page": 228,
+          "end_page": 235,
+          "slug": "section_16_2_publication"
+        }
+      ],
+      "slug": "chapter_16_the_java_memory_model",
+      "item_count": 1
+    }
+  ]
+}

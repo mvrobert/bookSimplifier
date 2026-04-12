@@ -1,0 +1,67 @@
+148 
+Java Concurrency In Practice 
+Listing 11.8. Hash­based Map Using Lock Striping. 
+@ThreadSafe 
+public class StripedMap { 
+    // Synchronization policy: buckets[n] guarded by locks[n%N_LOCKS] 
+    private static final int N_LOCKS = 16; 
+    private final Node[] buckets; 
+    private final Object[] locks; 
+ 
+    private static class Node { ... } 
+ 
+    public StripedMap(int numBuckets) { 
+        buckets = new Node[numBuckets]; 
+        locks = new Object[N_LOCKS]; 
+        for (int i = 0; i < N_LOCKS; i++) 
+            locks[i] = new Object(); 
+    } 
+ 
+    private final int hash(Object key) { 
+        return Math.abs(key.hashCode() % buckets.length); 
+    } 
+ 
+    public Object get(Object key) { 
+        int hash = hash(key); 
+        synchronized (locks[hash % N_LOCKS]) { 
+            for (Node m = buckets[hash]; m != null; m = m.next) 
+                if (m.key.equals(key)) 
+                    return m.value; 
+        } 
+        return null; 
+    } 
+ 
+    public void clear() { 
+        for (int i = 0; i < buckets.length; i++) { 
+            synchronized (locks[i % N_LOCKS]) { 
+                buckets[i] = null; 
+            } 
+        } 
+    } 
+    ... 
+} 
+Lock granularity cannot be reduced when there are variables that are required for every operation. This is yet another 
+area where raw performance and scalability are often at odds with each other; common optimizations such as caching 
+frequently computed values can introduce "hot fields" that limit scalability. 
+If you were implementing HashMap, you would have a choice of how size computes the number of entries in the Map. 
+The simplest approach is to count the number of entries every time it is called. A common optimization is to update a 
+separate counter as entries are added or removed; this slightly increases the cost of a put or remove operation to keep 
+the counter up‐to‐date, but reduces the cost of the size operation from O(n) to O(1). 
+Keeping  a  separate  count  to  speed  up  operations  like  size  and  isEmpty  works  fine  for  a  single‐threaded  or  fully 
+synchronized  implementation,  but  makes  it  much  harder  to  improve  the  scalability  of  the  implementation  because 
+every operation that modifies the map must now update the shared counter. Even if you use lock striping for the hash 
+chains, synchronizing access to the counter reintroduces the scalability problems of exclusive locking. What looked like a 
+performance optimization ‐ caching the results of the size operation ‐ has turned into a scalability liability. In this case, 
+the counter is called a hot field because every mutative operation needs to access it. 
+ConcurrentHashMap avoids this problem by having size enumerate the stripes and add up the number of elements in 
+each stripe, instead of maintaining a global count. To avoid enumerating every element, ConcurrentHashMap maintains 
+a separate count field for each stripe, also guarded by the stripe lock.[12] 
+[12] If size is called frequently compared to mutative operations, striped data structures can optimize for this by caching the collection size in a 
+volatile  whenever  size  is  called  and  invalidating  the  cache  (setting  it  to  ‐1)  whenever  the  collection  is  modified.  If  the  cached  value  is 
+nonnegative on entry to size, it is accurate and can be returned; otherwise it is recomputed. 
+11.4.5. Alternatives to Exclusive Locks 
+A third technique for mitigating the effect of lock contention is to forego the use of exclusive locks in favor of a more 
+concurrency‐friendly means of managing shared state. These include using the concurrent collections, read‐write locks, 
+immutable objects and atomic variables. 
+ReadWriteLock (see Chapter 13) enforces a multiple‐reader, single‐writer locking discipline: more than one reader can 
+access the shared resource concurrently so long as none of them wants to modify it, but writers must acquire the lock

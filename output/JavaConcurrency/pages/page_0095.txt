@@ -1,0 +1,64 @@
+78 
+Java Concurrency In Practice 
+[6] Timer does have support for scheduling based on absolute, not relative time, so that tasks can be sensitive to changes in the system clock; 
+ScheduledThreadPoolExecutor supports only relative time. 
+A Timer creates only a single thread for executing timer tasks. If a timer task takes too long to run, the timing accuracy 
+of other TimerTasks can suffer. If a recurring TimerTask is scheduled to run every 10 ms and another Timer-Task takes 
+40 ms to run, the recurring task either (depending on whether it was scheduled at fixed rate or fixed delay) gets called 
+four times in rapid succession after the long‐running task completes, or "misses" four invocations completely. Scheduled 
+thread pools address this limitation by letting you provide multiple threads for executing deferred and periodic tasks. 
+Another problem with Timer is that it behaves poorly if a TimerTask throws an unchecked exception. The Timer thread 
+doesn't catch the exception, so an unchecked exception thrown from a TimerTask terminates the timer thread. Timer 
+also doesn't resurrect the thread in this situation; instead, it erroneously assumes the entire Timer was cancelled. In this 
+case, TimerTasks that are already scheduled but not yet executed are never run, and new tasks cannot be scheduled. 
+(This problem, called "thread leakage" is described in Section 7.3, along with techniques for avoiding it.) 
+OutOfTime in Listing 6.9 illustrates how a Timer can become confused in this manner and, as confusion loves company, 
+how the Timer shares its confusion with the next hapless caller that tries to submit a TimerTask. You might expect the 
+program  to  run  for  six  seconds  and  exit,  but  what  actually  happens  is  that  it  terminates  after  one  second  with  an 
+IllegalStateException  whose  message  text  is  "Timer  already  cancelled".  ScheduledThreadPoolExecutor  deals 
+properly with ill‐behaved tasks; there is little reason to use Timer in Java 5.0 or later. 
+If  you  need  to  build  your own  scheduling  service,  you  may  still be  able  to  take  advantage  of  the  library  by  using  a 
+DelayQueue, 
+a 
+BlockingQueue 
+implementation 
+that 
+provides 
+the 
+scheduling 
+functionality 
+of 
+ScheduledThreadPoolExecutor. A DelayQueue manages a collection of Delayed objects. A Delayed has a delay time 
+associated  with  it:  DelayQueue  lets  you  take  an  element  only  if  its  delay  has  expired.  Objects  are  returned  from  a 
+DelayQueue ordered by the time associated with their delay. 
+6.3. Finding Exploitable Parallelism 
+The Executor framework makes it easy to specify an execution policy, but in order to use an Executor, you have to be 
+able to describe your task as a Runnable. In most server applications, there is an obvious task boundary: a single client 
+request. But sometimes good task boundaries are not quite so obvious, as in many desktop applications. There may also 
+be exploitable parallelism within a single client request in server applications, as is sometimes the case in database 
+servers. (For a further discussion of the competing design forces in choosing task boundaries, see [CPJ 4.4.1.1].) 
+Listing 6.9. Class Illustrating Confusing Timer Behavior. 
+ 
+public class OutOfTime { 
+    public static void main(String[] args) throws Exception { 
+        Timer timer = new Timer(); 
+        timer.schedule(new ThrowTask(), 1); 
+        SECONDS.sleep(1); 
+        timer.schedule(new ThrowTask(), 1); 
+        SECONDS.sleep(5); 
+    } 
+ 
+    static class ThrowTask extends TimerTask { 
+        public void run() { throw new RuntimeException(); } 
+    } 
+} 
+In this section we develop several versions of a component that admit varying degrees of concurrency. Our sample 
+component is the page‐rendering portion of a browser application, which takes a page of HTML and renders it into an 
+image buffer. To keep it simple, we assume that the HTML consists only of marked up text interspersed with image 
+elements with pre‐specified dimensions and URLs. 
+6.3.1. Example: Sequential Page Renderer 
+The simplest approach is to process the HTML document sequentially. As text markup is encountered, render it into the 
+image buffer; as image references are encountered, fetch the image over the network and draw it into the image buffer 
+as well. This is easy to implement and requires touching each element of the input only once (it doesn't even require 
+buffering  the  document),  but  is  likely  to  annoy  the  user,  who  may  have  to  wait  a  long  time  before  all  the  text  is 
+rendered.

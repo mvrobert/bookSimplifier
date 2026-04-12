@@ -1,0 +1,27 @@
+164 
+Java Concurrency In Practice 
+Histograms of task completion times are normally the best way to visualize variance in service time. Variances are only 
+slightly more difficult to measure than averages ‐ you need to keep track of per‐task completion times in addition to 
+aggregate completion time. Since timer granularity can be a factor in measuring individual task time (an individual task 
+may take less than or close to the smallest "timer tick", which would distort measurements of task duration), to avoid 
+measurement artifacts we can measure the run time of small batches of put and take operations instead. 
+Figure 12.3 shows the per‐task completion times of a variant of TimedPutTakeTest using a buffer size of 1000 in which 
+each  of  256  concurrent  tasks  iterates  only  1000  items  for  non‐fair  (shaded  bars)  and  fair  semaphores  (open  bars). 
+(Section 13.3 explains fair versus non‐fair queuing for locks and semaphores.) Completion times for non‐fair semaphores 
+range  from  104  to  8,714  ms,  a  factor  of  over  eighty.  It  is  possible  to  reduce  this  range  by  forcing  more  fairness  in 
+concurrency control; this is easy to do in BoundedBuffer by initializing the semaphores to fair mode. As Figure 12.3 
+shows, this succeeds in greatly reducing the variance (now ranging only from 38,194 to 38,207 ms), but unfortunately 
+also greatly reduces the throughput. (A longer‐running test with more typical kinds of tasks would probably show an 
+even larger throughput reduction.) 
+Figure 12.3. Completion Time Histogram for TimedPutTakeTest with Default (Non­fair) and Fair Semaphores. 
+ 
+We saw before that very small buffer sizes cause heavy context switching and poor throughput even in nonfair mode, 
+because nearly every operation involves a context switch. As an indication that the cost of fairness results primarily from 
+blocking  threads,  we  can  rerun  this  test  with  a  buffer  size  of  one  and  see  that  nonfair  semaphores  now  perform 
+comparably to fair semaphores. Figure 12.4 shows that fairness doesn't make the average much worse or the variance 
+much better in this case. 
+Figure 12.4. Completion Time Histogram for TimedPutTakeTest with Single­item Buffers. 
+ 
+So, unless threads are continually blocking anyway because of tight synchronization requirements, nonfair semaphores 
+provide much better throughput and fair semaphores provides lower variance. Because the results are so dramatically 
+different, Semaphore forces its clients to decide which of the two factors to optimize for.

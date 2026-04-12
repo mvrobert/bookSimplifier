@@ -1,0 +1,60 @@
+90 
+Java Concurrency In Practice 
+efficiency and responsiveness. If you have high responsiveness requirements, you cannot call potentially long‐running 
+methods that are not themselves responsive to interruption, potentially restricting your options for calling library code. 
+Cancellation can involve state other than the interruption status; interruption can be used to get the thread's attention, 
+and  information  stored  elsewhere  by  the  interrupting  thread  can  be  used  to  provide  further  instructions  for  the 
+interrupted thread. (Be sure to use synchronization when accessing that information.) 
+Listing 7.7. Non­cancelable Task that Restores Interruption Before Exit. 
+public Task getNextTask(BlockingQueue<Taskgt; queue) { 
+    boolean interrupted = false; 
+    try { 
+        while (true) { 
+            try { 
+                return queue.take(); 
+            } catch (InterruptedException e) { 
+                interrupted = true; 
+                // fall through and retry 
+            } 
+        } 
+    } finally { 
+        if (interrupted) 
+            Thread.currentThread().interrupt(); 
+    } 
+} 
+For example, when a worker thread owned by a ThreadPoolExecutor detects interruption, it checks whether the pool 
+is being shut down. If so, it performs some pool cleanup before terminating; otherwise it may create a new thread to 
+restore the thread pool to the desired size. 
+7.1.4. Example: Timed Run 
+Many problems can take forever to solve (e.g., enumerate all the prime numbers); for others, the answer might be 
+found  reasonably  quickly  but  also  might  take  forever.  Being  able  to  say  "spend  up  to  ten  minutes  looking  for  the 
+answer" or "enumerate all the answers you can in ten minutes" can be useful in these situations. 
+The  aSecondOfPrimes  method  in  Listing  7.2  starts  a  PrimeGenerator  and  interrupts  it  after  a  second.  While  the 
+PrimeGenerator might take somewhat longer than a second to stop, it will eventually notice the interrupt and stop, 
+allowing the thread to terminate. But another aspect of executing a task is that you want to find out if the task throws 
+an  exception.  If  PrimeGenerator  throws  an  unchecked  exception  before  the  timeout  expires,  it  will  probably  go 
+unnoticed, since the prime generator runs in a separate thread that does not explicitly handle exceptions. 
+Listing 7.8 shows an attempt at running an arbitrary Runnable for a given amount of time. It runs the task in the calling 
+thread  and  schedules  a  cancellation  task  to  interrupt  it  after  a  given  time  interval.  This  addresses  the  problem  of 
+unchecked exceptions thrown from the task, since they can then be caught by the caller of timedRun. 
+This is an appealingly simple approach, but it violates the rules: you should know a thread's interruption policy before 
+interrupting it. Since timedRun can be called from an arbitrary thread, it cannot know the calling thread's interruption 
+policy. If the task completes before the timeout, the cancellation task that interrupts the thread in which timedRun was 
+called  could  go  off  after  timedRun  has  returned  to  its  caller.  We  don't  know  what  code  will  be  running  when  that 
+happens,  but  the  result  won't  be  good.  (It  is  possible  but  surprisingly  tricky  to  eliminate  this  risk  by  using  the 
+ScheduledFuture returned by schedule to cancel the cancellation task.) 
+Listing 7.8. Scheduling an Interrupt on a Borrowed Thread. Don't Do this. 
+ 
+private static final ScheduledExecutorService cancelExec = ...; 
+ 
+public static void timedRun(Runnable r, 
+                           long timeout, TimeUnit unit) { 
+    final Thread taskThread = Thread.currentThread(); 
+    cancelExec.schedule(new Runnable() { 
+        public void run() { taskThread.interrupt(); } 
+    }, timeout, unit); 
+    r.run(); 
+} 
+Further, if the task is not responsive to interruption, timedRun will not return until the task finishes, which may be long 
+after the desired timeout (or even not at all). A timed run service that doesn't return after the specified time is likely to 
+be irritating to its callers.

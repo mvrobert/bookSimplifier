@@ -1,0 +1,61 @@
+109 
+5BPart II: Structuring Concurrent Applications ‐ 20BChapter 8. Applying Thread Pools
+Listing 8.3. Creating a Fixed­sized Thread Pool with a Bounded Queue and the Caller­runs Saturation Policy. 
+ThreadPoolExecutor executor 
+    = new ThreadPoolExecutor(N_THREADS, N_THREADS, 
+        0L, TimeUnit.MILLISECONDS, 
+        new LinkedBlockingQueue<Runnable>(CAPACITY)); 
+executor.setRejectedExecutionHandler( 
+    new ThreadPoolExecutor.CallerRunsPolicy()); 
+There is no predefined saturation policy to make execute block when the work queue is full. However, the same effect 
+can be accomplished by using a Semaphore to bound the task injection rate, as shown in BoundedExecutor in Listing 8.4. 
+In such an approach, use an unbounded queue (there's no reason to bound both the queue size and the injection rate) 
+and set the bound on the semaphore to be equal to the pool size plus the number of queued tasks you want to allow, 
+since the semaphore is bounding the number of tasks both currently executing and awaiting execution. 
+8.3.4. Thread Factories 
+Whenever a thread pool needs to create a thread, it does so through a thread factory (see Listing 8.5). The default 
+thread factory creates a new, nondaemon thread with no special configuration. Specifying a thread factory allows you to 
+customize the configuration of pool threads. ThreadFactory has a single method, newThread, that is called whenever a 
+thread pool needs to create a new thread. 
+There  are  a  number  of  reasons  to  use  a  custom  thread  factory.  You  might  want  to  specify  an 
+UncaughtExceptionHandler for pool threads, or instantiate an instance of a custom  Thread class, such as one that 
+performs debug logging. You might want to modify the priority (generally not a very good idea; see Section 10.3.1) or 
+set the daemon status (again, not all that good an idea; see Section 7.4.2) of pool threads. Or maybe you just want to 
+give pool threads more meaningful names to simplify interpreting thread dumps and error logs. 
+Listing 8.4. Using a Semaphore to Throttle Task Submission. 
+@ThreadSafe 
+public class BoundedExecutor { 
+    private final Executor exec; 
+    private final Semaphore semaphore; 
+ 
+    public BoundedExecutor(Executor exec, int bound) { 
+        this.exec = exec; 
+        this.semaphore = new Semaphore(bound); 
+    } 
+ 
+    public void submitTask(final Runnable command) 
+            throws InterruptedException { 
+        semaphore.acquire(); 
+        try { 
+            exec.execute(new Runnable() { 
+                public void run() { 
+                    try { 
+                        command.run(); 
+                    } finally { 
+                        semaphore.release(); 
+                    } 
+                } 
+            }); 
+        } catch (RejectedExecutionException e) { 
+            semaphore.release(); 
+        } 
+    } 
+} 
+Listing 8.5. ThreadFactory Interface. 
+public interface ThreadFactory { 
+    Thread newThread(Runnable r); 
+} 
+MyThreadFactory in Listing 8.6 illustrates a custom thread factory. It instantiates a new MyAppThread, passing a pool‐
+specific name to the constructor so that threads from each pool can be distinguished in thread dumps and error logs. 
+My-AppThread can also be used elsewhere in the application so that all threads can take advantage of its debugging 
+features.

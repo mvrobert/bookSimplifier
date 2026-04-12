@@ -1,0 +1,33 @@
+162 
+Java Concurrency In Practice 
+Figure 12.1. TimedPutTakeTest with Various Buffer Capacities. 
+ 
+ 
+It may be somewhat puzzling at first that adding a lot more threads degrades performance only slightly. The reason is 
+hard to see from the data, but easy to see on a CPU performance meter such as perfbar while the test is running: even 
+with many threads, not much computation is going on, and most of it is spent blocking and unblocking threads. So there 
+is plenty of CPU slack for more threads to do the same thing without hurting performance very much. 
+However, be careful about concluding from this data that you can always add more threads to a producer‐consumer 
+program that uses a bounded buffer. This test is fairly artificial in how it simulates the application; the producers do 
+almost  no  work  to  generate  the  item  placed  on  the  queue,  and  the  consumers  do  almost  no  work  with  the  item 
+retrieved.  If  the  worker  threads  in  a  real  producer‐consumer  application  do  some  nontrivial  work  to  produce  and 
+consume items (as is generally the case), then this slack would disappear and the effects of having too many threads 
+could  be  very  noticeable.  The  primary  purpose  of  this  test  is  to  measure  what  constraints  the  producer‐consumer 
+handoff via the bounded buffer imposes on overall throughput. 
+Listing 12.12. Testing with a Barrier­based Timer. 
+public void test() { 
+    try { 
+        timer.clear(); 
+        for (int i = 0; i < nPairs; i++) { 
+            pool.execute(new Producer()); 
+            pool.execute(new Consumer()); 
+        } 
+        barrier.await(); 
+        barrier.await(); 
+        long nsPerItem = timer.getTime() / (nPairs*  (long)nTrials); 
+        System.out.print("Throughput: " + nsPerItem + " ns/item"); 
+        assertEquals(putSum.get(), takeSum.get()); 
+    } catch (Exception e) { 
+        throw new RuntimeException(e); 
+    } 
+}

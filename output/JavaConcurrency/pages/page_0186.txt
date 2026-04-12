@@ -1,0 +1,38 @@
+169 
+6BPart III: Liveness, Performance, and Testing ‐ 24BChapter 12. Testing Concurrent Programs
+Sleeping or waiting while holding a lock. Calling Thread.sleep with a lock held can prevent other threads from making 
+progress for a long time and is therefore a potentially serious liveness hazard. Calling Object.wait or Condition.await 
+with two locks held poses a similar hazard. 
+Spin loops. Code that does nothing but spin (busy wait) checking a field for an expected value can waste CPU time and, if 
+the field is not volatile, is not guaranteed to terminate. Latches or condition waits are often a better technique when 
+waiting for a state transition to occur. 
+12.4.3. Aspect­oriented Testing Techniques 
+As  of  this  writing,  aspect‐oriented  programming  (AOP)  techniques  have  only  limited  applicability  to  concurrency, 
+because most popular AOP tools do not yet support pointcuts at synchronization points. However, AOP can be applied 
+to assert invariants or some aspects of compliance with synchronization policies. For example, (Laddad, 2003) provides 
+an example of using an aspect to wrap all calls to non‐thread‐safe Swing methods with the assertion that the call is 
+occurring in the event thread. As it requires no code changes, this technique is easy to apply and can disclose subtle 
+publication and thread‐confinement errors. 
+12.4.4. Profilers and Monitoring Tools 
+Most commercial profiling tools have some support for threads. They vary in feature set and effectiveness, but can 
+often provide insight into what your program is doing (although profiling tools are usually intrusive and can substantially 
+affect program timing and behavior). Most offer a display showing a timeline for each thread with different colors for 
+the various thread states (runnable, blocked waiting for a lock, blocked waiting for I/O, etc.). Such a display can show 
+how effectively your program is utilizing the available CPU resources, and if it is doing badly, where to look for the 
+cause.  (Many  profilers  also  claim  features  for  identifying  which  locks  are  causing  contention,  but  in  practice  these 
+features are often a blunter instrument than is desired for analyzing a program's locking behavior.) 
+The built‐in JMX agent also offers some limited features for monitoring thread behavior. The ThreadInfo class includes 
+the thread's current state and, if the thread is blocked, the lock or condition queue on which it is blocked. If the "thread 
+contention monitoring" feature is enabled (it is disabled by default because of its performance impact), ThreadInfo also 
+includes the number of times that the thread has blocked waiting for a lock or notification, and the cumulative amount 
+of time it has spent waiting. 
+Summary 
+Testing concurrent programs for correctness can be extremely challenging because many of the possible failure modes 
+of  concurrent  programs  are  low‐probability  events  that  are  sensitive  to  timing,  load,  and  other  hard‐to‐reproduce 
+conditions. Further, the testing infrastructure can introduce additional synchronization or timing constraints that can 
+mask  concurrency  problems  in  the  code  being  tested.  Testing  concurrent  programs  for  performance  can  be  equally 
+challenging;  Java  programs  are  more  difficult  to  test  than  programs  written  in  statically  compiled  languages  like  C, 
+because timing measurements can be affected by dynamic compilation, garbage collection, and adaptive optimization. 
+To have the best chance of finding latent bugs before they occur in production, combine traditional testing techniques 
+(being  careful  to  avoid  the  pitfalls  discussed  here)  with  code  reviews  and  automated  analysis  tools.  Each  of  these 
+techniques finds problems that the others are likely to miss.

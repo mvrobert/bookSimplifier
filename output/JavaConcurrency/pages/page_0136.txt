@@ -1,0 +1,19 @@
+119 
+5BPart II: Structuring Concurrent Applications ‐ 21BChapter 9. GUI Applications
+9.2. Short­running GUI Tasks 
+In a GUI application, events originate in the event thread and bubble up to application‐provided listeners, which will 
+probably perform some computation that affects the presentation objects. For simple, short‐running tasks, the entire 
+action can stay in the event thread; for longer‐running tasks, some of the processing should be offloaded to another 
+thread. 
+In the simple case, confining presentation objects to the event thread is completely natural. Listing 9.3 creates a button 
+whose color changes randomly when pressed. When the user clicks on the button, the toolkit delivers an ActionEvent 
+in the event thread to all registered action listeners. In response, the action listener picks a new color and changes the 
+button's  background  color.  So  the  event  originates  in  the  GUI  toolkit  and  is  delivered  to  the  application,  and  the 
+application modifies the GUI in response to the user's action. Control never has to leave the event thread, as illustrated 
+in Figure 9.1. 
+Figure 9.1. Control Flow of a Simple Button Click. 
+ 
+ 
+This trivial example characterizes the majority of interactions between GUI applications and GUI toolkits. So long as 
+tasks are short‐lived and access only GUI objects (or other thread‐confined or thread‐safe application objects), you can 
+almost totally ignore threading concerns and do everything from the event thread, and the right thing happens.

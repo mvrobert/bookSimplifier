@@ -1,0 +1,45 @@
+177 
+7BPart IV: Advanced Topics ‐ 25BChapter 13 ‐ Explicit Locks
+The locking strategy implemented by read‐write locks allows multiple simultaneous readers but only a single writer. Like 
+Lock,  ReadWriteLock  admits  multiple  implementations  that  can  vary  in  performance,  scheduling  guarantees, 
+acquisition preference, fairness, or locking semantics. 
+Read‐write locks are a performance optimization designed to allow greater concurrency in certain situations. In practice, 
+read‐write  locks  can  improve  performance  for  frequently  accessed  read‐mostly  data  structures  on  multiprocessor 
+systems;  under  other  conditions  they  perform  slightly  worse  than  exclusive  locks  due  to  their  greater  complexity. 
+Whether they are an improvement in any given situation is best determined via profiling; because ReadWriteLock uses 
+Lock for the read and write portions of the lock, it is relatively easy to swap out a read‐write lock for an exclusive one if 
+profiling determines that a read‐write lock is not a win. 
+The  interaction  between  the  read  and  write  locks  allows  for  a  number  of  possible  implementations.  Some  of  the 
+implementation options for a ReadWriteLock are: 
+Release preference. When a writer releases the write lock and both readers and writers are queued up, who should be 
+given preference ‐ readers, writers, or whoever asked first? 
+Reader barging. If the lock is held by readers but there are waiting writers, should newly arriving readers be granted 
+immediate  access,  or  should  they  wait  behind  the  writers?  Allowing  readers  to  barge  ahead  of  writers  enhances 
+concurrency but runs the risk of starving writers. 
+Reentrancy. Are the read and write locks reentrant? 
+Downgrading. If a thread holds the write lock, can it acquire the read lock without releasing the write lock? This would 
+let a writer "downgrade" to a read lock without letting other writers modify the guarded resource in the meantime. 
+Upgrading. Can a read lock be upgraded to a write lock in preference to other waiting readers or writers? Most read‐
+write lock implementations do not support upgrading, because without an explicit upgrade operation it is deadlock‐
+prone. (If two readers simultaneously attempt to upgrade to a write lock, neither will release the read lock.) 
+ReentrantReadWriteLock  provides  reentrant  locking  semantics  for  both  locks.  Like 
+ReentrantLock,  a 
+ReentrantReadWriteLock can be constructed as non‐fair (the default) or fair. With a fair lock, preference is given to the 
+thread that has been waiting the longest; if the lock is held by readers and a thread requests the write lock, no more 
+readers are allowed to acquire the read lock until the writer has been serviced and releases the write lock. With a non‐
+fair lock, the order in which threads are granted access is unspecified. Downgrading from writer to reader is permitted; 
+upgrading from reader to writer is not (attempting to do so results in deadlock). 
+Like ReentrantLock, the write lock in ReentrantReadWriteLock has a unique owner and can be released only by the 
+thread that acquired it. In Java 5.0, the read lock behaves more like a Semaphore than a lock, maintaining only the count 
+of active readers, not their identities. This behavior was changed in Java 6 to keep track also of which threads have been 
+granted the read lock. [6] 
+[6] One reason for this change is that under Java 5.0, the lock implementation cannot distinguish between a thread requesting the read lock for the 
+first time and a reentrant lock request, which would make fair read‐write locks deadlock‐prone. 
+Read‐write locks can improve concurrency when locks are typically held for a moderately long time and most operations 
+do not modify the guarded resources. ReadWriteMap in Listing 13.7 uses a ReentrantReadWriteLock to wrap a Map so 
+that it can be shared safely by multiple readers and still prevent reader‐writer or writer‐writer conflicts.[7] In reality, 
+ConcurrentHashMap's  performance  is  so  good  that  you  would  probably  use  it  rather  than  this  approach  if  all  you 
+needed was a concurrent hash‐based map, but this technique would be useful if you want to provide more concurrent 
+access to an alternate Map implementation such as LinkedHashMap. 
+[7] ReadWriteMap does not implement Map because implementing the view methods such as entrySet and values would be difficult and 
+the "easy" methods are usually sufficient.

@@ -1,0 +1,57 @@
+37 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 16BChapter 4. 
+Composing Objects
+Chapter 4. Composing Objects 
+So far, we've covered the low‐level basics of thread safety and synchronization. But we don't want to have to analyze 
+each memory access to ensure that our program is thread‐safe; we want to be able to take thread‐safe components and 
+safely compose them into larger components or programs. This chapter covers patterns for structuring classes that can 
+make  it  easier  to  make  them  thread‐safe  and  to  maintain  them  without  accidentally  undermining  their  safety 
+guarantees. 
+4.1. Designing a Thread­safe Class 
+While it is possible to write a thread‐safe program that stores all its state in public static fields, it is a lot harder to verify 
+its  thread  safety  or  to  modify  it  so  that  it  remains  thread‐safe  than  one  that  uses  encapsulation  appropriately. 
+Encapsulation makes it possible to determine that a class is thread‐safe without having to examine the entire program. 
+The design process for a thread‐safe class should include these three basic elements: 
+• Identify the variables that form the object's state; 
+• Identify the invariants that constrain the state variables; 
+• Establish a policy for managing concurrent access to the object's state. 
+An object's state starts with its fields. If they are all of primitive type, the fields comprise the entire state. Counter in 
+Listing 4.1 has only one field, so the value field comprises its entire state. The state of an object with n primitive fields is 
+just the n‐tuple of its field values; the state of a 2D Point is its (x, y) value. If the object has fields that are references to 
+other  objects,  its  state  will  encompass  fields  from  the  referenced  objects  as  well.  For  example,  the  state  of  a 
+LinkedList includes the state of all the link node objects belonging to the list. 
+The synchronization policy defines how an object coordinates access to its state without violating its invariants or post‐
+conditions. It specifies what combination of immutability, thread confinement, and locking is used to maintain thread 
+safety,  and  which  variables  are  guarded  by  which  locks.  To  ensure  that  the  class  can  be  analyzed  and  maintained, 
+document the synchronization policy. 
+Listing 4.1. Simple Thread­safe Counter Using the Java Monitor Pattern. 
+@ThreadSafe 
+public final class Counter { 
+    @GuardedBy("this")  private long value = 0; 
+ 
+    public synchronized  long getValue() { 
+        return value; 
+    } 
+    public  synchronized  long increment() { 
+        if (value == Long.MAX_VALUE) 
+            throw new IllegalStateException("counter overflow"); 
+        return ++value; 
+    } 
+} 
+4.1.1. Gathering Synchronization Requirements 
+Making  a  class  thread‐safe  means  ensuring  that  its  invariants  hold  under  concurrent  access;  this  requires  reasoning 
+about its state. Objects and variables have a state space: the range of possible states they can take on. The smaller this 
+state space, the easier it is to reason about. By using final fields wherever practical, you make it simpler to analyze the 
+possible states an object can be in. (In the extreme case, immutable objects can only be in a single state.) 
+Many classes have invariants that identify certain states as valid or invalid. The value field in Counter is a long. The 
+state  space  of  a  long  ranges  from  Long.MIN_VALUE  to  Long.MAX_VALUE,  but  Counter  places  constraints  on  value; 
+negative values are not allowed. 
+Similarly, operations may have post‐conditions that identify certain state transitions as invalid. If the current state of a 
+Counter is 17, the only valid next state is 18. When the next state is derived from the current state, the operation is 
+necessarily a compound action. Not all operations impose state transition constraints; when updating a variable that 
+holds the current temperature, its previous state does not affect the computation. 
+Constraints placed on states or state transitions by invariants and post‐conditions create additional synchronization or 
+encapsulation  requirements.  If  certain  states  are  invalid,  then  the  underlying  state  variables  must  be  encapsulated, 
+otherwise client code could put the object into an invalid state. If an operation has invalid state transitions, it must be

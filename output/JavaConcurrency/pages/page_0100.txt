@@ -1,0 +1,59 @@
+83 
+5BPart II: Structuring Concurrent Applications ‐ 18BChapter 6. Task Execution
+A  secondary  problem  when  using  timed  tasks  is  to  stop  them  when  they  run  out  of  time,  so  they  do  not  waste 
+computing resources by continuing to compute a result that will not be used. This can be accomplished by having the 
+task strictly manage its own time budget and abort if it runs out of time, or by cancelling the task if the timeout expires. 
+Again,  Future  can  help;  if  a  timed  get  completes  with  a  TimeoutException,  you  can  cancel  the  task  through  the 
+Future. If the task is written to be cancellable (see Chapter 7), it can be terminated early so as not to consume excessive 
+resources. This technique is used in Listings 6.13 and 6.16. 
+Listing 6.16 shows a typical application of a timed Future.get. It generates a composite web page that contains the 
+requested content plus an advertisement fetched from an ad server. It submits the ad‐fetching task to an executor, 
+computes the rest of the page content, and then waits for the ad until its time budget runs out.[8] If the get times out, it 
+cancels[9] the ad‐fetching task and uses a default advertisement instead. 
+[8] The timeout passed to get is computed by subtracting the current time from the deadline; this may in fact yield a negative number, but all the 
+timed methods in java.util.concurrent treat negative timeouts as zero, so no extra code is needed to deal with this case. 
+[9] The true parameter to Future.cancel means that the task thread can be interrupted if the task is currently running; see Chapter 7. 
+6.3.8. Example: A Travel Reservations Portal 
+The time‐budgeting approach in the previous section can be easily generalized to an arbitrary number of tasks. Consider 
+a travel reservation portal: the user enters travel dates and requirements and the portal fetches and displays bids from 
+a number of airlines, hotels or car rental companies. Depending on the company, fetching a bid might involve invoking a 
+web service, consulting a database, performing an EDI transaction, or some other mechanism. Rather than have the 
+response time for the page be driven by the slowest response, it may be preferable to present only the information 
+available  within  a  given  time  budget.  For  providers  that  do  not  respond  in  time,  the  page  could  either  omit  them 
+completely or display a placeholder such as "Did not hear from Air Java in time." 
+Listing 6.16. Fetching an Advertisement with a Time Budget. 
+Page renderPageWithAd() throws InterruptedException { 
+    long endNanos = System.nanoTime() + TIME_BUDGET; 
+    Future<Ad> f = exec.submit(new FetchAdTask()); 
+    // Render the page while waiting for the ad 
+    Page page = renderPageBody(); 
+    Ad ad; 
+    try { 
+        // Only wait for the remaining time budget 
+        long timeLeft = endNanos - System.nanoTime(); 
+        ad = f.get(timeLeft, NANOSECONDS); 
+    } catch (ExecutionException e) { 
+        ad = DEFAULT_AD; 
+    } catch (TimeoutException e) { 
+        ad = DEFAULT_AD; 
+        f.cancel(true); 
+    } 
+    page.setAd(ad); 
+    return page; 
+} 
+Fetching a bid from one company is independent of fetching bids from another, so fetching a single bid is a sensible task 
+boundary that allows bid retrieval to proceed concurrently. It would be easy enough to create n tasks, submit them to a 
+thread pool, retain the Futures, and use a timed get to fetch each result sequentially via its Future, but there is an 
+even easierway ‐ invokeAll. 
+Listing  6.17  uses  the  timed  version  of  invokeAll  to  submit  multiple  tasks  to  an  ExecutorService  and  retrieve  the 
+results. The invokeAll method takes a collection of tasks and returns a collection of Futures. The two collections have 
+identical structures; invokeAll adds the Futures to the returned collection in the order imposed by the task collection's 
+iterator, thus allowing the caller to associate a Future with the Callable it represents. The timed version of invokeAll 
+will return when all the tasks have completed, the calling thread is interrupted, or the timeout expires. Any tasks that 
+are  not  complete  when  the  timeout  expires  are  cancelled.  On  return  from  invokeAll,  each  task  will  have  either 
+completed normally or been cancelled; the client code can call get or isCancelled to find out which. 
+Summary 
+Structuring  applications  around  the  execution  of  tasks  can  simplify  development  and  facilitate  concurrency.  The 
+Executor  framework  permits  you  to  decouple  task  submission  from  execution  policy  and  supports  a  rich  variety  of 
+execution policies; whenever you find yourself creating threads to perform tasks, consider using an Executor instead. 
+To maximize the benefit of decomposing an application into tasks, you must identify sensible task boundaries. In some

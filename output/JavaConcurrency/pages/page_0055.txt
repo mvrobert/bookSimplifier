@@ -1,0 +1,53 @@
+38 
+Java Concurrency In Practice 
+made  atomic.  On  the  other  hand,  if  the  class  does  not  impose  any  such  constraints,  we  may  be  able  to  relax 
+encapsulation or serialization requirements to obtain greater flexibility or better performance. 
+A class can also have invariants that constrain multiple state variables. A number range class, like NumberRange in Listing 
+4.10, typically maintains state variables for the lower and upper bounds of the range. These variables must obey the 
+constraint that the lower bound be less than or equal to the upper bound. Multivariable invariants like this one create 
+atomicity requirements: related variables must be fetched or updated in a single atomic operation. You cannot update 
+one, release and reacquire the lock, and then update the others, since this could involve leaving the object in an invalid 
+state when the lock was released. When multiple variables participate in an invariant, the lock that guards them must 
+be held for the duration of any operation that accesses the related variables. 
+You cannot ensure thread safety without understanding an object's invariants and post‐conditions. Constraints on the 
+valid values or state transitions for state variables can create atomicity and encapsulation requirements. 
+4.1.2. State­dependent Operations 
+Class invariants and method post‐conditions constrain the valid states and state transitions for an object. Some objects 
+also have methods with state‐based preconditions. For example, you cannot remove an item from an empty queue; a 
+queue must be in the "nonempty" state before you can remove an element. Operations with state‐based preconditions 
+are called state‐dependent [CPJ 3]. 
+In  a  single‐threaded  program,  if  a  precondition  does  not  hold,  the  operation  has  no  choice  but  to  fail.  But  in  a 
+concurrent program, the precondition may become true later due to the action of another thread. Concurrent programs 
+add the possibility of waiting until the precondition becomes true, and then proceeding with the operation. 
+The built‐in mechanisms for efficiently waiting for a condition to become true ‐ wait and notify ‐ are tightly bound to 
+intrinsic locking, and can be difficult to use correctly. To create operations that wait for a precondition to become true 
+before proceeding, it is often easier to use existing library classes, such as blocking queues or semaphores, to provide 
+the  desired  state‐dependent  behavior.  Blocking  library  classes  such  as  BlockingQueue,  Semaphore,  and  other 
+synchronizers are covered in Chapter 5; creating state‐dependent classes using the low‐level mechanisms provided by 
+the platform and class library is covered in Chapter 14. 
+4.1.3. State Ownership 
+We implied in Section 4.1 that an object's state could be a subset of the fields in the object graph rooted at that object. 
+Why might it be a subset? Under what conditions are fields reachable from a given object not part of that object's state? 
+When defining which variables form an object's state, we want to consider only the data that object owns. Ownership is 
+not  embodied  explicitly  in  the  language,  but  is  instead  an  element  of  class  design.  If  you  allocate  and  populate  a 
+HashMap,  you  are  creating  multiple  objects:  the  HashMap  object,  a  number  of  Map.Entry  objects  used  by  the 
+implementation of HashMap, and perhaps other internal objects as well. The logical state of a HashMap includes the state 
+of all its Map.Entry and internal objects, even though they are implemented as separate objects. 
+For better or worse, garbage collection lets us avoid thinking carefully about ownership. When passing an object to a 
+method in C++, you have to think fairly carefully about whether you are transferring ownership, engaging in a short‐
+term loan, or envisioning long‐term joint ownership. In Java, all these same ownership models are possible, but the 
+garbage  collector  reduces  the  cost  of  many  of  the  common  errors  in  reference  sharing,  enabling  less‐than‐precise 
+thinking about ownership. 
+In many cases, ownership and encapsulation go together ‐ the object encapsulates the state it owns and owns the state 
+it encapsulates. It is the owner of a given state variable that gets to decide on the locking protocol used to maintain the 
+integrity of that variable's state. Ownership implies control, but once you publish a reference to a mutable object, you 
+no longer have exclusive control; at best, you might have "shared ownership". A class usually does not own the objects 
+passed to its methods or constructors, unless the method is designed to explicitly transfer ownership of objects passed 
+in (such as the synchronized collection wrapper factory methods). 
+Collection classes often exhibit a form of "split ownership", in which the collection owns the state of the collection 
+infrastructure, but client code owns the objects stored in the collection. An example is ServletContext from the servlet 
+framework.  ServletContext  provides  a  Map‐like  object  container  service  to  servlets  where  they  can  register  and 
+retrieve application objects by name with setAttribute and getAttribute. The ServletContext object implemented 
+by the servlet container must be thread‐safe, because it will necessarily be accessed by multiple threads. Servlets need 
+not use synchronization  when calling  set-Attribute and  getAttribute, but they  may have to use synchronization 
+when  using  the  objects  stored  in  the  ServletContext.  These  objects  are  owned  by  the  application;  they  are  being

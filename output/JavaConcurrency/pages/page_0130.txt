@@ -1,0 +1,64 @@
+113 
+5BPart II: Structuring Concurrent Applications ‐ 20BChapter 8. Applying Thread Pools
+depth‐first  traversal  of  a  tree,  performing  a  calculation  on  each  node  and  placing  the  result  in  a  collection.  The 
+transformed version, parallelRecursive, also does a depth‐first traversal, but instead of computing the result as each 
+node is visited, it submits a task to compute the node result. 
+Listing 8.11. Transforming Sequential Tail­recursion into Parallelized Recursion. 
+public<T> void sequentialRecursive(List<Node<T>> nodes, 
+                                   Collection<T> results) { 
+    for (Node<T> n : nodes) { 
+        results.add(n.compute()); 
+        sequentialRecursive(n.getChildren(), results); 
+    } 
+} 
+ 
+public<T> void parallelRecursive(final Executor exec, 
+                                 List<Node<T>> nodes, 
+                                 final Collection<T> results) { 
+    for (final Node<T> n : nodes) { 
+        exec.execute(new Runnable() { 
+            public void run() { 
+                results.add(n.compute()); 
+            } 
+        }); 
+        parallelRecursive(exec, n.getChildren(), results); 
+    } 
+} 
+When parallelRecursive returns, each node in the tree has been visited (the traversal is still sequential: only the calls 
+to compute are executed in parallel) and the computation for each node has been queued to the Executor. Callers of 
+parallelRecursive can wait for all the results by creating an Executor specific to the traversal and using shutdown 
+and awaitTermination, as shown in Listing 8.12. 
+Listing 8.12. Waiting for Results to be Calculated in Parallel. 
+public<T> Collection<T> getParallelResults(List<Node<T>> nodes) 
+        throws InterruptedException { 
+    ExecutorService exec = Executors.newCachedThreadPool(); 
+    Queue<T> resultQueue = new ConcurrentLinkedQueue<T>(); 
+    parallelRecursive(exec, nodes, resultQueue); 
+    exec.shutdown(); 
+    exec.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS); 
+    return resultQueue; 
+} 
+8.5.1. Example: A Puzzle Framework 
+An appealing application of this technique is solving puzzles that involve finding a sequence of transformations from 
+some initial state to reach a goal state, such as the familiar "sliding block puzzles",[7] "Hi‐Q", "Instant Insanity", and other 
+solitaire puzzles. 
+[7] See http://www.puzzleworld.org/SlidingBlockPuzzles. 
+We define a "puzzle" as a combination of an initial position, a goal position, and a set of rules that determine valid 
+moves. The rule set has two parts: computing the list of legal moves from a given position and computing the result of 
+applying  a  move  to  a  position.  Puzzle  in  Listing  8.13  shows  our  puzzle  abstraction;  the  type  parameters  P  and  M 
+represent  the  classes  for  a  position  and  a  move.  From  this  interface,  we  can  write  a  simple  sequential  solver  that 
+searches the puzzle space until a solution is found or the puzzle space is exhausted. 
+Listing 8.13. Abstraction for Puzzles Like the "Sliding Blocks Puzzle". 
+public interface Puzzle<P, M> { 
+    P initialPosition(); 
+    boolean isGoal(P position); 
+    Set<M> legalMoves(P position); 
+    P move(P position, M move); 
+} 
+Node in Listing 8.14 represents a position that has been reached through some series of moves, holding a reference to 
+the move that created the position and the previous Node. Following the links back from a Node lets us reconstruct the 
+sequence of moves that led to the current position. 
+SequentialPuzzleSolver in Listing 8.15 shows a sequential solver for the puzzle framework that performs a depth‐first 
+search of the puzzle space. It terminates when it finds a solution (which is not necessarily the shortest solution). 
+Rewriting the solver to exploit concurrency would allow us to compute next moves and evaluate the goal condition in 
+parallel, since the process of evaluating one move is mostly independent of evaluating other moves. (We say "mostly"

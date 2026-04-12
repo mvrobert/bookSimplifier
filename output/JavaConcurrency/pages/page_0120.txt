@@ -1,0 +1,47 @@
+103 
+5BPart II: Structuring Concurrent Applications ‐ 19BChapter 7. Cancellation and Shutdown
+Listing 7.26. Registering a Shutdown Hook to Stop the Logging Service. 
+public void start() { 
+    Runtime.getRuntime().addShutdownHook(new Thread() { 
+        public void run() { 
+            try { LogService.this.stop(); } 
+            catch (InterruptedException ignored) {} 
+        } 
+    }); 
+} 
+7.4.2. Daemon Threads 
+Sometimes you want to create a thread that performs some helper function but you don't want the existence of this 
+thread to prevent the JVM from shutting down. This is what daemon threads are for. 
+Threads are divided into two types: normal threads and daemon threads. When the JVM starts up, all the threads it 
+creates (such as garbage collector and other housekeeping threads) are daemon threads, except the main thread. When 
+a new thread is created, it inherits the daemon status of the thread that created it, so by default any threads created by 
+the main thread are also normal threads. 
+Normal  threads  and  daemon  threads  differ  only  in  what  happens  when  they  exit.  When  a  thread  exits,  the  JVM 
+performs an inventory of running threads, and if the only threads that are left are daemon threads, it initiates an orderly 
+shutdown.  When the  JVM halts, any remaining daemon threads are abandoned ‐  finally  blocks are not executed, 
+stacks are not unwound ‐ the JVM just exits. 
+Daemon  threads  should  be  used  sparingly  ‐  few  processing  activities  can  be  safely  abandoned  at  any  time  with  no 
+cleanup. In particular, it is dangerous to use daemon threads for tasks that might perform any sort of I/O. Daemon 
+threads are best saved for "housekeeping" tasks, such as a background thread that periodically removes expired entries 
+from an in‐memory cache. 
+Daemon threads are not a good substitute for properly managing the lifecycle of services within an application. 
+7.4.3. Finalizers 
+The garbage collector does a good job of reclaiming memory resources when they are no longer needed, but some 
+resources, such as file or socket handles, must be explicitly returned to the operating system when no longer needed. To 
+assist  in  this,  the  garbage  collector  treats  objects  that  have  a  nontrivial  finalize  method  specially:  after  they  are 
+reclaimed by the collector, finalize is called so that persistent resources can be released. 
+Since finalizers can run in a thread managed by the JVM, any state accessed by a finalizer will be accessed by more than 
+one thread and therefore must be accessed with synchronization. Finalizers offer no guarantees on when or even if they 
+run,  and  they  impose  a  significant  performance  cost  on  objects  with  nontrivial  finalizers.  They  are  also  extremely 
+difficult to write correctly.[9] In most cases, the combination of finally blocks and explicit close methods does a better 
+job of resource management than finalizers; the sole exception is when you need to manage objects that hold resources 
+acquired by native methods. For these reasons and others, work hard to avoid writing or using classes with finalizers 
+(other than the platform library classes) [EJ Item 6]. 
+[9] See (Boehm, 2005) for some of the challenges involved in writing finalizers. 
+Avoid finalizers. 
+Summary 
+End‐of‐lifecycle  issues  for  tasks,  threads,  services,  and  applications  can  add  complexity  to  their  design  and 
+implementation.  Java  does  not  provide  a  preemptive  mechanism  for  cancelling  activities  or  terminating  threads. 
+Instead, it provides a cooperative interruption mechanism that can be used to facilitate cancellation, but it is up to you 
+to  construct  protocols  for  cancellation  and  use  them  consistently.  Using  FutureTask  and  the  Executor  framework 
+simplifies building cancellable tasks and services.

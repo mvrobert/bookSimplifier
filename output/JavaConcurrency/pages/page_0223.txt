@@ -1,0 +1,33 @@
+206 
+Java Concurrency In Practice 
+enough to reduce the cost of insertion operations. However, in nearly all situations, ordinary atomic variables perform 
+just fine ‐ in only a few cases will the atomic field updaters be needed. (The atomic field updaters are also useful when 
+you want to perform atomic updates while preserving the serialized form of an existing class.) 
+15.4.4. The ABA Problem 
+The ABA problem is an anomaly that can arise from the naive use of compare‐and‐swap in algorithms where nodes can 
+be recycled (primarily in environments without garbage collection). A CAS effectively asks "Is the value of V still A?", and 
+proceeds with the update if so. In most situations, including the examples presented in this chapter, this is entirely 
+sufficient. However, sometimes we really want to ask "Has the value of V changed since I last observed it to be A?" For 
+some algorithms, changing V from A to B and then back to A still counts as a change that requires us to retry some 
+algorithmic step. 
+This ABA problem can arise in algorithms that do their own memory management for link node objects. In this case, that 
+the head of a list still refers to a previously observed node is not enough to imply that the contents of the list have not 
+changed. If you cannot avoid the ABA problem by letting the garbage collector manage link nodes for you, there is still a 
+relatively  simple  solution:  instead  of  updating  the  value  of  a  reference,  update  a  pair  of  values,  a  reference  and  a 
+version  number.  Even  if  the  value  changes  from  A  to  B  and  back  to  A,  the  version  numbers  will  be  different. 
+AtomicStampedReference (and its cousin AtomicMarkableReference) provide atomic conditional update on a pair of 
+variables. AtomicStampedReference updates an object reference‐integer pair, allowing "versioned" references that are 
+immune[8] to the ABA problem. Similarly, AtomicMarkableReference updates an object reference‐boolean pair that is 
+used by some algorithms to let a node remain in a list while being marked as deleted.[9] 
+[8] In practice, anyway; theoretically the counter could wrap. 
+[9] Many processors provide a double‐wide CAS (CAS2 or CASX) operation that can operate on a pointer‐integer pair, which would make this 
+operation reasonably efficient. As of Java 6, Atomic-StampedReference does not use double‐wide CAS even on platforms that support it. 
+(Double‐wide CAS differs from DCAS, which operates on two unrelated memory locations; as of this writing, no current processor implements 
+DCAS.) 
+Summary 
+Non‐blocking algorithms maintain thread safety by using low‐level concurrency primitives such as compare‐and‐swap 
+instead of locks. These low‐level primitives are exposed through the atomic variable classes, which can also be used as 
+"better volatile variables" providing atomic update operations for integers and object references. 
+Non‐blocking algorithms are difficult to design and implement, but can offer better scalability under typical conditions 
+and greater resistance to liveness failures. Many of the advances in concurrent performance from one JVM version to 
+the next come from the use of non‐blocking algorithms, both within the JVM and in the platform libraries.

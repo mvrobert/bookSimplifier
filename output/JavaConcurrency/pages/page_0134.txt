@@ -1,0 +1,50 @@
+117 
+5BPart II: Structuring Concurrent Applications ‐ 21BChapter 9. GUI Applications
+Chapter 9. GUI Applications 
+If  you've  tried  to  write  even  a  simple  GUI  application  using  Swing,  you  know  that  GUI  applications  have  their  own 
+peculiar threading issues. To maintain safety, certain tasks must run in the Swing event thread. But you cannot execute 
+long‐running tasks in the event thread, lest the UI become unresponsive. And Swing data structures are not thread‐safe, 
+so you must be careful to confine them to the event thread. 
+Nearly  all  GUI  toolkits,  including  Swing  and  SWT,  are  implemented  as  single‐threaded  subsystems  in  which  all  GUI 
+activity is confined to a single thread. If you are not planning to write a totally single‐threaded program, there will be 
+activities that run partially in an application thread and partially in the event thread. Like many other threading bugs, 
+getting this division wrong may not necessarily make your program crash immediately; instead, it could behave oddly 
+under hard‐to‐identify conditions. Even though the GUI frameworks themselves are single‐threaded subsystems, your 
+application may not be, and you still need to consider threading issues carefully when writing GUI code. 
+9.1. Why are GUIs Single­threaded? 
+In  the  old  days,  GUI  applications  were  single‐threaded  and  GUI  events  were  processed  from  a  "main  event  loop". 
+Modern GUI frameworks use a model that is only slightly different: they create a dedicated event dispatch thread (EDT) 
+for handling GUI events. 
+Single‐threaded GUI frameworks are not unique to Java; Qt, NextStep, MacOS Cocoa, X Windows, and many others are 
+also  single‐threaded.  This  is  not  for  lack  of  trying;  there  have  been  many  attempts  to  write  multithreaded  GUI 
+frameworks, but because of persistent problems with race conditions and deadlock, they all eventually arrived at the 
+single‐threaded event queue model in which a dedicated thread fetches events off a queue and dispatches them to 
+application‐defined event handlers. (AWT originally tried to support a greater degree of multithreaded access, and the 
+decision to make Swing single‐threaded was based largely on experience with AWT.) 
+Multithreaded GUI frameworks tend to be particularly susceptible to deadlock, partially because of the unfortunate 
+interaction  between  input  event  processing  and  any  sensible  object‐oriented  modeling  of  GUI  components.  Actions 
+initiated by the user tend to "bubble up" from the OS to the application ‐ a mouse click is detected by the OS, is turned 
+into a "mouse click" event by the toolkit, and is eventually delivered to an application listener as a higher level event 
+such as a "button pressed" event. On the other hand, application‐initiated actions "bubble down" from the application 
+to the OS ‐ changing the background color of a component originates in the application and is dispatched to a specific 
+component class and eventually into the OS for rendering. Combining this tendency for activities to access the same GUI 
+objects in the opposite order with the requirement of making each object thread‐safe yields a recipe for inconsistent 
+lock ordering, which leads to deadlock (see Chapter 10). And this is exactly what nearly every GUI toolkit development 
+effort rediscovered through experience. 
+Another factor leading to deadlock in multithreaded GUI frameworks is the prevalence of the model‐view‐control (MVC) 
+pattern. Factoring user interactions into cooperating model, view, and controller objects greatly simplifies implementing 
+GUI  applications,  but  again  raises  the  risk  of  inconsistent  lock  ordering.  The  controller  calls  into  the  model,  which 
+notifies the view that something has changed. But the controller can also call into the view, which may in turn call back 
+into  the  model  to  query  the  model  state.  The  result  is  again  inconsistent  lock  ordering,  with  the  attendant  risk  of 
+deadlock. 
+In his weblog,[1] Sun VP Graham Hamilton nicely sums up the challenges, describing why the multithreaded GUI toolkit is 
+one of the recurring "failed dreams" of computer science. 
+[1] http://weblogs.java.net/blog/kgh/archive/2004/10 
+I believe you can program successfully with multithreaded GUI toolkits if the toolkit is very carefully designed; if the 
+toolkit  exposes  its  locking  methodology  in  gory  detail;  if  you  are  very  smart,  very  careful,  and  have  a  global 
+understanding of the whole structure of the toolkit. If you get one of these things slightly wrong, things will mostly 
+work, but you will get occasional hangs (due to deadlocks) or glitches (due to races). This multithreaded approach works 
+best for people who have been intimately involved in the design of the toolkit. 
+Unfortunately, I don't think this set of characteristics scales to widespread commercial use. What you tend to end up 
+with is normal smart programmers building apps that don't quite work reliably for reasons that are not at all obvious. So 
+the authors get very disgruntled and frustrated and use bad words on the poor innocent toolkit.

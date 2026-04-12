@@ -1,0 +1,47 @@
+181 
+7BPart IV: Advanced Topics ‐ 26BChapter 14 ‐ Building Custom Synchronizers
+Listing 14.4. Client Logic for Calling GrumpyBoundedBuffer. 
+while (true) { 
+    try { 
+        V item = buffer.take(); 
+        // use item 
+        break; 
+    } catch (BufferEmptyException e) { 
+        Thread.sleep(SLEEP_GRANULARITY); 
+    } 
+} 
+A variant of this approach is to return an error value when the buffer is in the wrong state. This is a minor improvement 
+in that it doesn't abuse the exception mechanism by throwing an exception that really means "sorry, try again", but it 
+does not address the fundamental problem: that callers must deal with precondition failures themselves.[2] 
+[2] Queue offers both of these options ‐ poll returns null if the queue is empty, and remove throws an exception ‐ but Queue is not intended 
+for use in producer‐consumer designs. BlockingQueue, whose operations block until the queue is in the right state to proceed, is a better 
+choice when producers and consumers will execute concurrently. 
+The  client  code  in  Listing  14.4  is  not  the  only  way  to  implement  the  retry  logic.  The  caller  could  retry  the  take 
+immediately, without sleeping ‐ an approach known as busy waiting or spin waiting. This could consume quite a lot of 
+CPU time if the buffer state does not change for a while. On the other hand, if the caller decides to sleep so as not to 
+consume so much CPU time, it could easily "oversleep" if the buffer state changes shortly after the call to sleep. So the 
+client code is left with the choice between the poor CPU usage of spinning and the poor responsiveness of sleeping. 
+(Somewhere between busy waiting and sleeping would be calling Thread.yield in each iteration, which is a hint to the 
+scheduler that this would be a reasonable time to let another thread run. If you are waiting for another thread to do 
+something, that something might happen faster if you yield the processor rather than consuming your full scheduling 
+quantum.) 
+14.1.2. Example: Crude Blocking by Polling and Sleeping 
+SleepyBoundedBuffer in Listing 14.5 attempts to spare callers the inconvenience of implementing the retry logic on 
+each call by encapsulating the same crude "poll and sleep" retry mechanism within the put and take operations. If the 
+buffer is empty, take sleeps until another thread puts some data into the buffer; if the buffer is full, put sleeps until 
+another  thread  makes  room  by  removing  some  data.  This  approach  encapsulates  precondition  management  and 
+simplifies using the buffer ‐ definitely a step in the right direction. 
+The implementation of SleepyBoundedBuffer is more complicated than the previous attempt.[3] The buffer code must 
+test the appropriate state condition with the buffer lock held, because the variables that represent the state condition 
+are guarded by the buffer lock. If the test fails, the executing thread sleeps for a while, first releasing the lock so other 
+threads can access the buffer.[4] Once the thread wakes up, it reacquires the lock and tries again, alternating between 
+sleeping and testing the state condition until the operation can proceed. 
+[3] We will spare you the details of Snow White's other five bounded buffer implementations, especially SneezyBoundedBuffer. 
+[4] It is usually a bad idea for a thread to go to sleep or otherwise block with a lock held, but in this case is even worse because the desired 
+condition (buffer is full/empty) can never become true if the lock is not released! 
+From the perspective of the caller, this works nicely ‐ if the operation can proceed immediately, it does, and otherwise it 
+blocks ‐ and the caller need not deal with the mechanics of failure and retry. Choosing the sleep granularity is a tradeoff 
+between responsiveness and CPU usage; the smaller the sleep granularity, the more responsive, but also the more CPU 
+resources consumed. Figure 14.1 shows how sleep granularity can affect responsiveness: there may be a delay between 
+when buffer space becomes available and when the thread wakes up and checks again. 
+Figure 14.1. Thread Oversleeping Because the Condition Became True Just After It Went to Sleep.

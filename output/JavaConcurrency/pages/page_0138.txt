@@ -1,0 +1,36 @@
+121 
+5BPart II: Structuring Concurrent Applications ‐ 21BChapter 9. GUI Applications
+Figure 9.2. Control Flow with Separate Model and View Objects. 
+ 
+9.3. Long­running GUI Tasks 
+If all tasks were short‐running (and the application had no significant non‐GUI portion), then the entire application could 
+run within the event thread and you wouldn't have to pay any attention to threads at all. However, sophisticated GUI 
+applications may execute tasks that may take longer than the user is willing to wait, such as spell checking, background 
+compilation, or fetching remote resources. These tasks must run in another thread so that the GUI remains responsive 
+while they run. 
+Swing makes it easy to have a task run in the event thread, but (prior to Java 6) doesn't provide any mechanism for 
+helping GUI tasks execute code in other threads. But we don't need Swing to help us here: we can create our own 
+Executor for processing long‐running tasks. A cached thread pool is a good choice for long‐running tasks; only rarely do 
+GUI applications initiate a large number of long‐running tasks, so there is little risk of the pool growing without bound. 
+We start with a simple task that does not support cancellation or progress indication and that does not update the GUI 
+on  completion,  and  then  add  those  features  one  by  one.  Listing  9.4  shows  an  action  listener,  bound  to  a  visual 
+component, that submits a long‐running task to an Executor. Despite the two layers of inner classes, having a GUI task 
+initiate a task in this manner is fairly straightforward: the UI action listener is called in the event thread and submits a 
+Runnable to execute in the thread pool. 
+This example gets the long‐running task out of the event thread in a "fire and forget" manner, which is probably not 
+very useful. There is usually some sort of visual feedback when a long‐running task completes. But you cannot access 
+presentation objects from the background thread, so on completion the task must submit another task to run in the 
+event thread to update the user interface. 
+Listing 9.4. Binding a Long­running Task to a Visual Component. 
+ExecutorService backgroundExec = Executors.newCachedThreadPool(); 
+... 
+button.addActionListener(new ActionListener() { 
+    public void actionPerformed(ActionEvent e) { 
+        backgroundExec.execute(new Runnable() { 
+            public void run() { doBigComputation(); } 
+        }); 
+}}); 
+Listing 9.5 illustrates the obvious way to do this, which is starting to get complicated; we're now up to three layers of 
+inner classes. The action listener first dims the button and sets a label indicating that a computation is in progress, then 
+submits a task to the background executor. When that task finishes, it queues another task to run in the event thread, 
+which reenables the button and restores the label text.

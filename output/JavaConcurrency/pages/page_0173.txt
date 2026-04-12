@@ -1,0 +1,58 @@
+156 
+Java Concurrency In Practice 
+Listing 12.3. Testing Blocking and Responsiveness to Interruption. 
+void testTakeBlocksWhenEmpty() { 
+    final BoundedBuffer<Integer> bb = new BoundedBuffer<Integer>(10); 
+    Thread taker = new Thread() { 
+        public void run() { 
+            try { 
+                int unused = bb.take(); 
+                fail();  // if we get here, it's an error 
+            } catch (InterruptedException success) { } 
+        }}; 
+    try { 
+        taker.start(); 
+        Thread.sleep(LOCKUP_DETECT_TIMEOUT); 
+        taker.interrupt(); 
+        taker.join(LOCKUP_DETECT_TIMEOUT); 
+        assertFalse(taker.isAlive()); 
+    } catch (Exception unexpected) { 
+        fail(); 
+    } 
+} 
+12.1.3. Testing Safety 
+The tests in Listings 12.2 and 12.3 test important properties of the bounded buffer, but are unlikely to disclose errors 
+stemming from data races. To test that a concurrent class performs correctly under unpredictable concurrent access, we 
+need to set up multiple threads performing put and take operations over some amount of time and then somehow test 
+that nothing went wrong. 
+Constructing  tests  to  disclose  safety  errors  in  concurrent  classes  is  a  chicken‐and‐egg  problem:  the  test  programs 
+themselves  are  concurrent  programs.  Developing  good  concurrent  tests  can  be  more  difficult  than  developing  the 
+classes they test. 
+The challenge to constructing effective safety tests for concurrent classes is identifying easily checked properties that 
+will, with high probability, fail if something goes wrong, while at the same time not letting the failure‐auditing code limit 
+concurrency artificially. It is best if checking the test property does not require any synchronization. 
+One approach that works well with classes used in producer‐consumer designs (like BoundedBuffer) is to check that 
+everything  put  into  a  queue  or  buffer  comes  out  of  it,  and  that  nothing  else  does.  A  naive  implementation  of  this 
+approach would insert the element into a "shadow" list when it is put on the queue, remove it from the list when it is 
+removed from the queue, and assert that the shadow list is empty when the test has finished. But this approach would 
+distort the scheduling of the test threads because modifying the shadow list would require synchronization and possibly 
+blocking. 
+A better approach is to compute checksums of the elements that are enqueued and dequeued using an order‐sensitive 
+checksum function, and compare them. If they match, the test passes. This approach works best when there is a single 
+producer putting elements into the buffer and a single consumer taking them out, because it can test not only that the 
+right elements (probably) came out but that they came out in the right order. 
+Extending this approach to a multiple‐producer, multiple‐consumer situation requires using a checksum function that is 
+insensitive to the order in which the elements are combined, so that multiple checksums can be combined after the 
+test. Otherwise, synchronizing access to a shared checksum field could become a concurrency bottleneck or distort the 
+timing of the test. (Any commutative operation, such as addition or XOR, meets these requirements.) 
+To ensure that your test actually tests what you think it does, it is important that the checksums themselves not be 
+guessable by the compiler. It would be a bad idea to use consecutive integers as your test data because then the result 
+would always be the same, and a smart compiler could conceivably just precompute it. 
+To avoid this problem, test data should be generated randomly, but many otherwise effective tests are compromised by 
+a poor choice of random number generator (RNG). Random number generation can create couplings between classes 
+and timing artifacts because most random number generator classes are threadsafe and therefore introduce additional 
+synchronization.[4] Giving each thread its own RNG allows a non‐thread‐safe RNG to be used. 
+[4] Many benchmarks are, unbeknownst to their developers or users, simply tests of how great a concurrency bottleneck the RNG is. 
+Rather  than  using a general‐purpose RNG, it is better to use simple pseudorandom functions. You don't need high‐
+quality randomness; all you need is enough randomness to ensure the numbers change from run to run. The xor-Shift 
+function in Listing 12.4 (Marsaglia, 2003) is among the cheapest medium‐quality random number functions. Starting it

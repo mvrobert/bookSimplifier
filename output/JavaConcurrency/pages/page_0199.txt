@@ -1,0 +1,61 @@
+182 
+Java Concurrency In Practice 
+Listing 14.5. Bounded Buffer Using Crude Blocking. 
+ 
+@ThreadSafe 
+public class SleepyBoundedBuffer<V> extends BaseBoundedBuffer<V> { 
+    public SleepyBoundedBuffer(int size) { super(size); } 
+ 
+    public void put(V v) throws InterruptedException { 
+        while (true) { 
+            synchronized (this) { 
+                if (!isFull()) { 
+                    doPut(v); 
+                    return; 
+                } 
+            } 
+            Thread.sleep(SLEEP_GRANULARITY); 
+        } 
+    } 
+ 
+    public V take() throws InterruptedException { 
+        while (true) { 
+            synchronized (this) { 
+                if (!isEmpty()) 
+                    return doTake(); 
+            } 
+            Thread.sleep(SLEEP_GRANULARITY); 
+        } 
+    } 
+} 
+SleepyBoundedBuffer also creates another requirement for the caller ‐ dealing with InterruptedException. When a 
+method blocks waiting for a condition to become true, the polite thing to do is to provide a cancellation mechanism (see 
+Chapter 7). Like most well‐behaved  blocking library methods,  SleepyBounded-Buffer supports cancellation through 
+interruption, returning early and throwing InterruptedException if interrupted. 
+These attempts to synthesize a blocking operation from polling and sleeping were fairly painful. It would be nice to have 
+a way of suspending a thread but ensuring that it is awakened promptly when a certain condition (such as the buffer 
+being no longer full) becomes true. This is exactly what condition queues do. 
+14.1.3. Condition Queues to the Rescue 
+Condition queues are like the "toast is ready" bell on your toaster. If you are listening for it, you are notified promptly 
+when your toast is ready and can drop what you are doing (or not, maybe you want to finish the newspaper first) and 
+get your toast. If you are not listening for it (perhaps you went outside to  get  the newspaper), you  could  miss the 
+notification, but on return to the kitchen you can observe the state of the toaster and either retrieve the toast if it is 
+finished or start listening for the bell again if it is not. 
+A condition queue gets its name because it gives a group of threads ‐ called the wait set ‐ a way to wait for a specific 
+condition to become true. Unlike typical queues in which the elements are data items, the elements of a condition 
+queue are the threads waiting for the condition. 
+Just as each Java object can act as a lock, each object can also act as a condition queue, and the wait, notify, and 
+notifyAll methods in Object constitute the API for intrinsic condition queues. An object's intrinsic lock and its intrinsic 
+condition queue are related: in order to call any of the condition queue methods on object X, you must hold the lock on 
+X. This is because the mechanism for waiting for state‐based conditions is necessarily tightly bound to the mechanism 
+for preserving state consistency: you cannot wait for a condition unless you can examine the state, and you cannot 
+release another thread from a condition wait unless you can modify the state. 
+Object.wait atomically releases the lock and asks the OS to suspend the current thread, allowing other threads to 
+acquire the lock and therefore modify the object state. Upon waking, it reacquires the lock before returning. Intuitively, 
+calling  wait  means  "I  want  to  go  to  sleep,  but  wake  me  when  something  interesting  happens",  and  calling  the 
+notification methods means "something interesting happened". 
+BoundedBuffer  in  Listing  14.6  implements  a  bounded  buffer  using  wait  and  notifyAll.  This  is  simpler  than  the 
+sleeping version, and is both more efficient (waking up less frequently if the buffer state does not change) and more 
+responsive (waking up promptly when an interesting state change happens). This is a big improvement, but note that 
+the  introduction  of  condition  queues  didn't  change  the  semantics  compared  to  the  sleeping  version.  It  is  simply  an 
+optimization  in  several  dimensions:  CPU  efficiency,  context‐switch  overhead,  and  responsiveness.  Condition  queues

@@ -1,0 +1,61 @@
+23 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 15BChapter 3. Sharing 
+Objects
+Chapter 3. Sharing Objects 
+We stated at the beginning of Chapter 2 that writing correct concurrent programs is primarily about managing access to 
+shared, mutable state. That chapter was about using synchronization to prevent multiple threads from accessing the 
+same data at the same time; this chapter examines techniques for sharing and publishing objects so they can be safely 
+accessed by multiple threads. Together, they lay the foundation for building thread‐safe classes and safely structuring 
+concurrent applications using the java.util.concurrent library classes. 
+We  have  seen  how  synchronized  blocks  and  methods  can  ensure  that  operations  execute  atomically,  but  it  is  a 
+common misconception that synchronized is only about atomicity or demarcating "critical sections". Synchronization 
+also  has  another  significant,  and  subtle,  aspect:  memory  visibility.  We  want  not  only  to  prevent  one  thread  from 
+modifying the state of an object when another is using it, but also to ensure that when a thread modifies the state of an 
+object, other threads can actually see the changes that were made. But without synchronization, this may not happen. 
+You can ensure that objects are published safely either by using explicit synchronization or by taking advantage of the 
+synchronization built into library classes. 
+3.1. Visibility 
+Visibility is subtle because the things that can go wrong are so counterintuitive. In a single‐threaded environment, if you 
+write a value to a variable and later read that variable with no intervening writes, you can expect to get the same value 
+back. This seems only natural. It may be hard to accept at first, but when the reads and writes occur in different threads, 
+this is simply not the case. In general, there is no guarantee that the reading thread will see a value written by another 
+thread on a timely basis, or even at all. In order to ensure visibility of memory writes across threads, you must use 
+synchronization. 
+NoVisibility  in  Listing  3.1  illustrates  what  can  go  wrong  when  threads  share  data  without  synchronization.  Two 
+threads, the main thread and the reader thread, access the shared variables ready and number. The main thread starts 
+the reader thread and then sets number to 42 and ready to true. The reader thread spins until it sees ready is true, and 
+then prints out number. While it may seem obvious that NoVisibility will print 42, it is in fact possible that it will print 
+zero, or never terminate at all! Because it does not use adequate synchronization, there is no guarantee that the values 
+of ready and number written by the main thread will be visible to the reader thread. 
+Listing 3.1. Sharing Variables without Synchronization. Don't Do this. 
+ 
+ 
+public class NoVisibility { 
+    private static boolean ready; 
+    private static int number; 
+ 
+    private static class ReaderThread extends Thread { 
+        public void run() { 
+            while (!ready) 
+                Thread.yield(); 
+            System.out.println(number); 
+        } 
+    } 
+ 
+    public static void main(String[] args) { 
+        new ReaderThread().start(); 
+        number = 42; 
+        ready = true; 
+    } 
+} 
+NoVisibility could loop forever because the value of ready might never become visible to the reader thread. Even 
+more strangely, NoVisibility could print zero because the write to ready might be made visible to the reader thread 
+before the write to number, a phenomenon known as reordering. There is no guarantee that operations in one thread 
+will be performed in the order given by the program, as long as the reordering is not detectable from within that thread 
+‐ even if the reordering is apparent to other threads.[1] When the main thread writes first to number and then to done 
+without synchronization, the reader thread could see those writes happen in the opposite order ‐ or not at all. 
+[1]  This  may  seem  like  a  broken  design,  but  it  is  meant  to  allow  JVMs  to  take  full  advantage  of  the  performance  of  modern  multiprocessor 
+hardware. For example, in the absence of synchronization, the Java Memory Model permits the compiler to reorder operations and cache values in 
+registers, and permits CPUs to reorder operations and cache values in processor‐specific caches. For more details, see Chapter 16.

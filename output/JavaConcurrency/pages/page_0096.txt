@@ -1,0 +1,46 @@
+79 
+5BPart II: Structuring Concurrent Applications ‐ 18BChapter 6. Task Execution
+A less annoying but still sequential approach involves rendering the text elements first, leaving rectangular placeholders 
+for the images, and after completing the initial pass on the document, going back and downloading the images and 
+drawing them into the associated placeholder. This approach is shown in SingleThreadRenderer in Listing 6.10. 
+Downloading an image mostly involves waiting for I/O to complete, and during this time the CPU does little work. So the 
+sequential approach may underutilize the CPU, and also makes the user wait longer than necessary to see the finished 
+page. We can achieve better utilization and responsiveness by breaking the problem into independent tasks that can 
+execute concurrently. 
+Listing 6.10. Rendering Page Elements Sequentially. 
+ 
+public class SingleThreadRenderer { 
+    void renderPage(CharSequence source) { 
+        renderText(source); 
+        List<ImageData> imageData = new ArrayList<ImageData>(); 
+        for (ImageInfo imageInfo : scanForImageInfo(source)) 
+            imageData.add(imageInfo.downloadImage()); 
+        for (ImageData data : imageData) 
+            renderImage(data); 
+    } 
+} 
+6.3.2. Result­bearing Tasks: Callable and Future 
+The Executor framework uses Runnable as its basic task representation. Runnable is a fairly limiting abstraction; run 
+cannot return a value or throw checked exceptions, although it can have side effects such as writing to a log file or 
+placing a result in a shared data structure. 
+Many tasks are effectively deferred computations ‐ executing a database query, fetching a resource over the network, 
+or computing a complicated function. For these types of tasks, Callable is a better abstraction: it expects that the main 
+entry point,  call, will return a value and anticipates that it might throw an exception.[7]  Executors includes several 
+utility methods for wrapping other types of tasks, including Runnable and java.security.PrivilegedAction, with a 
+Callable. 
+[7] To express a non‐value‐returning task with Callable, use Callable<Void>. 
+Runnable and Callable describe abstract computational tasks. Tasks are usually finite: they have a clear starting point 
+and they eventually terminate. The lifecycle of a task executed by an Executor has four phases: created, submitted, 
+started,  and  completed.  Since  tasks  can  take  a  long  time  to  run,  we  also  want  to  be  able  to  cancel  a  task.  In  the 
+Executor framework, tasks that have been submitted but not yet started can always be cancelled, and tasks that have 
+started can sometimes be cancelled if they are responsive to interruption. Cancelling a task that has already completed 
+has no effect. (Cancellation is covered in greater detail in Chapter 7.) 
+Future  represents  the  lifecycle  of  a  task  and  provides  methods  to  test  whether  the  task  has  completed  or  been 
+cancelled,  retrieve  its  result,  and  cancel  the  task.  Callable  and  Future  are  shown  in  Listing  6.11.  Implicit  in  the 
+specification of Future is that task lifecycle can only move forwards, not backwards ‐ just like the ExecutorService 
+lifecycle. Once a task is completed, it stays in that state forever. 
+The behavior of get varies depending on the task state (not yet started, running, completed). It returns immediately or 
+throws  an  Exception  if  the  task  has  already  completed,  but  if  not  it  blocks  until  the  task  completes.  If  the  task 
+completes  by  throwing  an  exception,  get  rethrows  it  wrapped  in  an  ExecutionException;  if  it  was  cancelled,  get 
+throws CancellationException. If get throws ExecutionException, the underlying exception can be retrieved with 
+getCause.

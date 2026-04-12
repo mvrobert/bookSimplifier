@@ -1,0 +1,60 @@
+185 
+7BPart IV: Advanced Topics ‐ 26BChapter 14 ‐ Building Custom Synchronizers
+When using condition waits (Object.wait or Condition.await): 
+• 
+Always have a condition predicatesome test of object state that must hold before proceeding; 
+• 
+Always test the condition predicate before calling wait, and again after returning from wait; 
+• 
+Always call wait in a loop; 
+• 
+Ensure  that  the  state  variables  making  up  the  condition  predicate  are  guarded  by  the  lock  associated  with  the 
+condition queue; 
+• 
+Hold the lock associated with the the condition queue when calling wait, notify, or notifyAll; and 
+• 
+Do not release the lock after checking the condition predicate but before acting on it. 
+14.2.3. Missed Signals 
+Chapter 10 discussed liveness failures such as deadlock and livelock. Another form of liveness failure is missed signals. A 
+missed  signal  occurs  when  a  thread  must  wait  for  a  specific  condition  that  is  already  true,  but  fails  to  check  the 
+condition predicate before waiting. Now the thread is waiting to be notified of an event that has already occurred. This 
+is like starting the toast, going out to get the newspaper, having the bell go off while you are outside, and then sitting 
+down  at  the  kitchen  table  waiting  for  the  toast  bell.  You  could  wait  a  long  timepotentially  forever.[10]  Unlike  the 
+marmalade for your toast, notification is not "sticky"if thread A notifies on a condition queue and thread B subsequently 
+waits on that same condition queue, B does not immediately wake upanother notification is required to wake B. Missed 
+signals are the result of coding errors like those warned against in the list above, such as failing to test the condition 
+predicate before calling wait. If you structure your condition waits as in Listing 14.7, you will not have problems with 
+missed signals. 
+[10] In order to emerge from this wait, someone else would have to make toast, but this will just make matters worse; when the bell rings, you will 
+then have a disagreement about toast ownership. 
+14.2.4. Notification 
+So far, we've described half of what goes on in a condition wait: waiting. The other half is notification. In a bounded 
+buffer, take blocks if called when the buffer is empty. In order for take to unblock when the buffer becomes nonempty, 
+we  must  ensure  that  every  code  path  in  which  the  buffer  could  become  nonempty  performs  a  notification.  In 
+BoundedBuffer, there is only one such placeafter a put. So put calls notifyAll after successfully adding an object to 
+the buffer. Similarly, take calls notifyAll after removing an element to indicate that the buffer may no longer be full, 
+in case any threads are waiting on the "not full" condition. 
+Whenever  you  wait  on  a  condition,  make  sure  that  someone  will  perform  a  notification  whenever  the  condition 
+predicate becomes true. 
+There are two notification methods in the condition queue APInotify and notifyAll. To call either, you must hold the 
+lock associated with the condition queue object. Calling notify causes the JVM to select one thread waiting on that 
+condition queue to wake up; calling notifyAll wakes up all the threads waiting on that condition queue. Because you 
+must hold the lock on the condition queue object when calling notify or notifyAll, and waiting threads cannot return 
+from wait without reacquiring the lock, the notifying thread should release the lock quickly to ensure that the waiting 
+threads are unblocked as soon as possible. 
+Because multiple threads could be waiting on the same condition queue for different condition predicates, using notify 
+instead  of  notifyAll  can  be  dangerous,  primarily  because  single  notification  is  prone  to  a  problem  akin  to  missed 
+signals. 
+BoundedBuffer provides a good illustration of why notifyAll should be preferred to single notify in most cases. The 
+condition queue is used for two different condition predicates: "not full" and "not empty". Suppose thread A waits on a 
+condition queue for predicate PA, while thread B waits on the same condition queue for predicate PB. Now, suppose PB 
+becomes true and thread C performs a single  notify: the JVM will wake up one thread of its own choosing. If A is 
+chosen,  it  will  wake  up,  see  that  PA  is  not  yet  true,  and  go  back  to  waiting.  Meanwhile,  B,  which  could  now  make 
+progress, does not wake up. This is not exactly a missed signalit's more of a "hijacked signal"but the problem is the 
+same: a thread is waiting for a signal that has (or should have) already occurred. 
+Single notify can be used instead of notifyAll only when both of the following conditions hold: 
+• 
+Uniform waiters. Only one condition predicate is associated with the condition queue, and each thread executes the 
+same logic upon returning from wait; and 
+• 
+One‐in, one‐out. A notification on the condition variable enables at most one thread to proceed.

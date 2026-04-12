@@ -1,0 +1,56 @@
+26 
+Java Concurrency In Practice 
+[4] This analogy is not exact; the memory visibility effects of SynchronizedInteger are actually slightly stronger than those of volatile variables. See 
+Chapter 16. 
+[5] Volatile reads are only slightly more expensive than nonvolatile reads on most current processor architectures. 
+The visibility effects of volatile variables extend beyond the value of the volatile variable itself. When thread A writes to 
+a volatile variable and subsequently thread B reads that same variable, the values of all variables that were visible to A 
+prior to writing to the volatile variable become visible to B after reading the volatile variable. So from a memory visibility 
+perspective, writing a volatile variable is like exiting a synchronized block and reading a volatile variable is like entering 
+a synchronized block. However, we do not recommend relying too heavily on volatile variables for visibility; code that 
+relies on volatile variables for visibility of arbitrary state is more fragile and harder to understand than code that uses 
+locking. 
+Use  volatile variables only when they simplify implementing and verifying your synchronization policy; avoid using 
+volatile variables when verifying correctness would require subtle reasoning about visibility. Good uses of volatile 
+variables  include  ensuring  the  visibility  of  their  own  state,  that  of  the  object  they  refer  to,  or  indicating  that  an 
+important lifecycle event (such as initialization or shutdown) has occurred. 
+Listing 3.4 illustrates a typical use of volatile variables: checking a status flag to determine when to exit a loop. In this 
+example, our anthropomorphized thread is trying to get to sleep by the time‐honored method of counting sheep. For 
+this example to work, the asleep flag must be volatile. Otherwise, the thread might not notice when asleep has been 
+set by another thread.[6] We could instead have used locking to ensure visibility of changes to asleep, but that would 
+have made the code more cumbersome. 
+[6] Debugging tip: For server applications, be sure to always specify the -server JVM command line switch when invoking the JVM, even for 
+development and testing. The server JVM performs more optimization than the client JVM, such as hoisting variables out of a loop that are not 
+modified in the loop; code that might appear to work in the development environment (client JVM) can break in the deployment environment 
+(server JVM). For example, had we "forgotten" to declare the variable asleep as volatile in Listing 3.4, the server JVM could hoist the test out 
+of the loop (turning it into an infinite loop), but the client JVM would not. An infinite loop that shows up in development is far less costly than one 
+that only shows up in production. 
+Listing 3.4. Counting Sheep. 
+volatile boolean asleep; 
+... 
+    while (!asleep) 
+        countSomeSheep(); 
+Volatile  variables  are  convenient,  but  they  have  limitations.  The  most  common  use  for  volatile  variables  is  as  a 
+completion, interruption, or status flag, such as the asleep flag in Listing 3.4. Volatile variables can be used for other 
+kinds of state information, but more care is required when attempting this. For example, the semantics of volatile are 
+not strong enough to make the increment operation (count++) atomic, unless you can guarantee that the variable is 
+written only from a single thread. (Atomic variables do provide atomic read‐modify‐write support and can often be used 
+as "better volatile variables"; see Chapter 15.) 
+Locking can guarantee both visibility and atomicity; volatile variables can only guarantee visibility. 
+You can use volatile variables only when all the following criteria are met: 
+• 
+Writes to the variable do not depend on its current value, or you can ensure that only a single thread ever 
+updates the value; 
+• 
+The variable does not participate in invariants with other state variables; and 
+• 
+Locking is not required for any other reason while the variable is being accessed. 
+3.2. Publication and Escape 
+Publishing an object means making it available to code outside of its current scope, such as by storing a reference to it 
+where other code can find it, returning it from a non‐private method, or passing it to a method in another class. In many 
+situations, we want to ensure that objects and their internals are not published. In other situations, we do want to 
+publish an object for general use, but doing so in a thread‐safe manner may require synchronization. Publishing internal 
+state  variables  can  compromise  encapsulation  and  make  it  more  difficult  to  preserve  invariants;  publishing  objects 
+before they are fully constructed can compromise thread safety. An object that is published when it should not have 
+been is said to have escaped. Section 3.5 covers idioms for safe publication; right now, we look at how an object can 
+escape.

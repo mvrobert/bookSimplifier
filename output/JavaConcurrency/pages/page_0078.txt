@@ -1,0 +1,51 @@
+61 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 17BChapter 5. Building 
+Blocks
+the master thread to release all the worker threads at once, and the ending gate allows the master thread to wait for 
+the last thread to finish rather than waiting sequentially for each thread to finish. 
+5.5.2. FutureTask 
+FutureTask  also  acts  like  a  latch.  (FutureTask  implements  Future,  which  describes  an  abstract  result‐bearing 
+computation [CPJ 4.3.3].) A computation represented by a  FutureTask is implemented with a  Callable, the result‐
+bearing equivalent of Runnable, and can be in one of three states: waiting to run, running, or completed. Completion 
+subsumes all the ways a computation can complete, including normal completion, cancellation, and exception. Once a 
+FutureTask enters the completed state, it stays in that state forever. 
+The behavior of Future.get depends on the state of the task. If it is completed, get returns the result immediately, and 
+otherwise blocks until the task transitions to the completed state and then returns the result or throws an exception. 
+FutureTask conveys the result from the thread executing the computation to the thread(s) retrieving the result; the 
+specification of FutureTask guarantees that this transfer constitutes a safe publication of the result. 
+Listing 5.11. Using CountDownLatch for Starting and Stopping Threads in Timing Tests. 
+public class TestHarness { 
+    public long timeTasks(int nThreads, final Runnable task) 
+            throws InterruptedException { 
+        final CountDownLatch startGate = new CountDownLatch(1); 
+        final CountDownLatch endGate = new CountDownLatch(nThreads); 
+ 
+        for (int i = 0; i < nThreads; i++) { 
+            Thread t = new Thread() { 
+                public void run() { 
+                    try { 
+                        startGate.await(); 
+                        try { 
+                            task.run(); 
+                        } finally { 
+                            endGate.countDown(); 
+                        } 
+                    } catch (InterruptedException ignored) { } 
+                } 
+            }; 
+            t.start(); 
+        } 
+ 
+        long start = System.nanoTime(); 
+        startGate.countDown(); 
+        endGate.await(); 
+        long end = System.nanoTime(); 
+        return end-start; 
+    } 
+} 
+FutureTask is used by the Executor framework to represent asynchronous tasks, and can also be used to represent any 
+potentially  lengthy  computation  that  can  be  started  before  the  results  are  needed.  Preloader  in  Listing  5.12  uses 
+FutureTask to perform an expensive computation whose results are needed later; by starting the computation early, 
+you reduce the time you would have to wait later when you actually need the results.

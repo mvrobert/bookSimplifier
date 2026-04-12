@@ -1,0 +1,53 @@
+6 
+Java Concurrency In Practice 
+UnsafeSequence illustrates a common concurrency hazard called a race condition. Whether or not nextValue returns a 
+unique  value  when  called  from  multiple  threads,  as  required  by  its  specification,  depends  on  how  the  runtime 
+interleaves the operations ‐ which is not a desirable state of affairs. 
+Because threads share the same memory address space and run concurrently, they can access or modify variables that 
+other threads might be using. This is a tremendous convenience, because it makes data sharing much easier than would 
+other inter‐thread communications mechanisms. But it is also a significant risk: threads can be confused by having data 
+change unexpectedly. Allowing multiple threads to access and modify the same variables introduces an element of non‐
+sequentiality into an otherwise sequential programming model, which can be confusing and difficult to reason about. 
+For a multithreaded program's behavior to be predictable, access to shared variables must be properly coordinated so 
+that threads do not interfere with one another. Fortunately, Java provides synchronization mechanisms to coordinate 
+such access. 
+UnsafeSequence can be fixed by making getNext a synchronized method, as shown in Sequence in Listing 1.2,[3] thus 
+preventing the unfortunate interaction in Figure 1.1. (Exactly why this works is the subject of Chapters 2 and 3.) 
+[3] @GuardedBy is described in Section 2.4; it documents the synchronization policy for Sequence. 
+Listing 1.2. Thread­safe Sequence Generator. 
+@ThreadSafe 
+public class Sequence { 
+    @GuardedBy("this") private int nextValue; 
+ 
+    public synchronized int getNext() { 
+        return nextValue++; 
+    } 
+} 
+In the absence of synchronization, the compiler, hardware, and runtime are allowed to take substantial liberties with 
+the  timing  and  ordering  of  actions,  such  as  caching  variables  in  registers  or  processor‐local  caches  where  they  are 
+temporarily  (or  even  permanently)  invisible  to  other  threads.  These  tricks  are  in  aid  of better  performance  and  are 
+generally  desirable,  but  they  place  a  burden  on  the  developer  to  clearly  identify  where  data  is  being  shared  across 
+threads  so  that  these  optimizations  do  not  undermine  safety.  (Chapter  16  gives  the  gory  details  on  exactly  what 
+ordering guarantees the JVM makes and how synchronization affects those guarantees, but if you follow the rules in 
+Chapters 2 and 3, you can safely avoid these low‐level details.) 
+1.3.2. Liveness Hazards 
+It is critically important to pay attention to thread safety issues when developing concurrent code: safety cannot be 
+compromised. The importance of safety is not unique to multithreaded programs ‐ single‐threaded programs also must 
+take care to preserve safety and correctness ‐ but the use of threads introduces additional safety hazards not present in 
+single‐threaded programs. Similarly, the use of threads introduces additional forms of liveness failure that do not occur 
+in single‐threaded programs. 
+While  safety  means  "nothing  bad  ever  happens",  liveness  concerns  the  complementary  goal  that  "something  good 
+eventually happens". A liveness failure occurs when an activity gets into a state such that it is permanently unable to 
+make forward progress. One form of liveness failure that can occur in sequential programs is an inadvertent infinite 
+loop, where the code that follows the loop never gets executed. The use of threads introduces additional liveness risks. 
+For example, if thread A is waiting for a resource that thread B holds exclusively, and B never releases it, A will wait 
+forever. Chapter 10 describes various forms of liveness failures and how to avoid them, including deadlock (Section 
+10.1), starvation (Section 10.3.1), and livelock (Section 10.3.3). Like most concurrency bugs, bugs that cause liveness 
+failures can be elusive because they depend on the relative timing of events in different threads, and therefore do not 
+always manifest themselves in development or testing. 
+1.3.3. Performance Hazards 
+Related to liveness is performance. While liveness means that something good eventually happens, eventually may not 
+be  good  enough  ‐  we  often  want  good  things  to  happen  quickly.  Performance  issues  subsume  a  broad  range  of 
+problems, including poor service time, responsiveness, throughput, resource consumption, or scalability. Just as with 
+safety and liveness, multithreaded programs are subject to all the performance hazards of single‐threaded programs, 
+and to others as well that are introduced by the use of threads.

@@ -1,0 +1,59 @@
+39 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 16BChapter 4. 
+Composing Objects
+stored for safekeeping by the servlet container on the application's behalf. Like all shared objects, they must be shared 
+safely;  in  order  to  prevent  interference  from  multiple  threads  accessing  the  same  object  concurrently,  they  should 
+either be thread‐safe, effectively immutable, or explicitly guarded by a lock.[1]  
+[1] Interestingly, the HttpSession object, which performs a similar function in the servlet framework, may have stricter requirements. Because 
+the servlet container may access the objects in the HttpSession so they can be serialized for replication or passivation, they must be thread‐
+safe because the container will be accessing them as well as the web application. (We say "may have" since replication and passivation is outside 
+of the servlet specification but is a common feature of servlet containers.) 
+4.2. Instance Confinement 
+If an object is not thread‐safe, several techniques can still let it be used safely in a multithreaded program. You can 
+ensure that it is only accessed from a single thread (thread confinement), or that all access to it is properly guarded by a 
+lock. 
+Encapsulation simplifies making classes thread‐safe by promoting instance confinement, often just called confinement 
+[CPJ 2.3.3]. When an object is encapsulated within another object, all code paths that have access to the encapsulated 
+object  are  known  and  can  be  therefore  be  analyzed  more  easily  than  if  that  object  were  accessible  to  the  entire 
+program.  Combining  confinement  with  an  appropriate  locking  discipline  can  ensure  that  otherwise  non‐thread‐safe 
+objects are used in a thread‐safe manner. 
+Encapsulating data within an object confines access to the data to the object's methods, making it easier to ensure that 
+the data is always accessed with the appropriate lock held. 
+Confined objects must not escape their intended scope. An object may be confined to a class instance (such as a private 
+class member), a lexical scope (such as a local variable), or a thread (such as an object that is passed from method to 
+method within a thread, but not supposed to be shared across threads). Objects don't escape on their own, of course ‐ 
+they need help from the developer, who assists by publishing the object beyond its intended scope. 
+PersonSet in Listing 4.2 illustrates how confinement and locking can work together to make a class thread‐safe even 
+when its component state variables are not. The state of PersonSet is managed by a HashSet, which is not thread‐safe. 
+But because mySet is private and not allowed to escape, the HashSet is confined to the PersonSet. The only code paths 
+that can access mySet are addPerson and containsPerson, and each of these acquires the lock on the PersonSet. All its 
+state is guarded by its intrinsic lock, making PersonSet thread‐safe. 
+Listing 4.2. Using Confinement to Ensure Thread Safety. 
+@ThreadSafe 
+public class PersonSet { 
+    @GuardedBy("this") 
+    private final Set<Person> mySet = new HashSet<Person>(); 
+ 
+    public synchronized void addPerson(Person p) { 
+        mySet.add(p); 
+    } 
+ 
+    public synchronized boolean containsPerson(Person p) { 
+        return mySet.contains(p); 
+    } 
+} 
+This example makes no assumptions about the thread‐safety of Person, but if it is mutable, additional synchronization 
+will be needed when accessing a Person retrieved from a PersonSet. The most reliable way to do this would be to make 
+Person thread‐safe; less reliable would be to guard the Person objects with a lock and ensure that all clients follow the 
+protocol of acquiring the appropriate lock before accessing the Person. 
+Instance confinement is one of the easiest ways to build thread‐safe classes. It also allows flexibility in the choice of 
+locking strategy; PersonSet happened to use its own intrinsic lock to guard its state, but any lock, consistently used, 
+would do just as well. Instance confinement also allows different state variables to be guarded by different locks. (For an 
+example of a class that uses multiple lock objects to guard its state, see ServerStatus on 236.) 
+There are many examples of confinement in the platform class libraries, including some classes that exist solely to turn 
+non‐thread‐safe  classes  into  thread‐safe  ones.  The  basic  collection  classes  such  as  ArrayList  and  HashMap  are  not 
+thread‐safe, but the class library provides wrapper factory methods (Collections.synchronizedList and friends) so 
+they can be used safely in multithreaded environments. These factories use the Decorator pattern (Gamma et al., 1995) 
+to wrap the collection with a synchronized wrapper object; the wrapper implements each method of the appropriate

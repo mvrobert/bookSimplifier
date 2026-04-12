@@ -1,0 +1,57 @@
+88 
+Java Concurrency In Practice 
+with it ‐ either throw InterruptedException or restore the interrupted status by calling interrupt again, as in Listing 
+5.10 on page 94. 
+BrokenPrimeProducer illustrates how custom cancellation mechanisms do not always interact well with blocking library 
+methods.  If  you  code  your  tasks  to  be  responsive  to  interruption,  you  can  use  interruption  as  your  cancellation 
+mechanism and take advantage of the interruption support provided by many library classes. 
+Interruption is usually the most sensible way to implement cancellation. 
+BrokenPrimeProducer can be easily fixed (and simplified) by using interruption instead of a boolean flag to request 
+cancellation, as shown in Listing 7.5. There are two points in each loop iteration where interruption may be detected: in 
+the blocking put call, and by explicitly polling the interrupted status in the loop header. The explicit test is not strictly 
+necessary here because of the blocking put call, but it makes PrimeProducer more responsive to interruption because 
+it checks for interruption before starting the lengthy task of searching for a prime, rather than after. When calls to 
+interruptible  blocking  methods  are  not  frequent  enough  to  deliver  the  desired  responsiveness,  explicitly  testing  the 
+interrupted status can help. 
+Listing 7.5. Using Interruption for Cancellation. 
+class PrimeProducer extends Thread { 
+    private final BlockingQueue<BigInteger> queue; 
+ 
+    PrimeProducer(BlockingQueue<BigInteger> queue) { 
+        this.queue = queue; 
+    } 
+ 
+    public void run() { 
+        try { 
+            BigInteger p = BigInteger.ONE; 
+            while (!Thread.currentThread().isInterrupted()) 
+                queue.put(p = p.nextProbablePrime()); 
+        } catch (InterruptedException consumed) { 
+            /*  Allow thread to exit  */ 
+        } 
+    } 
+    public void cancel() { interrupt(); } 
+} 
+7.1.2. Interruption Policies 
+Just  as  tasks  should  have  a  cancellation  policy,  threads  should  have  an  interruption  policy.  An  interruption  policy 
+determines how a thread interprets an interruption request ‐ what it does (if anything) when one is detected, what units 
+of work are considered atomic with respect to interruption, and how quickly it reacts to interruption. 
+The  most  sensible  interruption  policy  is  some  form  of  thread‐level  or  service‐level  cancellation:  exit  as  quickly  as 
+practical, cleaning up if necessary, and possibly notifying some owning entity that the thread is exiting. It is possible to 
+establish  other  interruption  policies,  such  as  pausing  or  resuming  a  service,  but  threads  or  thread  pools  with 
+nonstandard interruption policies may need to be restricted to tasks that have been written with an awareness of the 
+policy. 
+It is important to distinguish between how tasks and threads should react to interruption. A single interrupt request 
+may have more than one desired recipient interrupting a worker thread in a thread pool can mean both "cancel the 
+current task" and "shut down the worker thread". 
+Tasks do not execute in threads they own; they borrow threads owned by a service such as a thread pool. Code that 
+doesn't own the thread (for a thread pool, any code outside of the thread pool implementation) should be careful to 
+preserve the interrupted status so that the owning code can eventually act on it, even if the "guest" code acts on the 
+interruption as well. (If you are house‐sitting for someone, you don't throw out the mail that comes while they're away ‐ 
+you save it and let them deal with it when they get back, even if you do read their magazines.) 
+This is why most blocking library methods simply throw InterruptedException in response to an interrupt. They will 
+never execute in a thread they own, so they implement the most reasonable cancellation policy for task or library code: 
+get out of the way as quickly as possible and communicate the interruption back to the caller so that code higher up on 
+the call stack can take further action. 
+A task needn't necessarily drop everything when it detects an interruption request ‐ it can choose to postpone it until a 
+more opportune time by remembering that it was interrupted, finishing the task it was performing, and then throwing

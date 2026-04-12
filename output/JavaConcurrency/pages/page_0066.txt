@@ -1,0 +1,58 @@
+49 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 16BChapter 4. 
+Composing Objects
+strategy of another object. In effect, we've used the Java monitor pattern to encapsulate an existing List, and this is 
+guaranteed to provide thread safety so long as our class holds the only outstanding reference to the underlying List. 
+Listing 4.16. Implementing Put­if­absent Using Composition. 
+@ThreadSafe 
+public class ImprovedList<T> implements List<T> { 
+    private final List<T> list; 
+ 
+    public ImprovedList(List<T> list) { this.list = list; } 
+ 
+    public synchronized boolean putIfAbsent(T x) { 
+        boolean contains = list.contains(x); 
+        if (contains) 
+            list.add(x); 
+        return !contains; 
+    } 
+ 
+    public synchronized void clear() { list.clear(); } 
+    // ... similarly delegate other List methods 
+} 
+ [7] The penalty will be small because the synchronization on the underlying List is guaranteed to be uncontended and therefore fast; see Chapter 
+11. 
+4.5. Documenting Synchronization Policies 
+Documentation is one of the most powerful (and, sadly, most underutilized) tools for managing thread safety. Users 
+look to the documentation to find out if a class is thread‐safe, and maintainers look to the documentation to understand 
+the implementation strategy so they can maintain it without inadvertently compromising safety. Unfortunately, both of 
+these constituencies usually find less information in the documentation than they'd like. 
+Document a class's thread safety guarantees for its clients; document its synchronization policy for its maintainers. 
+Each use of synchronized, volatile, or any thread‐safe class reflects a synchronization policy defining a strategy for 
+ensuring the integrity of data in the face of concurrent access. That policy is an element of your program's design, and 
+should be documented. Of course, the best time to document design decisions is at design time. Weeks or months later, 
+the details may be a blur ‐ so write it down before you forget. 
+Crafting a synchronization policy requires a number of decisions: which variables to make volatile, which variables to 
+guard with locks, which lock(s) guard which variables, which variables to make immutable or confine to a thread, which 
+operations must be atomic, etc. Some of these are strictly implementation details and should be documented for the 
+sake  of  future  maintainers,  but  some  affect  the  publicly  observable  locking  behavior  of  your  class  and  should  be 
+documented as part of its specification. 
+At the very least, document the thread safety guarantees made by a class. Is it thread‐safe? Does it make callbacks with 
+a lock held? Are there any specific locks that affect its behavior? Don't force clients to make risky guesses. If you don't 
+want to commit to supporting client‐side locking, that's fine, but say so. If you want clients to be able to create new 
+atomic operations on your class, as we did in Section 4.4, you need to document which locks they should acquire to do 
+so safely. If you use locks to guard state, document this for future maintainers, because it's so easy ‐ the @GuardedBy 
+annotation will do the trick. If you use more subtle means to maintain thread safety, document them because they may 
+not be obvious to maintainers. 
+The current state of affairs in thread safety documentation, even in the platform library classes, is not encouraging. How 
+many times have you looked at the Javadoc for a class and wondered whether it was thread‐safe?[8] Most classes don't 
+offer  any  clue  either  way.  Many  official  Java  technology  specifications,  such  as  servlets  and  JDBC,  woefully 
+underdocument their thread safety promises and requirements. 
+[8] If you've never wondered this, we admire your optimism. 
+While prudence suggests that we not assume behaviors that aren't part of the specification, we have work to get done, 
+and we are often faced with a choice of bad assumptions. Should we assume an object is thread‐safe because it seems 
+that it ought to be? Should we assume that access to an object can be made thread‐safe by acquiring its lock first? (This 
+risky technique works only if we control all the code that accesses that object; otherwise, it provides only the illusion of 
+thread safety.) Neither choice is very satisfying.

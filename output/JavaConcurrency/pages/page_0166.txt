@@ -1,0 +1,50 @@
+149 
+6BPart III: Liveness, Performance, and Testing ‐ 23BChapter 11. Performance and Scalability
+exclusively. For read‐mostly data structures, ReadWriteLock can offer greater concurrency than exclusive locking; for 
+read‐only data structures, immutability can eliminate the need for locking entirely. 
+Atomic variables (see Chapter 15) offer a means of reducing the cost of updating "hot fields" such as statistics counters, 
+sequence generators, or the reference to the first node in a linked data structure. (We used AtomicLong to maintain the 
+hit counter in the servlet examples in Chapter 2.) The atomic variable classes provide very fine‐grained (and therefore 
+more scalable) atomic operations on integers or object references, and are implemented using low‐level concurrency 
+primitives (such as compare‐and‐swap) provided by most modern processors. If your class has a small number of hot 
+fields  that  do  not  participate  in  invariants  with  other  variables,  replacing  them  with  atomic  variables  may  improve 
+scalability. (Changing your algorithm to have fewer hot fields might improve scalability even more ‐ atomic variables 
+reduce the cost of updating hot fields, but they don't eliminate it.) 
+11.4.6. Monitoring CPU Utilization 
+When testing for scalability, the goal is usually to keep the processors fully utilized. Tools like vmstat and mpstat on 
+Unix systems or perfmon on Windows systems can tell you just how "hot" the processors are running. 
+If the CPUs are asymmetrically utilized (some CPUs are running hot but others are not) your first goal should be to find 
+increased parallelism in your program. Asymmetric utilization indicates that most of the computation is going on in a 
+small set of threads, and your application will not be able to take advantage of additional processors. 
+If the CPUs are not fully utilized, you need to figure out why. There are several likely causes: 
+Insufficient load. It may be that the application being tested is just not subjected to enough load. You can test for this by 
+increasing the load and measuring changes in utilization, response time, or service time. Generating enough load to 
+saturate an application can require substantial computer power; the problem may be that the client systems, not the 
+system being tested, are running at capacity. 
+I/O‐bound.  You  can  determine  whether  an  application  is  disk‐bound  using  iostat  or  perfmon,  and  whether  it  is 
+bandwidth‐limited by monitoring traffic levels on your network. 
+Externally bound. If your application depends on external services such as a database or web service, the bottleneck 
+may not be in your code. You can test for this by using a profiler or database administration tools to determine how 
+much time is being spent waiting for answers from the external service. 
+Lock contention. Profiling tools can tell you how much lock contention your application is experiencing and which locks 
+are "hot". You can often get the same information without a profiler through random sampling, triggering a few thread 
+dumps and looking for threads contending for locks. If a thread is blocked waiting for a lock, the appropriate stack frame 
+in the thread dump indicates "waiting to lock monitor . . . " Locks that are mostly uncontended rarely show up in a 
+thread dump; a heavily contended lock will almost always have at least one thread waiting to acquire it and so will 
+frequently appear in thread dumps. 
+If your application is keeping the CPUs sufficiently hot, you can use monitoring tools to infer whether it would benefit 
+from additional CPUs. A program with only four threads may be able to keep a 4‐way system fully utilized, but is unlikely 
+to see a performance boost if moved to an 8‐way system since there would need to be waiting runnable threads to take 
+advantage of the additional processors. (You may also be able to reconfigure the program to divide its workload over 
+more threads, such as adjusting a thread pool size.) One of the columns reported by vmstat is the number of threads 
+that are runnable but not currently running because a CPU is not available; if CPU utilization is high and there are always 
+runnable threads waiting for a CPU, your application would probably benefit from more processors. 
+11.4.7. Just Say No to Object Pooling 
+In  early  JVM  versions,  object  allocation  and  garbage  collection  were  slow,[13]  but  their  performance  has  improved 
+substantially since then. In fact, allocation in Java is now faster than  malloc is in C: the common code path for  new 
+Object in HotSpot 1.4.x and 5.0 is approximately ten machine instructions. 
+[13] As was everything else ‐ synchronization, graphics, JVM startup, reflection ‐ predictably so in the first version of an experimental technology. 
+To work around "slow" object lifecycles, many developers turned to object pooling, where objects are recycled instead 
+of being garbage collected and allocated anew when needed. Even taking into account its reduced garbage collection 
+overhead, object pooling has been shown to be a performance loss[14] for all but the most expensive objects (and a 
+serious loss for light‐ and medium‐weight objects) in single‐threaded programs (Click, 2005).

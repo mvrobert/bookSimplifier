@@ -1,0 +1,71 @@
+58 
+Java Concurrency In Practice 
+For mutable objects, producer‐consumer designs and blocking queues facilitate serial thread confinement for handing 
+off ownership of objects from producers to consumers. A thread‐confined object is owned exclusively by a single thread, 
+but that ownership can be "transferred" by publishing it safely where only one other thread will gain access to it and 
+ensuring that the publishing thread does not access it after the handoff. The safe publication ensures that the object's 
+state is visible to the new owner, and since the original owner will not touch it again, it is now confined to the new 
+thread. The new owner may modify it freely since it has exclusive access. 
+Object pools exploit serial thread confinement, "lending" an object to a requesting thread. As long as the pool contains 
+sufficient internal  synchronization  to  publish  the  pooled  object  safely,  and  as  long  as  the  clients  do  not  themselves 
+publish the pooled object or use it after returning it to the pool, ownership can be transferred safely from thread to 
+thread. 
+One could also use other publication mechanisms for transferring ownership of a mutable object, but it is necessary to 
+ensure that only one thread receives the object being handed off. Blocking queues make this easy; with a little more 
+work,  it  could  also  done  with  the  atomic  remove  method  of  ConcurrentMap  or  the  compareAndSet  method  of 
+AtomicReference. 
+Listing 5.8. Producer and Consumer Tasks in a Desktop Search Application. 
+public class FileCrawler implements Runnable { 
+    private final BlockingQueue<File> fileQueue; 
+    private final FileFilter fileFilter; 
+    private final File root; 
+    ... 
+    public void run() { 
+        try { 
+            crawl(root); 
+        } catch (InterruptedException e) { 
+            Thread.currentThread().interrupt(); 
+        } 
+    } 
+ 
+    private void crawl(File root) throws InterruptedException { 
+        File[] entries = root.listFiles(fileFilter); 
+        if (entries != null) { 
+            for (File entry : entries) 
+                if (entry.isDirectory()) 
+                    crawl(entry); 
+                else if (!alreadyIndexed(entry)) 
+                    fileQueue.put(entry); 
+        } 
+    } 
+} 
+ 
+public class Indexer implements Runnable { 
+    private final BlockingQueue<File> queue; 
+ 
+    public Indexer(BlockingQueue<File> queue) { 
+        this.queue = queue; 
+    } 
+ 
+    public void run() { 
+        try { 
+            while (true) 
+                indexFile(queue.take()); 
+        } catch (InterruptedException e) { 
+            Thread.currentThread().interrupt(); 
+        } 
+    } 
+} 
+Listing 5.9. Starting the Desktop Search. 
+public static void startIndexing(File[] roots) { 
+    BlockingQueue<File> queue = new LinkedBlockingQueue<File>(BOUND); 
+    FileFilter filter = new FileFilter() { 
+        public boolean accept(File file) { return true; } 
+    }; 
+ 
+    for (File root : roots) 
+        new Thread(new FileCrawler(queue, filter, root)).start(); 
+ 
+    for (int i = 0; i < N_CONSUMERS; i++) 
+        new Thread(new Indexer(queue)).start(); 
+}

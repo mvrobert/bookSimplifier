@@ -1,0 +1,74 @@
+xi
+1BListing and Image Index
+Listing 14.6. Bounded Buffer Using Condition Queues. 
+183 
+Listing 14.7. Canonical Form for State‐dependent Methods. 
+184 
+Listing 14.8. Using Conditional Notification in BoundedBuffer.put. 
+186 
+Listing 14.9. Recloseable Gate Using Wait and Notifyall. 
+187 
+Listing 14.10. Condition Interface. 
+188 
+Listing 14.11. Bounded Buffer Using Explicit Condition Variables. 
+189 
+Listing 14.12. Counting Semaphore Implemented Using Lock. 
+190 
+Listing 14.13. Canonical Forms for Acquisition and Release in AQS. 
+191 
+Listing 14.14. Binary Latch Using AbstractQueuedSynchronizer. 
+192 
+Listing 14.15. tryAcquire Implementation From Non‐fair ReentrantLock. 
+193 
+Listing 14.16. tryacquireshared and tryreleaseshared from Semaphore. 
+193 
+Chapter 15. Atomic Variables and Non-blocking Synchronization 
+195 
+Listing 15.1. Simulated CAS Operation. 
+197 
+Listing 15.2. Non‐blocking Counter Using CAS. 
+197 
+Listing 15.3. Preserving Multivariable Invariants Using CAS. 
+199 
+Figure 15.1. Lock and AtomicInteger Performance Under High Contention. 
+200 
+Figure 15.2. Lock and AtomicInteger Performance Under Moderate Contention. 
+200 
+Listing 15.4. Random Number Generator Using ReentrantLock. 
+200 
+Listing 15.5. Random Number Generator Using AtomicInteger. 
+201 
+Listing 15.6. Non‐blocking Stack Using Treiber's Algorithm (Treiber, 1986). 
+203 
+Figure 15.3. Queue with Two Elements in Quiescent State. 
+203 
+Figure 15.4. Queue in Intermediate State During Insertion. 
+204 
+Figure 15.5. Queue Again in Quiescent State After Insertion is Complete. 
+204 
+Listing 15.7. Insertion in the Michael‐Scott Non‐blocking Queue Algorithm (Michael and Scott, 1996). 
+205 
+Listing 15.8. Using Atomic Field Updaters in ConcurrentLinkedQueue. 
+205 
+Chapter 16. The Java Memory Model 
+207 
+Figure 16.1. Interleaving Showing Reordering in PossibleReordering. 
+208 
+Listing 16.1. Insufficiently Synchronized Program that can have Surprising Results. Don't Do this. 
+209 
+Figure 16.2. Illustration of Happens‐before in the Java Memory Model. 
+210 
+Listing 16.2. Inner Class of FutureTask Illustrating Synchronization Piggybacking. 
+211 
+Listing 16.3. Unsafe Lazy Initialization. Don't Do this. 
+212 
+Listing 16.4. Thread‐safe Lazy Initialization. 
+213 
+Listing 16.5. Eager Initialization. 
+213 
+Listing 16.6. Lazy Initialization Holder Class Idiom. 
+213 
+Listing 16.7. Double‐checked‐locking Anti‐pattern. Don't Do this. 
+214 
+Listing 16.8. Initialization Safety for Immutable Objects. 
+215

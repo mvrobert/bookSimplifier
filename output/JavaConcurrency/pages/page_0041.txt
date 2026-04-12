@@ -1,0 +1,55 @@
+24 
+Java Concurrency In Practice 
+In the absence of synchronization, the compiler, processor, and runtime can do some downright weird things to the 
+order in which operations appear to execute. Attempts to reason about the order in which memory actions "must" 
+happen in insufficiently synchronized multithreaded programs will almost certainly be incorrect. 
+NoVisibility is about as simple as a concurrent program can get ‐ two threads and two shared variables ‐ and yet it is 
+still all too easy to come to the wrong conclusions about what it does or even whether it will terminate. Reasoning 
+about insufficiently synchronized concurrent programs is prohibitively difficult. 
+This may all sound a little scary, and it should. Fortunately, there's an easy way to avoid these complex issues: always 
+use the proper synchronization whenever data is shared across threads. 
+3.1.1. Stale Data 
+NoVisibility demonstrated one of the ways that insufficiently synchronized programs can cause surprising results: 
+stale data. When the reader thread examines ready, it may see an out‐of‐date value. Unless synchronization is used 
+every  time  a  variable  is  accessed,  it  is  possible  to see  a  stale  value  for  that  variable.  Worse,  staleness  is  not  all‐or‐
+nothing: a thread can see an up‐to‐date value of one variable but a stale value of another variable that was written first. 
+When food is stale, it is usually still edible ‐ just less enjoyable. But stale data can be more dangerous. While an out‐of‐
+date hit counter in a web application might not be so bad,[2] stale values can cause serious safety or liveness failures. In 
+NoVisibility, stale values could cause it to print the wrong value or prevent the program from terminating. Things can 
+get  even  more  complicated  with  stale  values  of  object  references,  such  as  the  link  pointers  in  a  linked  list 
+implementation. Stale data can  cause  serious and  confusing failures such as unexpected  exceptions, corrupted  data 
+structures, inaccurate computations, and infinite loops. 
+[2] Reading data without synchronization is analogous to using the READ_UNCOMMITTED isolation level in a database, where you are willing to 
+trade accuracy for performance. However, in the case of unsynchronized reads, you are trading away a greater degree of accuracy, since the visible 
+value for a shared variable can be arbitrarily stale. 
+MutableInteger in Listing 3.2 is not thread‐safe because the value field is accessed from both get and set without 
+synchronization. Among other hazards, it is susceptible to stale values: if one thread calls set, other threads calling get 
+may or may not see that update. 
+We can make MutableInteger thread safe by synchronizing the getter and setter as shown in SynchronizedInteger in 
+Listing 3.3. Synchronizing only the setter would not be sufficient: threads calling  get would still be able to see stale 
+values. 
+Listing 3.2. Non­thread­safe Mutable Integer Holder. 
+ 
+@NotThreadSafe 
+public class MutableInteger { 
+    private int value; 
+ 
+    public int  get() { return value; } 
+    public void set(int value) { this.value = value; } 
+} 
+Listing 3.3. Thread­safe Mutable Integer Holder. 
+@ThreadSafe 
+public class SynchronizedInteger { 
+    @GuardedBy("this") private int value; 
+ 
+    public synchronized int get() { return value; } 
+    public synchronized void set(int value) { this.value = value; } 
+} 
+3.1.2. Non­atomic 64­bit Operations 
+When a thread reads a variable without synchronization, it may see a stale value, but at least it sees a value that was 
+actually placed there by some thread rather than some random value. This safety guarantee is called out‐of‐thin‐air 
+safety. 
+Out‐of‐thin‐air safety applies to all variables, with one exception: 64‐bit numeric variables (double and long) that are 
+not declared volatile (see Section 3.1.4). The Java Memory Model requires fetch and store operations to be atomic, 
+but for nonvolatile long and double variables, the JVM is permitted to treat a 64‐bit read or write as two separate 32‐
+bit operations. If the reads and writes occur in different threads, it is therefore possible to read a nonvolatile long and

@@ -1,0 +1,59 @@
+52 
+Java Concurrency In Practice 
+Because  the  synchronized  collections  commit  to  a  synchronization  policy  that  supports  client‐side  locking,  [1]  it  is 
+possible to create new operations that are atomic with respect to other collection operations as long as we know which 
+lock to use. The synchronized collection classes guard each method with the lock on the synchronized collection object 
+itself.  By  acquiring  the  collection  lock  we  can  make  getLast  and  deleteLast  atomic,  ensuring  that  the  size  of  the 
+Vector does not change between calling size and get, as shown in Listing 5.2. 
+[1] This is documented only obliquely in the Java 5.0 Javadoc, as an example of the correct iteration idiom. 
+The risk that the size of the list might change between a call to size and the corresponding call to get is also present 
+when we iterate through the elements of a Vector as shown in Listing 5.3. 
+This iteration idiom relies on a leap of faith that other threads will not modify the Vector between the calls to size and 
+get. In a single‐threaded environment, this assumption is  perfectly valid, but when other threads may concurrently 
+modify the  Vector it can lead to trouble. Just as with  getLast, if another thread deletes an element while you are 
+iterating  through  the  Vector  and  the  operations  are  interleaved  unluckily,  this  iteration  idiom  throws 
+ArrayIndexOutOfBoundsException. 
+Listing 5.2. Compound Actions on Vector Using Client­side Locking. 
+public static Object getLast(Vector list) { 
+    synchronized (list) { 
+        int lastIndex = list.size() - 1; 
+        return list.get(lastIndex); 
+    } 
+} 
+ 
+public static void deleteLast(Vector list) { 
+    synchronized (list) { 
+        int lastIndex = list.size() - 1; 
+        list.remove(lastIndex); 
+    } 
+} 
+Listing 5.3. Iteration that may Throw ArrayIndexOutOfBoundsException. 
+for (int i = 0; i < vector.size(); i++) 
+    doSomething(vector.get(i)); 
+Even though the iteration in Listing 5.3 can throw an exception, this doesn't mean Vector isn't thread‐safe. The state of 
+the Vector is still valid and the exception is in fact in conformance with its specification. However, that something as 
+mundane as fetching the last element or iteration throw an exception is clearly undesirable. 
+The problem of unreliable iteration can again be addressed by client‐side locking, at some additional cost to scalability. 
+By  holding  the  Vector  lock  for  the  duration  of  iteration,  as  shown  in  Listing  5.4,  we  prevent  other  threads  from 
+modifying the Vector while we are iterating it. Unfortunately, we also prevent other threads from accessing it at all 
+during this time, impairing concurrency. 
+Listing 5.4. Iteration with Client­side Locking. 
+synchronized (vector) { 
+    for (int i = 0; i < vector.size(); i++) 
+        doSomething(vector.get(i)); 
+} 
+5.1.2. Iterators and Concurrentmodificationexception 
+We use Vector for the sake of clarity in many of our examples, even though it is considered a "legacy" collection class. 
+But the more "modern" collection classes do not eliminate the problem of compound actions. The standard way to 
+iterate a Collection is with an Iterator, either explicitly or through the for‐each loop syntax introduced in Java 5.0, 
+but using iterators does not obviate the need to lock the collection during iteration if other threads can concurrently 
+modify it. The iterators returned by the synchronized collections are not designed to deal with concurrent modification, 
+and they are fail‐fast ‐ meaning that if they detect that the collection has changed since iteration began, they throw the 
+unchecked ConcurrentModificationException. 
+These fail‐fast iterators are not designed to be foolproof ‐ they are designed to catch concurrency errors on a "good‐
+faith‐effort" basis and thus act only as early‐warning indicators for concurrency problems. They are implemented by 
+associating a modification count with the collection: if the modification count changes during iteration, hasNext or next 
+throws ConcurrentModificationException. However, this check is done without synchronization, so there is a risk of 
+seeing a stale value of the modification count and therefore that the iterator does not realize a modification has been 
+made. This was a deliberate design tradeoff to reduce the performance impact of the concurrent modification detection 
+code.[2]

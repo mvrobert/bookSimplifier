@@ -1,0 +1,60 @@
+101 
+5BPart II: Structuring Concurrent Applications ‐ 19BChapter 7. Cancellation and Shutdown
+thread exits abnormally the framework is informed of this and can take corrective action. This is one of the few times 
+when you might want to consider catching RuntimeExceptionwhen you are calling unknown, untrusted code through 
+an abstraction such as Runnable.[7] 
+[7] There is some controversy over the safety of this technique; when a thread throws an unchecked exception, the entire application may possibly 
+be compromised. But the alternative ‐ shutting down the entire application ‐ is usually not practical. 
+Listing 7.23 illustrates a way to structure a worker thread within a thread pool. If a task throws an unchecked exception, 
+it allows the thread to die, but not before notifying the framework that the thread has died. The framework may then 
+replace the worker thread with a new thread, or may choose not to because the thread pool is being shut down or there 
+are already enough worker threads to meet current demand.  ThreadPoolExecutor and Swing use this technique to 
+ensure that a poorly behaved task doesn't prevent subsequent tasks from executing. If you are writing a worker thread 
+class that executes submitted tasks, or calling untrusted external code (such as dynamically loaded plugins), use one of 
+these approaches to prevent a poorly written task or plugin from taking down the thread that happens to call it. 
+Listing 7.23. Typical Thread­pool Worker Thread Structure. 
+public void run() { 
+    Throwable thrown = null; 
+    try { 
+        while (!isInterrupted()) 
+            runTask(getTaskFromWorkQueue()); 
+    } catch (Throwable e) { 
+        thrown = e; 
+    } finally { 
+        threadExited(this, thrown); 
+    } 
+} 
+7.3.1. Uncaught Exception Handlers 
+The  previous  section  offered  a  proactive  approach  to  the  problem  of  unchecked  exceptions.  The  Thread  API  also 
+provides  the  UncaughtExceptionHandler  facility,  which  lets  you  detect  when  a  thread  dies  due  to  an  uncaught 
+exception.  The  two  approaches  are  complementary:  taken  together,  they  provide  defense‐indepth  against  thread 
+leakage. 
+When  a  thread  exits  due  to  an  uncaught  exception,  the  JVM  reports  this  event  to  an  application‐provided 
+UncaughtExceptionHandler (see Listing 7.24); if no handler exists, the default behavior is to print the stack trace to 
+System.err.[8] 
+[8] Before Java 5.0, the only way to control the UncaughtExceptionHandler was by subclassing ThreadGroup. In Java 5.0 and later, you 
+can set an UncaughtExceptionHandler on a per‐thread basis with Thread.setUncaughtExceptionHandler, and can also set the 
+default  UncaughtExceptionHandler  with  Thread.setDefaultUncaughtExceptionHandler.  However,  only  one  of  these 
+handlers  is  calledfirst  the  JVM  looks  for  a  per‐thread  handler,  then  for  a  ThreadGroup  handler.  The  default  handler  implementation  in 
+ThreadGroup delegates to its parent thread group, and so on up the chain until one of the ThreadGroup handlers deals with the uncaught 
+exception or it bubbles up to the toplevel thread group. The top‐level thread group handler delegates to the default system handler (if one exists; 
+the default is none) and otherwise prints the stack trace to the console. 
+Listing 7.24. UncaughtExceptionHandler Interface. 
+public interface UncaughtExceptionHandler { 
+    void uncaughtException(Thread t, Throwable e); 
+} 
+What the handler should do with an uncaught exception depends on your quality‐of‐service requirements. The most 
+common response is to write an error message and stack trace to the application log, as shown in Listing 7.25. Handlers 
+can also take more direct action, such as trying to restart the thread, shutting down the application, paging an operator, 
+or other corrective or diagnostic action. 
+Listing 7.25. UncaughtExceptionHandler that Logs the Exception. 
+public class UEHLogger implements Thread.UncaughtExceptionHandler { 
+    public void uncaughtException(Thread t, Throwable e) { 
+        Logger logger = Logger.getAnonymousLogger(); 
+        logger.log(Level.SEVERE, 
+              "Thread terminated with exception: " + t.getName(), 
+              e); 
+    } 
+} 
+ 
+In long‐running applications, always use uncaught exception handlers for all threads that at least log the exception.

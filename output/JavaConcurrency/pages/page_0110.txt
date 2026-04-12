@@ -1,0 +1,62 @@
+93 
+5BPart II: Structuring Concurrent Applications ‐ 19BChapter 7. Cancellation and Shutdown
+ReaderThread encapsulates cancellation of socket‐using threads by overriding interrupt; the same can be done for 
+tasks by overriding Future.cancel. 
+CancellableTask  in  Listing  7.12  defines  a  CancellableTask  interface  that  extends  Callable  and  adds  a  cancel 
+method  and  a  newTask  factory  method  for  constructing  a  RunnableFuture.  CancellingExecutor  extends 
+ThreadPoolExecutor, and overrides newTaskFor to let a CancellableTask create its own Future. 
+Listing 7.11. Encapsulating Nonstandard Cancellation in a Thread by Overriding Interrupt. 
+public class ReaderThread extends Thread { 
+    private final Socket socket; 
+    private final InputStream in; 
+ 
+    public ReaderThread(Socket socket) throws IOException { 
+        this.socket = socket; 
+        this.in = socket.getInputStream(); 
+    } 
+ 
+    public void  interrupt()  { 
+        try { 
+            socket.close(); 
+        } 
+        catch (IOException ignored) { } 
+        finally { 
+            super.interrupt(); 
+        } 
+    } 
+ 
+    public void run() { 
+        try { 
+            byte[] buf = new byte[BUFSZ]; 
+            while (true) { 
+                int count = in.read(buf); 
+                if (count < 0) 
+                    break; 
+                else if (count > 0) 
+                    processBuffer(buf, count); 
+            } 
+        } catch (IOException e) { /*  Allow thread to exit  */  } 
+    } 
+} 
+SocketUsingTask  implements  CancellableTask  and  defines  Future.cancel  to  close  the  socket  as  well  as  call 
+super.cancel. If a SocketUsingTask is cancelled through its Future, the socket is closed and the executing thread is 
+interrupted. This increases the task's responsiveness to cancellation: not only can it safely call interruptible blocking 
+methods while remaining responsive to cancellation, but it can also call blocking socket I/O methods. 
+7.2. Stopping a Thread­based Service 
+Applications commonly create services that own threads, such as thread pools, and the lifetime of these services is 
+usually longer than that of the method that creates them. If the application is to shut down gracefully, the threads 
+owned by these services need to be terminated. Since there is no preemptive way to stop a thread, they must instead 
+be persuaded to shut down on their own. 
+Sensible encapsulation practices dictate that you should not manipulate a thread ‐ interrupt it, modify its priority, etc. ‐ 
+unless you own it. The thread API has no formal concept of thread ownership: a thread is represented with a Thread 
+object that can be freely shared like any other object. However, it makes sense to think of a thread as having an owner, 
+and this is usually the class that created the thread. So a thread pool owns its worker threads, and if those threads need 
+to be interrupted, the thread pool should take care of it. 
+As with any other encapsulated object, thread ownership is not transitive: the application may own the service and the 
+service may own the worker threads, but the application doesn't own the worker threads and therefore should not 
+attempt to stop them directly. Instead, the service should provide lifecycle methods for shutting itself down that also 
+shut  down  the  owned  threads;  then  the  application  can  shut  down  the  service,  and  the  service  can  shut  down  the 
+threads.  ExecutorService  provides  the  shutdown  and  shutdownNow  methods;  other  thread‐owning  services  should 
+provide a similar shutdown mechanism. 
+Provide lifecycle methods whenever a thread‐owning service has a lifetime longer than that of the method that created 
+it.

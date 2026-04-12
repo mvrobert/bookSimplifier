@@ -1,0 +1,31 @@
+Java Concurrency 
+In Practice 
+Brian Göetz 
+Tim Peierls 
+Joshua Bloch 
+Joseph Bowbeer 
+David Holmes 
+Doug Lea 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Addison‐Wesley Professional 
+ISBN‐10: 0‐321‐34960‐1 
+ISBN‐13: 978‐0‐321‐34960‐6

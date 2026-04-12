@@ -1,0 +1,52 @@
+72 
+Java Concurrency In Practice 
+Chapter 6. Task Execution 
+Most concurrent applications are organized around the execution of tasks: abstract, discrete units of work. Dividing the 
+work  of  an  application  into  tasks  simplifies  program  organization,  facilitates  error  recovery  by  providing  natural 
+transaction boundaries, and promotes concurrency by providing a natural structure for parallelizing work. 
+6.1. Executing Tasks in Threads 
+The first step in organizing a program around task execution is identifying sensible task boundaries. Ideally, tasks are 
+independent  activities:  work  that  doesn't  depend  on  the  state,  result,  or  side  effects  of  other  tasks.  Independence 
+facilitates concurrency, as independent tasks can be executed in parallel if there are adequate processing resources. For 
+greater  flexibility  in  scheduling  and  load  balancing  tasks,  each  task  should  also  represent  a  small  fraction  of  your 
+application's processing capacity. 
+Server  applications  should  exhibit  both  good  throughput  and  good  responsiveness  under  normal  load.  Application 
+providers want applications to support as many users as possible, so as to reduce provisioning costs per user; users 
+want  to  get  their  response  quickly.  Further,  applications  should  exhibit  graceful  degradation  as  they  become 
+overloaded, rather than simply falling over under heavy load. Choosing good task boundaries, coupled with a sensible 
+task execution policy (see Section 6.2.2), can help achieve these goals. 
+Most server applications offer a natural choice of task boundary: individual client requests. Web servers, mail servers, 
+file servers, EJB containers, and database servers all accept requests via network connections from remote clients. Using 
+individual requests as task boundaries usually offers both independence and appropriate task sizing. For example, the 
+result of submitting a message to a mail server is not affected by the other messages being processed at the same time, 
+and handling a single message usually requires a very small percentage of the server's total capacity. 
+6.1.1. Executing Tasks Sequentially 
+There are a number of possible policies for scheduling tasks within an application, some of which exploit the potential 
+for concurrency better than others. The simplest is to execute tasks sequentially in a single thread. SingleThreadWeb-
+Server in Listing 6.1 processes its tasks ‐ HTTP requests arriving on port 80 ‐ sequentially. The details of the request 
+processing aren't important; we're interested in characterizing the concurrency of various scheduling policies. 
+Listing 6.1. Sequential Web Server. 
+ 
+class SingleThreadWebServer { 
+    public static void main(String[] args) throws IOException { 
+        ServerSocket socket = new ServerSocket(80); 
+        while (true) { 
+            Socket connection = socket.accept(); 
+            handleRequest(connection); 
+        } 
+    } 
+} 
+SingleThreadedWebServer is simple and theoretically correct, but would perform poorly in production because it can 
+handle  only  one  request  at  a  time.  The  main  thread  alternates  between  accepting  connections  and  processing  the 
+associated  request.  While  the  server  is  handling  a  request,  new  connections  must  wait  until  it  finishes  the  current 
+request  and  calls  accept  again.  This  might  work  if  request  processing  were  so  fast  that  handleRequest  effectively 
+returned immediately, but this doesn't describe any web server in the real world. 
+Processing  a  web  request  involves  a  mix  of  computation  and  I/O.  The  server  must  perform  socket  I/O  to  read  the 
+request  and  write  the  response,  which  can  block  due  to  network  congestion  or  connectivity  problems.  It  may  also 
+perform file I/O or make database requests, which can also block. In a single‐threaded server, blocking not only delays 
+completing the current request, but prevents pending requests from being processed at all. If one request blocks for an 
+unusually long time, users might think the server is unavailable because it appears unresponsive. At the same time, 
+resource utilization is poor, since the CPU sits idle while the single thread waits for its I/O to complete. 
+In server applications, sequential processing rarely provides either good throughput or good responsiveness. There are 
+exceptions ‐ such as when tasks are few and long‐lived, or when the server serves a single client that makes only a single 
+request at a time ‐ but most server applications do not work this way.[1]

@@ -1,0 +1,66 @@
+75 
+5BPart II: Structuring Concurrent Applications ‐ 18BChapter 6. Task Execution
+Listing 6.4. Web Server Using a Thread Pool. 
+class TaskExecutionWebServer { 
+    private static final int NTHREADS = 100; 
+    private static final Executor exec 
+        = Executors.newFixedThreadPool(NTHREADS); 
+ 
+    public static void main(String[] args) throws IOException { 
+        ServerSocket socket = new ServerSocket(80); 
+        while (true) { 
+            final Socket connection = socket.accept(); 
+            Runnable task = new Runnable() { 
+                public void run() { 
+                    handleRequest(connection); 
+                } 
+            }; 
+            exec.execute(task); 
+        } 
+    } 
+} 
+We can easily modify TaskExecutionWebServer to behave like ThreadPer-TaskWebServer by substituting an Executor 
+that creates a new thread for each request. Writing such an Executor is trivial, as shown in ThreadPerTaskExecutor in 
+Listing 6.5. 
+Listing 6.5. Executor that Starts a New Thread for Each Task. 
+public class ThreadPerTaskExecutor implements Executor { 
+    public void execute(Runnable r) { 
+        new Thread(r).start(); 
+    }; 
+} 
+Similarly,  it  is  also  easy  to  write  an  Executor  that  would  make  TaskExecutionWebServer  behave  like  the  single‐
+threaded  version,  executing  each  task  synchronously  before  returning  from 
+execute,  as  shown  in 
+WithinThreadExecutor in Listing 6.6. 
+6.2.2. Execution Policies 
+The value of decoupling submission from execution is that it lets you easily specify, and subsequently change without 
+great difficulty, the execution policy for a given class of tasks. An execution policy specifies the "what, where, when, and 
+how" of task execution, including: 
+Listing 6.6. Executor that Executes Tasks Synchronously in the Calling Thread. 
+public class WithinThreadExecutor implements Executor { 
+    public void execute(Runnable r) { 
+        r.run(); 
+    }; 
+} 
+• 
+In what thread will tasks be executed? 
+• 
+In what order should tasks be executed (FIFO, LIFO, priority order)? 
+• 
+How many tasks may execute concurrently? 
+• 
+How many tasks may be queued pending execution? 
+• 
+If a task has to be rejected because the system is overloaded, which task should be selected as the victim, and 
+how should the application be notified? 
+• 
+What actions should be taken before or after executing a task? 
+Execution  policies  are  a  resource  management  tool,  and  the  optimal  policy  depends  on  the  available  computing 
+resources and your quality‐of‐service requirements. By limiting the number of concurrent tasks, you can ensure that the 
+application  does  not  fail  due  to  resource  exhaustion  or  suffer  performance  problems  due  to  contention  for  scarce 
+resources.[3]  Separating  the  specification  of  execution  policy  from  task  submission  makes  it  practical  to  select  an 
+execution policy at deployment time that is matched to the available hardware. 
+[3] This is analogous to one of the roles of a transaction monitor in an enterprise application: it can throttle the rate at which transactions are 
+allowed to proceed so as not to exhaust or overstress limited resources. 
+Whenever you see code of the form: 
+new Thread(runnable).start()

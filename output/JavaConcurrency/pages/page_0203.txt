@@ -1,0 +1,53 @@
+186 
+Java Concurrency In Practice 
+BoundedBuffer meets the one‐in, one‐out requirement, but does not meet the uniform waiters requirement because 
+waiting threads might be waiting for either the "not full" and "not empty" condition. A "starting gate" latch like that 
+used in TestHarness on page 96, in which a single event releases a set of threads, does not meet the one‐in, one‐out 
+requirement because opening the starting gate lets multiple threads proceed. 
+Most  classes  don't  meet  these  requirements,  so  the  prevailing  wisdom  is  to  use  notifyAll  in  preference  to  single 
+notify.  While  this  may  be  inefficient,  it  is  much  easier  to  ensure  that  your  classes  behave  correctly  when  using 
+notifyAll instead of notify. 
+This "prevailing wisdom" makes some people uncomfortable, and for good reason. Using  notifyAll when only one 
+thread can make progress is inefficientsometimes a little, sometimes grossly so. If ten threads are waiting on a condition 
+queue, calling notifyAll causes each of them to wake up and contend for the lock; then most or all of them will go 
+right back to sleep. This means a lot of context switches and a lot of contended lock acquisitions for each event that 
+enables (maybe) a single thread to make progress. (In the worst case, using notify-All results in O(n2) wakeups where 
+n  would  suffice.)  This  is  another  situation  where  performance  concerns  support  one  approach  and  safety  concerns 
+support the other. 
+The notification done by  put and  take in  BoundedBuffer is conservative: a notification  is performed every time  an 
+object is put into or removed from the buffer. This could be optimized by observing that a thread can be released from a 
+wait only if the buffer goes from empty to not empty or from full to not full, and notifying only if a put or take effected 
+one  of  these  state  transitions.  This  is  called  conditional  notification.  While  conditional  notification  can  improve 
+performance, it is tricky to get right (and also complicates the implementation of subclasses) and so should be used 
+carefully. Listing 14.8 illustrates using conditional notification in BoundedBuffer.put. 
+Single notification and conditional notification are optimizations. As always, follow the principle "First make it right, and 
+then make it fastif it is not already fast enough" when using these optimizations; it is easy to introduce strange liveness 
+failures by applying them incorrectly. 
+Listing 14.8. Using Conditional Notification in BoundedBuffer.put. 
+public synchronized void put(V v) throws InterruptedException { 
+    while (isFull()) 
+        wait(); 
+    boolean wasEmpty = isEmpty(); 
+    doPut(v); 
+    if (wasEmpty) 
+        notifyAll(); 
+} 
+14.2.5. Example: A Gate Class 
+The starting gate latch in TestHarness on page 96 was constructed with an initial count of one, creating a binary latch: 
+one with two states, the initial state and the terminal state. The latch prevents threads from passing the starting gate 
+until it is opened, at which point all the threads can pass through. While this latching mechanism is often exactly what is 
+needed, sometimes it is a drawback that a gate constructed in this manner cannot be reclosed once opened. 
+It is easy to develop a recloseable ThreadGate class using condition waits, as shown in Listing 14.9. ThreadGate lets the 
+gate be opened and closed, providing an await method that blocks until the gate is opened. The  open method uses 
+notifyAll because the semantics of this class fail the "one‐in, one‐out" test for single notification. 
+The condition predicate used by await is more complicated than simply testing isOpen. This is needed because if N 
+threads are waiting at the gate at the time it is opened, they should all be allowed to proceed. But, if the gate is opened 
+and closed in rapid succession, all threads might not be released if await examines only isOpen: by the time all the 
+threads  receive  the  notification,  reacquire  the  lock,  and  emerge  from  wait,  the  gate  may  have  closed  again.  So 
+ThreadGate  uses  a  somewhat  more  complicated  condition  predicate:  every  time  the  gate  is  closed,  a  "generation" 
+counter is incremented, and a thread may pass await if the gate is open now or if the gate has opened since this thread 
+arrived at the gate. 
+Since  ThreadGate only supports waiting for the gate to open, it performs notification only in  open; to support both 
+"wait for open" and "wait for close" operations, it would have to notify in both open and close. This illustrates why 
+state‐dependent  classes  can  be  fragile  to  maintainthe  addition  of  a  new  statedependent  operation  may  require 
+modifying many code paths that modify the object state so that the appropriate notifications can be performed.

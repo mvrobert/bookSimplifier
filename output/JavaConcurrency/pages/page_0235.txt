@@ -1,0 +1,36 @@
+218 
+Java Concurrency In Practice 
+ 
+Ramnivas Laddad. AspectJ in Action. Manning, 2003. 
+ 
+Doug Lea. Concurrent Programming in Java, Second Edition. Addison Wesley, 2000. 
+ 
+Doug Lea. JSR‐133 Cookbook for Compiler Writers. URL http://gee.cs.oswego.edu/dl/jmm/cookbook.html. 
+ 
+J. D. C. Little. A proof of the Queueing Formula L = λW". Operations Research, 9: 383‐387, 1961. 
+ 
+Jeremy Manson, William Pugh, and Sarita V. Adve. The Java Memory Model. In POPL '05: Proceedings of the 32nd ACM 
+SIGPLAN‐SIGACT Symposium on Principles of Programming Languages, pages 378‐391. ACM Press, 2005. 
+URL http://doi.acm.org/10.1145/1040305.1040336. 
+ 
+George Marsaglia. XorShift RNGs. Journal of Statistical Software, 8(13), 2003. URL http://www.jstatsoft.org/v08/i14. 
+ 
+Maged  M.  Michael  and  Michael  L.  Scott.  Simple,  Fast,  and  Practical  Non‐Blocking  and  Blocking  Concurrent  Queue 
+Algorithms. In Symposium on Principles of Distributed Computing, pages 267‐275, 1996. 
+URL http://citeseer.ist.psu.edu/michael96simple.html. 
+ 
+Mark Moir and Nir Shavit. Concurrent Data Structures, In Handbook of Data Structures and Applications, chapter 47. CRC 
+Press, 2004. 
+ 
+William Pugh and Jeremy Manson. Java Memory Model and Thread Specification, 2004. 
+URL http://www.cs.umd.edu/~pugh/java/memoryModel/jsr133.pdf. 
+ 
+M. Raynal. Algorithms for Mutual Exclusion. MIT Press, 1986. 
+ 
+William N. Scherer, Doug Lea, and Michael L. Scott. Scalable Synchronous Queues. In 11th ACM SIGPLAN Symposium on 
+Principles and Practices of Parallel Programming (PPoPP), 2006. 
+ 
+R. K. Treiber. Systems Programming: Coping with Parallelism. Technical Report RJ 5118, IBM Almaden Research Center, 
+April 1986. 
+ 
+Andrew Wellings. Concurrent and Real‐Time Programming in Java. John Wiley & Sons, 2004.

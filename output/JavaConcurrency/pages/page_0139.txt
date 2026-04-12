@@ -1,0 +1,68 @@
+122 
+Java Concurrency In Practice 
+Listing 9.5. Long­running Task with User Feedback. 
+button.addActionListener(new ActionListener() { 
+    public void actionPerformed(ActionEvent e) { 
+        button.setEnabled(false); 
+        label.setText("busy"); 
+        backgroundExec.execute(new Runnable() { 
+            public void run() { 
+                try { 
+                    doBigComputation(); 
+                } finally { 
+                    GuiExecutor.instance().execute(new Runnable() { 
+                        public void run() { 
+                            button.setEnabled(true); 
+                            label.setText("idle"); 
+                        } 
+                    }); 
+                } 
+            } 
+        }); 
+    } 
+}); 
+The task triggered when the button is pressed is composed of three sequential subtasks whose execution alternates 
+between the event thread and the background thread. The first subtask updates the user interface to show that a long‐
+running  operation  has  begun  and  starts  the  second  subtask  in  a  background  thread.  Upon  completion,  the  second 
+subtask queues the third subtask to run again in the event thread, which updates the user interface to reflect that the 
+operation has completed. This sort of "thread hopping" is typical of handling long‐running tasks in GUI applications. 
+9.3.1. Cancellation 
+Any task that takes long enough to run in another thread probably also takes long enough that the user might want to 
+cancel it. You could implement cancellation directly using thread interruption, but it is much easier to use Future, which 
+was designed to manage cancellable tasks. 
+When you call cancel on a Future with mayInterruptIfRunning set to true, the Future implementation interrupts 
+the thread that is executing the task if it is currently running. If your task is written to be responsive to interruption, it 
+can return early if it is cancelled. Listing 9.6 illustrates a task that polls the thread's interrupted status and returns early 
+on interruption. 
+Listing 9.6. Cancelling a Long­running Task. 
+Future<?>  runningTask = null;    // thread-confined 
+... 
+startButton.addActionListener(new ActionListener() { 
+    public void actionPerformed(ActionEvent e) { 
+        if (runningTask != null) { 
+            runningTask = backgroundExec.submit(new Runnable() { 
+                public void run() { 
+                   while (moreWork()) { 
+                       if (Thread.currentThread().isInterrupted()) { 
+                           cleanUpPartialWork(); 
+                           break; 
+                       } 
+                       doSomeWork(); 
+                   } 
+                } 
+            }); 
+    }; 
+}}); 
+ 
+cancelButton.addActionListener(new ActionListener() { 
+    public void actionPerformed(ActionEvent event) { 
+        if (runningTask != null) 
+            runningTask.cancel(true); 
+}}); 
+Because runningTask is confined to the event thread, no synchronization is required when setting or checking it, and 
+the start button listener ensures that only one background task is running at a time. However, it would be better to be 
+notified when the task completes so that, for example, the cancel button could be disabled. We address this in the next 
+section. 
+9.3.2. Progress and Completion Indication 
+Using a Future to represent a long‐running task greatly simplified implementing cancellation. FutureTask also has a 
+done hook that similarly facilitates completion notification. After the background Callable completes, done is called. By

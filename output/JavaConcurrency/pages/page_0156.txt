@@ -1,0 +1,43 @@
+139 
+6BPart III: Liveness, Performance, and Testing ‐ 23BChapter 11. Performance and Scalability
+most difficult to track down and eliminate, however, anything that risks introducing them must be undertaken very 
+carefully. 
+Worse, when you trade safety for performance, you may get neither.  Especially when it  comes to concurrency, the 
+intuition of many developers about where a performance problem lies or which approach will be faster or more scalable 
+is  often  incorrect.  It  is  therefore  imperative  that  any  performance  tuning  exercise  be  accompanied  by  concrete 
+performance  requirements  (so  you  know  both  when  to  tune  and  when  to  stop  tuning)  and  with  a  measurement 
+program  in  place  using  a  realistic  configuration  and  load  profile.  Measure  again  after  tuning  to  verify  that  you've 
+achieved  the  desired  improvements.  The  safety  and  maintenance  risks  associated  with  many  optimizations  are  bad 
+enough ‐ you don't want to pay these costs if you don't need to ‐ and you definitely don't want to pay them if you don't 
+even get the desired benefit. 
+Measure, don't guess. 
+There  are  sophisticated  profiling  tools  on  the  market  for  measuring  performance  and  tracking  down  performance 
+bottlenecks, but you don't have to spend a lot of money to figure out what your program is doing. For example, the free 
+perfbar application can give you a good picture of how busy the CPUs are, and since your goal is usually to keep the 
+CPUs busy, this is a very good way to evaluate whether you need performance tuning or how effective your tuning has 
+been. 
+11.2. Amdahl's Law 
+Some problems can be solved faster with more resources ‐ the more workers available for harvesting crops, the faster 
+the harvest can be completed. Other tasks are fundamentally serial ‐ no number of additional workers will make the 
+crops grow any faster. If one of our primary reasons for using threads is to harness the power of multiple processors, we 
+must also ensure that the problem is amenable to parallel decomposition and that our program effectively exploits this 
+potential for parallelization. 
+Most concurrent programs have a lot in common with farming, consisting of a mix of parallelizable and serial portions. 
+Amdahl's law describes how much a program can theoretically be sped up by additional computing resources, based on 
+the  proportion of parallelizable and serial components. If F is  the fraction of the  calculation that must be executed 
+serially, then Amdahl's law says that on a machine with N processors, we can achieve a speedup of at most: 
+ܵ݌݁݁݀ݑ݌  ൑
+1
+ܨ൅1 െܨ
+ܰ
+ 
+As N approaches infinity, the maximum speedup converges to 1/F, meaning that a program in which fifty percent of the 
+processing must be executed serially can be sped up only by a factor of two, regardless of how many processors are 
+available, and a program in which ten percent must be executed serially can be sped up by at most a factor of ten. 
+Amdahl's law also quantifies the efficiency cost of serialization. With ten processors, a program with 10%serialization 
+can achieve at most a speedup of 5.3 (at 53% utilization), and with 100 processors it can achieve at most a speedup of 
+9.2 (at 9% utilization). It takes a lot of inefficiently utilized CPUs to never get to that factor of ten. 
+Figure 11.1 shows the maximum possible processor utilization for varying degrees of serial execution and numbers of 
+processors. (Utilization is defined as the speedup divided by the number of processors.) It is clear that as processor 
+counts increase, even a small percentage of serialized execution limits how much throughput can be increased with 
+additional computing resources.

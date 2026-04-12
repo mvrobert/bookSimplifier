@@ -1,0 +1,54 @@
+159 
+6BPart III: Liveness, Performance, and Testing ‐ 24BChapter 12. Testing Concurrent Programs
+In tests that run until they complete a fixed number of operations, it is possible that the test case will never finish if the 
+code being tested encounters an exception due to a bug. The most common way to handle this is to have the test 
+framework abort tests that do not terminate within a certain amount of time; how long to wait should be determined 
+empirically, and failures must then be analyzed to ensure that the problem wasn't just that you didn't wait long enough. 
+(This problem is not unique to testing concurrent classes; sequential tests must also distinguish between long‐running 
+and infinite loops.) 
+12.1.4. Testing Resource Management 
+The tests so far have been concerned with a class's adherence to its specification ‐ that it does what it is supposed to do. 
+A secondary aspect to test is that it does not do things it is not supposed to do, such as leak resources. Any object that 
+holds or manages other objects should not continue to maintain references to those objects longer than necessary. Such 
+storage  leaks  prevent  garbage  collectors  from  reclaiming  memory  (or  threads,  file  handles,  sockets,  database 
+connections, or other limited resources) and can lead to resource exhaustion and application failure. 
+Resource management issues are especially important for classes like BoundedBufferthe entire reason for bounding a 
+buffer is to prevent application failure due to resource exhaustion when producers get too far ahead of consumers. 
+Bounding causes overly productive producers to block rather than continue to create work that will consume more and 
+more memory or other resources. 
+Undesirable memory retention can be easily tested with heap‐inspection tools that measure application memory usage; 
+a variety of commercial and open‐source heap‐profiling tools can do this. The testLeak method in Listing 12.7 contains 
+placeholders for a heap‐inspection  tool to snapshot the  heap, which forces a garbage  collection[5] and  then records 
+information about the heap size and memory usage. 
+[5] Technically, it is impossible to force a garbage collection; System.gc only suggests to the JVM that this might be a good time to perform a 
+garbage collection. HotSpot can be instructed to ignore System.gc calls with -XX:+DisableExplicitGC. 
+The testLeak method inserts several large objects into a bounded buffer and then removes them; memory usage at 
+heap snapshot #2 should be approximately the same as at heap snapshot #1. On the other hand, if doExtract forgot to 
+null out the reference to the returned element (items[i]=null), the reported memory usage at the two snapshots 
+would definitely not be the same. (This is one of the few times where explicit nulling is necessary; most of the time, it is 
+either not helpful or actually harmful [EJ Item 5].) 
+12.1.5. Using Callbacks 
+Callbacks to client‐provided code can be helpful in constructing test cases; callbacks are often made at known points in 
+an object's lifecycle that are good opportunities to assert invariants. For example, ThreadPoolExecutor makes calls to 
+the task Runnables and to the ThreadFactory. 
+Listing 12.7. Testing for Resource Leaks. 
+class Big { double[] data = new double[100000]; } 
+ 
+void testLeak() throws InterruptedException { 
+     BoundedBuffer<Big> bb = new BoundedBuffer<Big>(CAPACITY); 
+     int heapSize1 =  /* snapshot heap */ ; 
+     for (int i = 0; i < CAPACITY; i++) 
+         bb.put(new Big()); 
+     for (int i = 0; i < CAPACITY; i++) 
+         bb.take(); 
+     int heapSize2 =  /* snapshot heap */ ; 
+     assertTrue(Math.abs(heapSize1-heapSize2) < THRESHOLD); 
+} 
+Testing a thread pool involves testing a number of elements of execution policy: that additional threads are created 
+when  they  are  supposed  to,  but  not  when  they  are  not  supposed  to;  that  idle  threads  get  reaped  when  they  are 
+supposed to, etc. Constructing a comprehensive test suite that covers all the possibilities is a major effort, but many of 
+them can be tested fairly simply individually. 
+We can instrument thread creation by using a custom thread factory. TestingThreadFactory in Listing 12.8 maintains a 
+count  of  created  threads;  test  cases  can  then  verify  the  number  of  threads  created  during  a  test  run. 
+TestingThreadFactory could be extended to return a custom Thread that also records when the thread terminates, so 
+that test cases can verify that threads are reaped in accordance with the execution policy.

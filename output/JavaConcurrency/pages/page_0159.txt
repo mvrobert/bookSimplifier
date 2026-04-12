@@ -1,0 +1,51 @@
+142 
+Java Concurrency In Practice 
+uses atomic references to update individual link pointers. In one, the entire insertion or removal is serialized; in the 
+other, only updates to individual pointers are serialized. 
+11.2.2. Applying Amdahl's Law Qualitatively 
+Amdahl's  law  quantifies  the  possible  speedup  when  more  computing  resources  are  available,  if  we  can  accurately 
+estimate the fraction of execution that is serialized. Although measuring serialization directly can be difficult, Amdahl's 
+law can still be useful without such measurement. 
+Since our mental models are influenced by our environment, many of us are used to thinking that a multiprocessor 
+system has two or four processors, or maybe (if we've got a big budget) as many as a few dozen, because this is the 
+technology that has been widely available in recent years. But as multicore CPUs become mainstream, systems will have 
+hundreds or even thousands of processors.  [3] Algorithms that seem scalable on a four‐way system may have hidden 
+scalability bottlenecks that have just not yet been encountered. 
+[3] Market update: at this writing, Sun is shipping low‐end server systems based on the 8‐core Niagara processor, and Azul is shipping high‐end 
+server systems (96, 192, and 384‐way) based on the 24‐core Vega processor. 
+When  evaluating  an  algorithm,  thinking  "in  the  limit"  about  what  would  happen  with  hundreds  or  thousands  of 
+processors  can  offer  some  insight  into  where  scaling  limits  might  appear.  For  example,  Sections  11.4.2  and  11.4.3 
+discuss two techniques for reducing lock granularity: lock splitting (splitting one lock into two) and lock striping (splitting 
+one lock into many). Looking at them through the lens of Amdahl's law, we see that splitting a lock in two does not get 
+us very far towards exploiting many processors, but lock striping seems much more promising because the size of the 
+stripe  set  can  be  increased  as  processor  count  increases.  (Of  course,  performance  optimizations  should  always  be 
+considered in light of actual performance requirements; in some cases, splitting a lock in two may be enough to meet 
+the requirements.) 
+11.3. Costs Introduced by Threads 
+Single‐threaded programs incur neither scheduling nor synchronization overhead, and need not use locks to preserve 
+the  consistency  of  data  structures.  Scheduling  and  interthread  coordination  have  performance  costs;  for  threads  to 
+offer a performance improvement, the performance benefits of parallelization must outweigh the costs introduced by 
+concurrency. 
+11.3.1. Context Switching 
+If the main thread is the only schedulable thread, it will almost never be scheduled out. On the other hand, if there are 
+more runnable threads than CPUs, eventually the OS will preempt one thread so that another can use the CPU. This 
+causes a context switch, which requires saving the execution context of the currently running thread and restoring the 
+execution context of the newly scheduled thread. 
+Context switches are not free; thread scheduling requires manipulating shared data structures in the OS and JVM. The 
+OS and JVMuse the same CPUs your program does; more CPU time spent in JVM and OS code means less is available for 
+your program. But OS and JVM activity is not the only cost of context switches. When a new thread is switched in, the 
+data it needs is unlikely to be in the local processor cache, so a context switch causes a flurry of cache misses, and thus 
+threads run a little more slowly when they are first scheduled. This is one of the reasons that schedulers give each 
+runnable thread a certain minimum time quantum even when many other threads are waiting: it amortizes the cost of 
+the  context switch and its consequences over more uninterrupted execution time, improving overall throughput  (at 
+some cost to responsiveness). 
+Listing 11.2. Synchronization that has No Effect. Don't Do this. 
+ 
+synchronized (new Object()) { 
+    // do something 
+} 
+When a thread blocks because it is waiting for a contended lock, the JVM usually suspends the thread and allows it to be 
+switched out. If threads block frequently, they will be unable to use their full scheduling quantum. A program that does 
+more  blocking  (blocking  I/O,  waiting  for  contended  locks,  or  waiting  on  condition  variables)  incurs  more  context 
+switches  than  one  that  is  CPU‐bound,  increasing  scheduling  overhead  and  reducing  throughput.  (Non‐blocking 
+algorithms can also help reduce context switches; see Chapter 15.)

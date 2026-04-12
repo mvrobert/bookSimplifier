@@ -1,0 +1,49 @@
+53 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 17BChapter 5. Building 
+Blocks
+[2] ConcurrentModificationException can arise in single‐threaded code as well; this happens when objects are removed from the collection directly 
+rather than through Iterator.remove. 
+Listing 5.5 illustrates iterating a collection with the for‐each loop syntax. Internally, javac generates code that uses an 
+Iterator, repeatedly calling hasNext and next to iterate the List. Just as with iterating the Vector, the way to prevent 
+ConcurrentModificationException is to hold the collection lock for the duration of the iteration. 
+Listing 5.5. Iterating a List with an Iterator. 
+ 
+ 
+List<Widget> widgetList 
+    = Collections.synchronizedList(new ArrayList<Widget>()); 
+... 
+// May throw ConcurrentModificationException 
+for (Widget w : widgetList) 
+    doSomething(w); 
+There are several reasons, however, why locking a collection during iteration may be undesirable. Other threads that 
+need to access the collection will block until the iteration is complete; if the collection is large or the task performed for 
+each element is lengthy, they could wait a long time. Also, if the collection is locked as in Listing 5.4, doSomething is 
+being called with a lock held, which is a risk factor for deadlock (see Chapter 10). Even in the absence of starvation or 
+deadlock risk, locking collections for significant periods of time hurts application scalability. The longer a lock is held, the 
+more likely it is to be contended, and if many threads are blocked waiting for a lock throughput and CPU utilization can 
+suffer (see Chapter 11). 
+An alternative to locking the collection during iteration is to clone the collection and iterate the copy instead. Since the 
+clone  is  thread‐confined,  no  other  thread  can  modify  it  during  iteration,  eliminating  the  possibility  of 
+ConcurrentModificationException. (The collection still must be locked during the clone operation itself.) Cloning the 
+collection has an obvious performance cost; whether this is a favorable tradeoff depends on many factors including the 
+size of the collection, how much work is done for each element, the relative frequency of iteration compared to other 
+collection operations, and responsiveness and throughput requirements. 
+5.1.3. Hidden Iterators 
+While locking can prevent iterators from throwing ConcurrentModificationException, you have to remember to use 
+locking  everywhere  a  shared  collection  might  be  iterated.  This  is  trickier  than  it  sounds,  as  iterators  are  sometimes 
+hidden,  as  in  HiddenIterator  in  Listing  5.6.  There  is  no  explicit  iteration  in  HiddenIterator,  but  the  code  in  bold 
+entails  iteration  just  the  same.  The  string  concatenation  gets  turned  by  the  compiler  into  a  call  to 
+StringBuilder.append(Object), which in turn invokes the collection's toString method ‐ and the implementation of 
+toString in the standard collections iterates the collection and calls toString on each element to produce a nicely 
+formatted representation of the collection's contents. 
+The addTenThings method could throw ConcurrentModificationException, because the collection is being iterated 
+by toString in the process of preparing the debugging message. Of course, the real problem is that HiddenIterator is 
+not thread‐safe; the HiddenIterator lock should be acquired before using set in the println call, but debugging and 
+logging code commonly neglect to do this. 
+The real lesson here is that the greater the distance between the state and the synchronization that guards it, the more 
+likely that someone will forget to use proper synchronization when accessing that state. If HiddenIterator wrapped 
+the HashSet with a synchronizedSet, encapsulating the synchronization, this sort of error would not occur. 
+Just as encapsulating an object's state makes it easier to preserve its invariants, encapsulating its synchronization makes 
+it easier to enforce its synchronization policy.

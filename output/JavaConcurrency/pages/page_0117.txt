@@ -1,0 +1,70 @@
+100 
+Java Concurrency In Practice 
+Listing 7.22. Using TRackingExecutorService to Save Unfinished Tasks for Later Execution. 
+public abstract class WebCrawler { 
+    private volatile TrackingExecutor exec; 
+    @GuardedBy("this") 
+    private final Set<URL> urlsToCrawl = new HashSet<URL>(); 
+    ... 
+    public synchronized void start() { 
+        exec = new TrackingExecutor( 
+                Executors.newCachedThreadPool()); 
+        for (URL url : urlsToCrawl) submitCrawlTask(url); 
+        urlsToCrawl.clear(); 
+    } 
+ 
+    public synchronized void stop() throws InterruptedException { 
+        try { 
+            saveUncrawled(exec.shutdownNow()); 
+            if (exec.awaitTermination(TIMEOUT, UNIT)) 
+                saveUncrawled(exec.getCancelledTasks()); 
+        } finally { 
+            exec = null; 
+        } 
+    } 
+ 
+    protected abstract List<URL> processPage(URL url); 
+ 
+    private void saveUncrawled(List<Runnable> uncrawled) { 
+        for (Runnable task : uncrawled) 
+            urlsToCrawl.add(((CrawlTask) task).getPage()); 
+    } 
+    private void submitCrawlTask(URL u) { 
+        exec.execute(new CrawlTask(u)); 
+    } 
+    private class CrawlTask implements Runnable { 
+        private final URL url; 
+        ... 
+        public void run() { 
+            for (URL link : processPage(url)) { 
+                if (Thread.currentThread().isInterrupted()) 
+                    return; 
+                submitCrawlTask(link); 
+            } 
+        } 
+        public URL getPage() { return url; } 
+    } 
+} 
+7.3. Handling Abnormal Thread Termination 
+It is obvious when a single‐threaded console application terminates due to an uncaught exceptionthe program stops 
+running and produces a stack trace that is very different from typical program output. Failure of a thread in a concurrent 
+application is not always so obvious. The stack trace may be printed on the console, but no one may be watching the 
+console. Also, when a thread fails, the application may appear to continue to work, so its failure could go unnoticed. 
+Fortunately, there are means of both detecting and preventing threads from "leaking" from an application. 
+The leading cause of premature thread death is RuntimeException. Because these exceptions indicate a programming 
+error or other unrecoverable problem, they are generally not caught. Instead they propagate all the way up the stack, at 
+which point the default behavior is to print a stack trace on the console and let the thread terminate. 
+The consequences of abnormal thread death range from benign to disastrous, depending on the thread's role in the 
+application. Losing a thread from a thread pool can have performance consequences, but an application that runs well 
+with a 50‐thread pool will probably run fine with a 49‐thread pool too. But losing the event dispatch thread in a GUI 
+application  would  be  quite  noticeable  ‐  the  application  would  stop  processing  events  and  the  GUI  would  freeze. 
+OutOfTime  on  124  showed  a  serious  consequence  of  thread  leakage:  the  service  represented  by  the  Timer  is 
+permanently out of commission. 
+Just about any code can throw a RuntimeException. Whenever you call another method, you are taking a leap of faith 
+that it will return normally or throw one of the checked exceptions its signature declares. The less familiar you are with 
+the code being called, the more skeptical you should be about its behavior. 
+Task‐processing threads such as the worker threads in a thread pool or the Swing event dispatch thread spend their 
+whole  life  calling  unknown  code  through  an  abstraction  barrier  like  Runnable,  and  these  threads  should  be  very 
+skeptical that the code they call will be well behaved. It would be very bad if a service like the Swing event thread failed 
+just because some poorly written event handler threw a NullPointerException. Accordingly, these facilities should call 
+tasks within a try-catch block that catches unchecked exceptions, or within a try-finally block to ensure that if the

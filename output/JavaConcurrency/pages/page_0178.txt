@@ -1,0 +1,51 @@
+161 
+6BPart III: Liveness, Performance, and Testing ‐ 24BChapter 12. Testing Concurrent Programs
+While there is definitely overlap between performance and functionality tests, they have different goals. Performance 
+tests seek to measure end‐to‐end performance metrics for representative use cases. Picking a reasonable set of usage 
+scenarios  is  not  always  easy;  ideally,  tests  should  reflect  how  the  objects  being  tested  are  actually  used  in  your 
+application. 
+In some cases an appropriate test scenario is obvious. Bounded buffers are nearly always used in producer‐consumer 
+designs, so it is sensible to measure the throughput of producers feeding data to consumers. We can easily extend 
+PutTakeTest to become a performance test for this scenario. 
+A common secondary goal of performance testing is to select sizings empirically for various boundsnumbers of threads, 
+buffer capacities, and so on. While these values might turn out to be sensitive enough to platform characteristics (such 
+as processor type or even processor stepping level, number of CPUs, or memory size) to require dynamic configuration, 
+it is equally common that reasonable choices for these values work well across a wide range of systems. 
+12.2.1. Extending PutTakeTest to Add Timing 
+The primary extension we have to make to PutTakeTest is to measure the time taken for a run. Rather than attempting 
+to measure the time for a single operation, we get a more accurate measure by timing the entire run and dividing by the 
+number of operations to get a per‐operation time. We are already using a CyclicBarrier to start and stop the worker 
+threads, so we can extend this by using a barrier action that measures the start and end time, as shown in Listing 12.11. 
+We can modify the initialization of the barrier to use this barrier action by using the constructor for CyclicBarrier that 
+accepts a barrier action: 
+Listing 12.11. Barrier­based Timer. 
+this.timer = new BarrierTimer(); 
+this.barrier = new CyclicBarrier(npairs * 2 + 1, timer); 
+public class BarrierTimer implements Runnable { 
+    private boolean started; 
+    private long startTime, endTime; 
+ 
+    public synchronized void run() { 
+        long t = System.nanoTime(); 
+        if (!started) { 
+            started = true; 
+            startTime = t; 
+        } else 
+            endTime = t; 
+    } 
+    public synchronized void clear() { 
+        started = false; 
+    } 
+    public synchronized long getTime() { 
+        return endTime - startTime; 
+    } 
+} 
+The modified test method using the barrier‐based timer is shown in Listing 12.12. 
+We can learn several things from running TimedPutTakeTest. One is the throughput of the producer‐consumer handoff 
+operation for various combinations of parameters; another is how the bounded buffer scales with different numbers of 
+threads; a third is how we might select the bound size. Answering these questions requires running the test for various 
+combinations of parameters, so we'll need amain test driver, shown in Listing 12.13. 
+Figure 12.1 shows some sample results on a 4‐way machine, using buffer capacities of 1, 10, 100, and 1000. We see 
+immediately that a buffer size of one causes very poor throughput; this is because each thread can make only a tiny bit 
+of  progress  before  blocking  and  waiting  for  another  thread.  Increasing  buffer  size  to  ten  helps  dramatically,  but 
+increases past ten offer diminishing returns.

@@ -1,0 +1,50 @@
+137 
+6BPart III: Liveness, Performance, and Testing ‐ 23BChapter 11. Performance and Scalability
+Chapter 11. Performance and Scalability 
+One of the primary reasons to use threads is to improve performance.[1] Using threads can improve resource utilization 
+by  letting  applications  more  easily  exploit  available  processing  capacity,  and  can  improve  responsiveness  by  letting 
+applications begin processing new tasks immediately while existing tasks are still running. 
+[1] Some might argue this is the only reason we put up with the complexity threads introduce. 
+This chapter explores techniques for analyzing, monitoring, and improving the performance of concurrent programs. 
+Unfortunately,  many  of  the  techniques  for  improving  performance  also  increase  complexity,  thus  increasing  the 
+likelihood  of  safety  and  liveness  failures.  Worse,  some  techniques  intended  to  improve  performance  are  actually 
+counterproductive or trade one sort of performance problem for another. While better performance is often desirable ‐ 
+and improving performance can be very satisfying ‐ safety always comes first. First make your program right, then make 
+it fast ‐ and then only if your performance requirements and measurements tell you it needs to be faster. In designing a 
+concurrent application, squeezing out the last bit of performance is often the least of your concerns. 
+11.1. Thinking about Performance 
+Improving performance means doing more work with fewer resources. The meaning of "resources" can vary; for a given 
+activity, some specific resource is usually in shortest supply, whether it is CPU cycles, memory, network bandwidth, I/O 
+bandwidth, database requests, disk space, or any number of other resources. When the performance of an activity is 
+limited by availability of a particular resource, we say it is bound by that resource: CPU‐bound, database‐bound, etc. 
+While the goal may be to improve performance overall, using multiple threads always introduces some performance 
+costs compared to the single‐threaded approach. These include the overhead associated with coordinating between 
+threads (locking, signaling, and memory synchronization), increased context switching, thread creation and teardown, 
+and scheduling overhead. When threading is employed effectively, these costs are more than made up for by greater 
+throughput, responsiveness, or capacity. On the other hand, a poorly designed concurrent application can perform even 
+worse than a comparable sequential one.[2] 
+[2] A colleague provided this amusing anecdote: he had been involved in the testing of an expensive and complex application that managed its 
+work via a tunable thread pool. After the system was complete, testing showed that the optimal number of threads for the pool was . . . 1. This 
+should have been obvious from the outset; the target system was a single‐CPU system and the application was almost entirely CPU‐bound. 
+In using concurrency to achieve better performance, we are trying to do two things: utilize the processing resources we 
+have  more  effectively,  and  enable  our  program  to  exploit  additional  processing  resources  if  they  become  available. 
+From  a  performance  monitoring  perspective,  this  means  we  are  looking  to  keep  the  CPUs  as  busy  as  possible.  (Of 
+course, this doesn't mean burning cycles with useless computation; we want to keep the CPUs busy with useful work.) If 
+the program is compute‐bound, then we may be able to increase its capacity by adding more processors; if it can't even 
+keep the processors we have busy, adding more won't help. Threading offers a means to keep the CPU(s) "hotter" by 
+decomposing the application so there is always work to be done by an available processor. 
+11.1.1. Performance Versus Scalability 
+Application performance can be measured in a number of ways, such as service time, latency, throughput, efficiency, 
+scalability, or capacity. Some of these (service time, latency) aremeasures of "how fast" a given unit of work can be 
+processed or acknowledged; others (capacity, throughput) are measures of "how much" work can be performed with a 
+given quantity of computing resources. 
+Scalability  describes  the  ability  to  improve  throughput  or  capacity  when  additional  computing  resources  (such  as 
+additional CPUs, memory, storage, or I/O bandwidth) are added. 
+Designing  and  tuning  concurrent  applications  for  scalability  can  be  very  different  from  traditional  performance 
+optimization. When tuning for performance, the goal is usually to do the same work with less effort, such as by reusing 
+previously computed results through caching or replacing an O(n2) algorithm with an O(n log n) one. When tuning for 
+scalability,  you  are  instead  trying  to  find  ways  to  parallelize  the  problem  so  you  can  take  advantage  of  additional 
+processing resources to do more work with more resources. 
+These two aspects of performance ‐ how fast and how much ‐ are completely separate, and sometimes even at odds 
+with each other. In order to achieve higher scalability or better hardware utilization, we often end up increasing the 
+amount of work done to process each individual task, such as when we divide tasks into multiple "pipelined" subtasks.

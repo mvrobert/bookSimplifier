@@ -1,0 +1,51 @@
+176 
+Java Concurrency In Practice 
+13.4. Choosing Between Synchronized and ReentrantLock 
+ReentrantLock provides the same locking and memory semantics as intrinsic locking, as well as additional features such 
+as timed lock waits, interruptible lock waits, fairness, and the ability to implement non‐block‐structured locking. The 
+performance of ReentrantLock appears to dominate that of intrinsic locking, winning slightly on Java 6 and dramatically 
+on Java 5.0. So why not deprecate synchronized and encourage all new concurrent code to use ReentrantLock? Some 
+authors have in fact suggested this, treating synchronized as a "legacy" construct. But this is taking a good thing way 
+too far. 
+Intrinsic  locks  still  have  significant  advantages  over  explicit  locks.  The  notation  is  familiar  and  compact,  and  many 
+existing programs already use intrinsic lockingand mixing the two could be confusing and error‐prone. Reentrant-Lock 
+is definitely a more dangerous tool than synchronization; if you forget to wrap the unlock call in a finally block, your 
+code will probably appear to run properly, but you've created a time bomb that may well hurt innocent bystanders. 
+Save ReentrantLock for situations in which you need something ReentrantLock provides that intrinsic locking doesn't. 
+ReentrantLock is an advanced tool for situations where intrinsic locking is not practical. Use it if you need its advanced 
+features: timed, polled, or interruptible lock acquisition, fair queuing, or non‐block‐structured locking. Otherwise, prefer 
+synchronized. 
+Under Java 5.0, intrinsic locking has another advantage over  ReentrantLock: thread dumps show which call frames 
+acquired which locks and can detect and identify deadlocked threads. The JVM knows nothing about which threads hold 
+ReentrantLocks and therefore cannot help in debugging threading problems using  ReentrantLock. This disparity is 
+addressed in Java 6 by providing a management and monitoring interface with which locks can register, enabling locking 
+information for ReentrantLocks to appear in thread dumps and through other management and debugging interfaces. 
+The availability of this information for debugging is a substantial, if mostly temporary, advantage for  synchronized; 
+locking information in thread dumps has saved many programmers from utter consternation. The non‐block‐structured 
+nature of  ReentrantLock still means that lock acquisitions cannot be tied to specific stack frames, as they can with 
+intrinsic locks. 
+Future performance improvements are likely to favor  synchronized over  ReentrantLock. Because  synchronized is 
+built into the JVM, it can perform optimizations such as lock elision for thread‐confined lock objects and lock coarsening 
+to eliminate synchronization with intrinsic locks (see Section 11.3.2); doing this with library‐based locks seems far less 
+likely.  Unless  you  are  deploying  on  Java  5.0  for  the  foreseeable  future  and  you  have  a  demonstrated  need  for 
+ReentrantLock's  scalability  benefits  on  that  platform,  it  is  not  a  good  idea  to  choose  ReentrantLock  over 
+synchronized for performance reasons. 
+13.5. Read­write Locks 
+ReentrantLock implements a standard mutual‐exclusion lock: at most one thread at a time can hold a ReentrantLock. 
+But mutual exclusion is frequently a stronger locking discipline than needed to preserve data integrity, and thus limits 
+concurrency more than necessary. Mutual exclusion is a conservative locking strategy that prevents writer/writer and 
+writer/reader overlap, but also prevents reader/reader overlap. In many cases, data structures are "read‐mostly"they 
+are mutable and are sometimes modified, but most accesses involve only reading. In these cases, it would be nice to 
+relax the locking requirements to allow multiple readers to access the data structure at once. As long as each thread is 
+guaranteed an up‐to‐date view of the data and no other thread modifies the data while the readers are viewing it, there 
+will be no problems. This is what read‐write locks allow: a resource can be accessed by multiple readers or a single 
+writer at a time, but not both. 
+ReadWriteLock,  shown  in  Listing  13.6,  exposes  two  Lock  objectsone  for  reading  and  one  for  writing.  To  read  data 
+guarded by a ReadWriteLock you must first acquire the read lock, and to modify data guarded by a ReadWriteLock you 
+must first acquire the write lock. While there may appear to be two separate locks, the read lock and write lock are 
+simply different views of an integrated read‐write lock object. 
+Listing 13.6. ReadWriteLock Interface. 
+public interface ReadWriteLock { 
+    Lock readLock(); 
+    Lock writeLock(); 
+}

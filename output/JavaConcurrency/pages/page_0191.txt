@@ -1,0 +1,36 @@
+174 
+Java Concurrency In Practice 
+In Chapter 11, we saw how reducing lock granularity can enhance scalability. Lock striping allows different hash chains in 
+a hash‐based collection to use different locks. We can apply a similar principle to reduce locking granularity in a linked 
+list  by  using  a  separate  lock  for  each  link  node,  allowing  different  threads  to  operate  independently  on  different 
+portions  of  the  list.  The  lock  for  a  given  node  guards  the  link  pointers  and  the  data  stored  in  that  node,  so  when 
+traversing or modifying the list we must hold the lock on one node until we acquire the lock on the next node; only then 
+can we release the lock on the first node. An example of this technique, called hand‐over‐hand locking or lock coupling, 
+appears in [CPJ 2.5.1.4]. 
+13.2. Performance Considerations 
+When  ReentrantLock was added in Java 5.0, it offered far better contended performance than intrinsic locking. For 
+synchronization primitives, contended performance is the key to scalability: if more resources are expended on lock 
+management and scheduling, fewer are available for the application. A better lock implementation makes fewer system 
+calls,  forces  fewer  context  switches,  and  initiates  less  memory‐synchronization  traffic  on  the  shared  memory  bus, 
+operations that are time‐consuming and divert computing resources from the program. 
+Java 6 uses an improved algorithm for managing intrinsic locks, similar to that used by ReentrantLock, that closes the 
+scalability gap considerably. Figure 13.1 shows the performance difference between intrinsic locks and ReentrantLock 
+on Java 5.0 and on a prerelease build of Java 6 on a four‐way Opteron system running Solaris. The curves represent the 
+"speedup"  of  ReentrantLock  over  intrinsic  locking  on  a  single  JVM  version.  On  Java  5.0,  ReentrantLock  offers 
+considerably better throughput, but on Java 6, the two are quite close.[2] The test program is the same one used in 
+Section 11.5, this time comparing the throughput of a HashMap guarded by an intrinsic lock and by a ReentrantLock. 
+[2] Though this particular graph doesn't show it, the scalability difference between Java 5.0 and Java 6 really does come from improvement in 
+intrinsic locking, rather than from regression in Reentrant-Lock. 
+Figure 13.1. Intrinsic Locking Versus ReentrantLock Performance on Java 5.0 and Java 6. 
+ 
+ 
+On Java 5.0, the performance of intrinsic locking drops dramatically in going from one thread (no contention) to more 
+than one thread; the performance of ReentrantLock drops far less, showing its better scalability. But on Java 6, it is a 
+different storyintrinsic locks no longer fall apart under contention, and the two scale fairly similarly. 
+Graphs like Figure 13.1 remind us that statements of the form "X is faster than Y" are at best short‐lived. Performance 
+and scalability are sensitive to platform factors such as CPU, processor count, cache size, and JVM characteristics, all of 
+which can change over time. [3] 
+[3] When we started this book, ReentrantLock seemed the last word in lock scalability. Less than a year later, intrinsic locking gives it a good 
+run for its money. Performance is not just a moving target, it can be a fast‐moving target. 
+Performance is a moving target; yesterday's benchmark showing that X is faster than Y may already be out of date 
+today.

@@ -1,0 +1,69 @@
+v
+1BListing and Image Index
+Listing and Image Index 
+Preface 
+v 
+Listing 1. Bad Way to Sort a List. Don't Do this. 
+xiv 
+Listing 2. Less than Optimal Way to Sort a List. 
+xv 
+Chapter 1. Introduction 
+11 
+Listing 1.1. Non‐thread‐safe Sequence Generator. 
+5 
+Figure 1.1. Unlucky Execution of UnsafeSequence.Nextvalue. 
+5 
+Listing 1.2. Thread‐safe Sequence Generator. 
+6 
+Chapter 2. Thread Safety 
+11 
+Listing 2.1. A Stateless Servlet. 
+13 
+Listing 2.2. Servlet that Counts Requests without the Necessary Synchronization. Don't Do this. 
+14 
+Listing 2.3. Race Condition in Lazy Initialization. Don't Do this. 
+15 
+Listing 2.4. Servlet that Counts Requests Using AtomicLong. 
+16 
+Listing 2.5. Servlet that Attempts to Cache its Last Result without Adequate Atomicity. Don't Do this. 
+17 
+Listing 2.6. Servlet that Caches Last Result, But with Unacceptably Poor Concurrency. Don't Do this. 
+18 
+Listing 2.7. Code that would Deadlock if Intrinsic Locks were Not Reentrant. 
+18 
+Figure 2.1. Poor Concurrency of SynchronizedFactorizer. 
+21 
+Listing 2.8. Servlet that Caches its Last Request and Result. 
+21 
+Chapter 3. Sharing Objects 
+23 
+Listing 3.1. Sharing Variables without Synchronization. Don't Do this. 
+23 
+Listing 3.2. Non‐thread‐safe Mutable Integer Holder. 
+24 
+Listing 3.3. Thread‐safe Mutable Integer Holder. 
+24 
+Figure 3.1. Visibility Guarantees for Synchronization. 
+25 
+Listing 3.4. Counting Sheep. 
+26 
+Listing 3.5. Publishing an Object. 
+27 
+Listing 3.6. Allowing Internal Mutable State to Escape. Don't Do this. 
+27 
+Listing 3.7. Implicitly Allowing the this Reference to Escape. Don't Do this. 
+28 
+Listing 3.8. Using a Factory Method to Prevent the this Reference from Escaping During Construction. 
+28 
+Listing 3.9. Thread Confinement of Local Primitive and Reference Variables. 
+30 
+Listing 3.10. Using ThreadLocal to Ensure thread Confinement. 
+30 
+Listing 3.11. Immutable Class Built Out of Mutable Underlying Objects. 
+32 
+Listing 3.12. Immutable Holder for Caching a Number and its Factors. 
+33 
+Listing 3.13. Caching the Last Result Using a Volatile Reference to an Immutable Holder Object. 
+33 
+Listing 3.14. Publishing an Object without Adequate Synchronization. Don't Do this. 
+33

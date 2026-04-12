@@ -1,0 +1,63 @@
+86 
+Java Concurrency In Practice 
+A task that wants to be cancellable must have a cancellation policy that specifies the "how", "when", and "what" of 
+cancellation ‐ how other code can request cancellation, when the task checks whether cancellation has been requested, 
+and what actions the task takes in response to a cancellation request. 
+Consider  the  real‐world  example  of  stopping  payment  on  a  check.  Banks  have  rules  about  how  to  submit  a  stop‐
+payment request, what responsiveness guarantees it makes in processing such requests, and what procedures it follows 
+when payment is actually stopped (such as notifying the other bank involved in the transaction and assessing a fee 
+against the  payer’s account). Taken together, these procedures  and guarantees comprise  the  cancellation policy for 
+check payment. 
+Listing 7.1. Using a Volatile Field to Hold Cancellation State. 
+@ThreadSafe 
+public class PrimeGenerator implements Runnable { 
+     @GuardedBy("this") 
+     private final List<BigInteger> primes 
+             = new ArrayList<BigInteger>(); 
+     private  volatile boolean cancelled; 
+ 
+     public void run() { 
+         BigInteger p = BigInteger.ONE; 
+         while (!cancelled ) { 
+             p = p.nextProbablePrime(); 
+             synchronized (this) { 
+                 primes.add(p); 
+             } 
+         } 
+     } 
+ 
+     public void cancel() { cancelled = true;  } 
+ 
+     public synchronized List<BigInteger> get() { 
+         return new ArrayList<BigInteger>(primes); 
+     } 
+} 
+Listing 7.2. Generating a Second's Worth of Prime Numbers. 
+List<BigInteger> aSecondOfPrimes() throws InterruptedException { 
+    PrimeGenerator generator = new PrimeGenerator(); 
+    new Thread(generator).start(); 
+    try { 
+        SECONDS.sleep(1); 
+    } finally { 
+        generator.cancel(); 
+    } 
+    return generator.get(); 
+} 
+PrimeGenerator uses a simple cancellation policy: client code requests cancellation by calling cancel, PrimeGenerator 
+checks for cancellation once per prime found and exits when it detects cancellation has been requested. 
+7.1.1. Interruption 
+The cancellation mechanism in PrimeGenerator will eventually cause the prime‐seeking task to exit, but it might take a 
+while. If, however, a task that uses this approach calls a blocking method such as BlockingQueue.put, we could have a 
+more serious problem ‐ the task might never check the cancellation flag and therefore might never terminate. 
+BrokenPrimeProducer in Listing 7.3 illustrates this problem. The producer thread generates primes and places them on 
+a blocking queue. If the producer gets ahead of the consumer, the queue will fill up and put will block. What happens if 
+the consumer tries to cancel the producer task while it is blocked in put? It can call cancel which will set the cancelled 
+flag  ‐  but  the  producer  will  never  check  the  flag  because  it  will  never  emerge  from  the  blocking  put  (because  the 
+consumer has stopped retrieving primes from the queue). 
+As we hinted in Chapter 5, certain blocking library methods support interruption. Thread interruption is a cooperative 
+mechanism for a thread to signal another thread that it should, at its convenience and if it feels like it, stop what it is 
+doing and do something else. 
+There is nothing in the API or language specification that ties interruption to any specific cancellation semantics, but in 
+practice, using interruption for anything but cancellation is fragile and difficult to sustain in larger applications. 
+Each thread has a boolean interrupted status; interrupting a thread sets its interrupted status to true. Thread contains 
+methods  for  interrupting  a  thread  and  querying  the  interrupted  status  of  a  thread,  as  shown  in  Listing  7.4.  The

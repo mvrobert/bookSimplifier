@@ -1,0 +1,51 @@
+198 
+Java Concurrency In Practice 
+doesn't save any actual execution cost. On the other hand, executing a CAS from within the program involves no JVM 
+code, system calls, or scheduling activity. What looks like a longer code path at the application level is in fact a much 
+shorter code path when JVM and OS activity are taken into account. The primary disadvantage of CAS is that it forces 
+the  caller  to  deal  with  contention  (by  retrying,  backing  off,  or  giving  up),  whereas  locks  deal  with  contention 
+automatically by blocking until the lock is available.[5] 
+[5] Actually, the biggest disadvantage of CAS is the difficulty of constructing the surrounding algorithms correctly. 
+CAS  performance  varies  widely  across  processors.  On  a  single‐CPU  system,  a  CAS  typically  takes  on  the  order  of  a 
+handful  of  clock  cycles,  since  no  synchronization  across  processors  is  necessary.  As  of  this  writing,  the  cost  of  an 
+uncontended CAS on multiple CPU systems ranges from about ten to about 150 cycles; CAS performance is a rapidly 
+moving target and varies not only across architectures but even across versions of the same processor. Competitive 
+forces will likely result in continued CAS performance improvement over the next several years. A good rule of thumb is 
+that the cost of the "fast path" for uncontended lock acquisition and release on most processors is approximately twice 
+the cost of a CAS. 
+15.2.3. CAS Support in the JVM 
+So, how does Java code convince the processor to execute a CAS on its behalf? Prior to Java 5.0, there was no way to do 
+this short of writing native code. In Java 5.0, low‐level support was added to expose CAS operations on int, long, and 
+object references, and the JVM compiles these into the most efficient means provided by the underlying hardware. On 
+platforms supporting CAS, the runtime inlines them into the appropriate machine instruction(s); in the worst case, if a 
+CAS‐like instruction is not available the JVM uses a spin lock. This low‐level JVM support is used by the atomic variable 
+classes  (AtomicXXX  in  java.util.concurrent. atomic)  to  provide  an  efficient  CAS  operation  on  numeric  and 
+reference  types;  these  atomic  variable  classes  are  used,  directly  or  indirectly,  to  implement  most  of  the  classes  in 
+java.util.concurrent. 
+15.3. Atomic Variable Classes 
+Atomic variables are finer‐grained and lighter‐weight than locks, and are critical for implementing high‐performance 
+concurrent code on multiprocessor systems. Atomic variables limit the scope of contention to a single variable; this is as 
+fine‐grained as you can get (assuming your algorithm can even be implemented using such fine granularity). The fast 
+(uncontended) path for updating an atomic variable is no slower than the fast path for acquiring a lock, and usually 
+faster;  the  slow  path  is  definitely  faster  than  the  slow  path  for  locks  because  it  does  not  involve  suspending  and 
+rescheduling threads. With algorithms based on atomic variables instead of locks, threads are more likely to be able to 
+proceed without delay and have an easier time recovering if they do experience contention. 
+The atomic variable classes provide a generalization of volatile variables to support atomic conditional read‐modify‐
+write operations. AtomicInteger represents an int value, and provides get and set methods with the same memory 
+semantics as reads and writes to a volatile int. It also provides an atomic compareAndSet method (which if successful 
+has the memory effects of both reading and writing a volatile variable) and, for convenience, atomic add, increment, 
+and decrement methods. AtomicInteger bears a superficial resemblance to an extended Counter class, but offers far 
+greater scalability under contention because it can directly exploit underlying hardware support for concurrency. 
+There  are  twelve  atomic  variable  classes,  divided  into  four  groups:  scalars,  field  updaters,  arrays,  and  compound 
+variables. The most commonly used atomic variables are the scalars: AtomicInteger, AtomicLong, AtomicBoolean, and 
+AtomicReference.  All  support  CAS;  the  Integer  and  Long  versions  support  arithmetic  as  well.  (To  simulate  atomic 
+variables of other primitive types, you can cast  short or  byte values to and from  int, and use  floatToIntBits or 
+doubleToLongBits for floating‐point numbers.) 
+The  atomic  array  classes  (available  in  Integer,  Long,  and  Reference  versions)  are  arrays  whose  elements  can  be 
+updated atomically. The atomic array classes provide volatile access semantics to the elements of the array, a feature 
+not available for ordinary arrays ‐ a  volatile array has volatile semantics only for the array reference, not for its 
+elements. (The other types of atomic variables are discussed in Sections 15.4.3 and 15.4.4.) 
+While the atomic scalar classes extend Number, they do not extend the primitive wrapper classes such as Integer or 
+Long.  In  fact,  they  cannot:  the  primitive  wrapper  classes  are  immutable  whereas  the  atomic  variable  classes  are 
+mutable.  The  atomic  variable  classes  also  do  not  redefine  hashCode  or  equals;  each  instance  is  distinct.  Like  most 
+mutable objects, they are not good candidates for keys in hash‐based collections.

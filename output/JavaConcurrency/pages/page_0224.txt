@@ -1,0 +1,51 @@
+207 
+7BPart IV: Advanced Topics ‐ 28BChapter 16. The Java Memory Model
+Chapter 16. The Java Memory Model 
+Throughout this book, we've mostly avoided the low‐level details of the Java Memory Model (JMM) and instead focused 
+on higher‐level design issues such as safe publication, specification of, and adherence to synchronization policies. These 
+derive their safety from the JMM, and you may find it easier to use these mechanisms effectively when you understand 
+why they work. This chapter pulls back the curtain to reveal the low‐level requirements and guarantees of the Java 
+Memory Model and the reasoning behind some of the higher‐level design rules offered in this book.  
+16.1. What is a Memory Model, and Why would I Want One? 
+Suppose one thread assigns a value to aVariable: 
+aVariable = 3; 
+A memory model addresses the question "Under what conditions does a thread that reads aVariable see the value 3?" 
+This may sound like a dumb question, but in the absence of synchronization, there are a number of reasons a thread 
+might not immediately ‐ or ever ‐ see the results of an operation in another thread. Compilers may generate instructions 
+in a different order than the "obvious" one suggested by the source code, or store variables in registers instead of in 
+memory; processors may execute instructions in parallel or out of order; caches may vary the order in which writes to 
+variables  are  committed  to  main  memory;  and  values  stored  in  processor‐local  caches  may  not  be  visible  to  other 
+processors. These factors can prevent a thread from seeing the most up‐to‐date value for a variable and can cause 
+memory actions in other threads to appear to happen out of order ‐ if you don't use adequate synchronization. 
+In a single‐threaded environment, all these tricks played on our program by the environment are hidden from us and 
+have no effect other than to speed up execution. The Java Language Specification requires the JVM to maintain within 
+thread as‐if‐serial semantics: as long as the program has the same result as if it were executed in program order in a 
+strictly  sequential  environment,  all  these  games  are  permissible.  And  that's  a  good  thing,  too,  because  these 
+rearrangements  are  responsible  for  much  of  the  improvement  in  computing  performance  in  recent  years.  Certainly 
+higher clock rates have contributed to improved performance, but so has increased parallelism ‐ pipelined superscalar 
+execution units, dynamic instruction scheduling, speculative execution, and sophisticated multilevel memory caches. As 
+processors  have  become  more  sophisticated,  so  too  have  compilers,  rearranging  instructions  to  facilitate  optimal 
+execution and using sophisticated global register‐allocation algorithms. And as processor manufacturers transition to 
+multicore processors, largely because clock rates are getting harder to increase economically, hardware parallelism will 
+only increase. 
+In  a  multithreaded  environment,  the  illusion  of  sequentiality  cannot  be  maintained  without  significant  performance 
+cost. Since most of the time threads within a concurrent application are each "doing their own thing", excessive inter‐
+thread coordination would only slow down the application to no real benefit. It is only when multiple threads share data 
+that it is necessary to coordinate their activities, and the JVM relies on the program to identify when this is happening 
+by using synchronization. 
+The JMM specifies the minimal guarantees the JVM must make about when writes to variables become visible to other 
+threads. It was designed to balance the need for predictability and ease of program development with the realities of 
+implementing high‐performance JVMs on a wide range of popular processor architectures. Some aspects of the JMM 
+may be disturbing at first if you are not familiar with the tricks used by modern processors and compilers to squeeze 
+extra performance out of your program. 
+16.1.1. Platform Memory Models 
+In a shared‐memory multiprocessor architecture, each processor has its own cache that is periodically reconciled with 
+main memory. Processor architectures provide varying degrees of cache coherence; some provide minimal guarantees 
+that allow different processors to see different values for the same memory location at virtually any time. The operating 
+system,  compiler,  and  runtime  (and  sometimes,  the  program,  too)  must  make  up  the  difference  between  what  the 
+hardware provides and what thread safety requires. 
+Ensuring that every processor knows what every other processor is doing at all times is expensive. Most of the time this 
+information  is  not  needed,  so  processors  relax  their  memory‐coherency  guarantees  to  improve  performance.  An 
+architecture's memory model tells programs what guarantees they can expect from the memory system, and specifies 
+the  special  instructions  required  (called  memory  barriers  or  fences)  to  get  the  additional  memory  coordination 
+guarantees required when sharing data. In order to shield the Java developer from the differences between memory

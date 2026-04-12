@@ -1,0 +1,41 @@
+74 
+Java Concurrency In Practice 
+Up to a certain point, more threads can improve throughput, but beyond that point creating more threads just slows 
+down your application, and creating one thread too many can cause your entire application to crash horribly. The way 
+to stay out of danger is to place some bound on how many threads your application creates, and to test your application 
+thoroughly to ensure that, even when this bound is reached, it does not run out of resources. 
+The  problem  with  the  thread‐per‐task  approach  is  that  nothing  places  any  limit  on  the  number  of  threads  created 
+except  the  rate  at  which  remote  users  can  throw  HTTP  requests  at  it.  Like  other  concurrency  hazards,  unbounded 
+thread creation may appear to work just fine during prototyping and development, with problems surfacing only when 
+the application is deployed and under heavy load. So a malicious user, or enough ordinary users, can make your web 
+server crash if the traffic load ever reaches a certain threshold. For a server application that is supposed to provide high 
+availability and graceful degradation under load, this is a serious failing. 
+6.2. The Executor Framework 
+Tasks are logical units of work, and threads are a mechanism by which tasks can run asynchronously. We've examined 
+two policies for executing tasks using threads ‐ execute tasks sequentially in a single thread, and execute each task in its 
+own thread. Both have serious limitations: the sequential approach suffers from poor responsiveness and throughput, 
+and the thread‐per‐task approach suffers from poor resource management. 
+In Chapter 5, we saw how to use bounded queues to prevent an overloaded application from running out of memory. 
+Thread pools offer the same benefit for thread management, and java.util.concurrent provides a flexible thread 
+pool implementation as part of the Executor framework. The primary abstraction for task execution in the Java class 
+libraries is not Thread, but Executor, shown in Listing 6.3. 
+Listing 6.3. Executor Interface. 
+public interface Executor { 
+    void execute(Runnable command); 
+} 
+Executor may be a simple interface, but it forms the basis for a flexible and powerful framework for asynchronous task 
+execution  that  supports  a  wide  variety  of  task  execution  policies.  It  provides  a  standard  means  of  decoupling  task 
+submission from task execution, describing tasks with Runnable. The Executor implementations also provide lifecycle 
+support and hooks for adding statistics gathering, application management, and monitoring. 
+Executor is based on the producer‐consumer pattern, where activities that submit tasks are the producers (producing 
+units of work to be done) and the threads that execute tasks are the consumers (consuming those units of work). Using 
+an Executor is usually the easiest path to implementing a producer‐consumer design in your application. 
+6.2.1. Example: Web Server Using Executor 
+Building a web server with an Executor is easy. TaskExecutionWebServer in Listing 6.4 replaces the hard‐coded thread 
+creation with an Executor. In this case, we use one of the standard Executor implementations, a fixed‐size thread pool 
+with 100 threads. 
+In  TaskExecutionWebServer,  submission  of  the  request‐handling  task  is  decoupled  from  its  execution  using  an 
+Executor,  and  its  behavior  can  be  changed  merely  by  substituting  a  different  Executor  implementation.  Changing 
+Executor implementations or configuration is far less invasive than changing the way tasks are submitted; Executor 
+configuration is generally a one‐time event and can easily be exposed for deployment‐time configuration, whereas task 
+submission code tends to be strewn throughout the program and harder to expose.

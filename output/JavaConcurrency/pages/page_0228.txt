@@ -1,0 +1,67 @@
+211 
+7BPart IV: Advanced Topics ‐ 28BChapter 16. The Java Memory Model
+Listing 16.2. Inner Class of FutureTask Illustrating Synchronization Piggybacking. 
+ 
+// Inner class of FutureTask 
+private final class Sync extends AbstractQueuedSynchronizer { 
+    private static final int RUNNING = 1, RAN = 2, CANCELLED = 4; 
+    private V result; 
+    private Exception exception; 
+ 
+    void innerSet(V v) { 
+        while (true) { 
+            int s = getState(); 
+            if (ranOrCancelled(s)) 
+                return; 
+            if (compareAndSetState(s, RAN)) 
+                break; 
+        } 
+        result = v; 
+        releaseShared(0); 
+        done(); 
+    } 
+ 
+    V innerGet() throws InterruptedException, ExecutionException { 
+        acquireSharedInterruptibly(0); 
+        if (getState() == CANCELLED) 
+            throw new CancellationException(); 
+        if (exception != null) 
+            throw new ExecutionException(exception); 
+        return result; 
+    } 
+} 
+We call this technique "piggybacking" because it uses an existing happens‐before ordering that was created for some 
+other  reason  to  ensure  the  visibility  of  object  X,  rather  than  creating  a  happens‐before  ordering  specifically  for 
+publishing X. 
+Piggybacking of the sort employed by FutureTask is quite fragile and should not be undertaken casually. However, in 
+some cases piggybacking is perfectly reasonable, such as when a class commits to a happens‐before ordering between 
+methods as part of its specification. For example, safe publication using a BlockingQueue is a form of piggybacking. One 
+thread putting an object on a queue and another thread subsequently retrieving it constitutes safe publication because 
+there is guaranteed to be sufficient internal synchronization in a  BlockingQueue implementation to ensure that the 
+enqueue happens‐before the dequeue. 
+Other happens‐before orderings guaranteed by the class library include: 
+• 
+Placing  an  item  in  a  thread‐safe  collection  happens‐before  another  thread  retrieves  that  item  from  the 
+collection; 
+• 
+Counting down on a CountDownLatch happens‐before a thread returns from await on that latch; 
+• 
+Releasing a permit to a Semaphore happens‐before acquiring a permit from that same Semaphore; 
+• 
+Actions taken by the task represented by a Future happens‐before another thread successfully returns from 
+Future.get; 
+• 
+Submitting a Runnable or Callable to an Executor happens‐before the task begins execution; and 
+• 
+A thread arriving at a CyclicBarrier or Exchanger happens‐before the other threads are released from that 
+same barrier or exchange point. If CyclicBarrier uses a barrier action, arriving at the barrier happens‐before 
+the barrier action, which in turn happens‐before threads are released from the barrier. 
+16.2. Publication 
+Chapter 3 explored how an object could be safely or improperly published. The safe publication techniques described 
+there derive their safety from guarantees provided by the JMM; the risks of improper publication are consequences of 
+the absence of a happens‐before ordering between publishing a shared object and accessing it from another thread. 
+16.2.1. Unsafe Publication 
+The possibility of reordering in the absence of a happens‐before relationship explains why publishing an object without 
+adequate synchronization can allow another thread to see a partially constructed object (see Section 3.5). Initializing a 
+new object involves writing to variables ‐ the new object's fields. Similarly, publishing a reference involves writing to 
+another variable ‐ the reference to the new object. If you do not ensure that publishing the shared reference happens‐

@@ -1,0 +1,47 @@
+163 
+6BPart III: Liveness, Performance, and Testing ‐ 24BChapter 12. Testing Concurrent Programs
+Listing 12.13. Driver Program ­ for TimedPutTakeTest. 
+public static void main(String[] args) throws Exception { 
+    int tpt = 100000;  // trials per thread 
+    for (int cap = 1; cap <= 1000; cap*= 10) { 
+        System.out.println("Capacity: " + cap); 
+        for (int pairs = 1; pairs <= 128; pairs*= 2) { 
+            TimedPutTakeTest t = 
+                new TimedPutTakeTest(cap, pairs, tpt); 
+            System.out.print("Pairs: " + pairs + "\t"); 
+            t.test(); 
+            System.out.print("\t"); 
+            Thread.sleep(1000); 
+            t.test(); 
+            System.out.println(); 
+            Thread.sleep(1000); 
+        } 
+    } 
+    pool.shutdown(); 
+} 
+12.2.2. Comparing Multiple Algorithms 
+While BoundedBuffer is a fairly solid implementation that performs reasonably well, it turns out to be no match for 
+either  ArrayBlockingQueue  or  LinkedBlockingQueue  (which  explains  why  this  buffer  algorithm  wasn't  selected  for 
+inclusion in the class library). The java.util.concurrent algorithms have been selected and tuned, in part using tests 
+just like those described here, to be as efficient as we know how to make them, while still offering a wide range of 
+functionality.[6] The main reason BoundedBuffer fares poorly is that put and take each have multiple operations that 
+could  encounter  contention  ‐  acquire  a  semaphore,  acquire  a  lock,  release  a  semaphore.  Other  implementation 
+approaches have fewer points at which they might contend with another thread. 
+[6] You might be able to outperform them if you both are a concurrency expert and can give up some of the provided functionality. 
+Figure 12.2 shows comparative throughput on a dual hyper‐threaded machine for all three classes with 256‐element 
+buffers,  using  a  variant  of  TimedPutTakeTest.  This  test  suggests  that  LinkedBlockingQueue  scales  better  than 
+ArrayBlockingQueue. This may seem odd at first: a linked queue must allocate a link node object for each insertion, 
+and hence seems to be doing more work than the array‐based queue. However, even though it has more allocation and 
+GC overhead, a linked queue allows more concurrent access by puts and takes than an array‐based queue because the 
+best  linked  queue  algorithms  allow  the  head  and  tail  to  be  updated  independently.  Because  allocation  is  usually 
+threadlocal,  algorithms  that  can  reduce  contention  by  doing  more  allocation  usually  scale  better.  (This  is  another 
+instance in which intuition based on traditional performance tuning runs counter to what is needed for scalability.) 
+Figure 12.2. Comparing Blocking Queue Implementations. 
+ 
+12.2.3. Measuring Responsiveness 
+So  far  we  have  focused  on  measuring  throughput,  which  is  usually  the  most  important  performance  metric  for 
+concurrent  programs.  But  sometimes  it  is  more  important  to  know  how  long  an  individual  action  might  take  to 
+complete, and in this case we want to measure the variance of service time. Sometimes it makes sense to allow a longer 
+average service time if it lets us obtain a smaller variance; predictability is a valuable performance characteristic too. 
+Measuring  variance  allows  us  to  estimate  the  answers  to  quality‐of‐service  questions  like  "What  percentage  of 
+operations will succeed in under 100 milliseconds?"

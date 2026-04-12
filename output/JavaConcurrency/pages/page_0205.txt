@@ -1,0 +1,55 @@
+188 
+Java Concurrency In Practice 
+to see if they might have caused some other condition predicate to become true, and if so, notifying on the associated 
+condition queue. 
+AbstractQueuedSynchronizer, upon which most of the state‐dependent classes in java.util.concurrent are built 
+(see Section 14.4), exploits the concept of exit protocol. Rather than letting synchronizer classes perform their own 
+notification,  it  instead  requires  synchronizer  methods  to  return  a  value  indicating  whether  its  action  might  have 
+unblocked one or more waiting threads. This explicit API requirement makes it harder to "forget" to notify on some 
+state transitions. 
+14.3. Explicit Condition Objects 
+As we saw in Chapter 13, explicit Locks can be useful in some situations where intrinsic locks are too inflexible. Just as 
+Lock is a generalization of intrinsic locks, Condition (see Listing 14.10) is a generalization of intrinsic condition queues. 
+Intrinsic condition queues have several drawbacks. Each intrinsic lock can have only one associated condition queue, 
+which means that in classes like BoundedBuffer multiple threads might wait on the same condition queue for different 
+condition predicates, and the most common pattern for locking involves exposing the condition queue object. Both of 
+these factors make it impossible to enforce the uniform waiter requirement for using notifyAll. If you want to write a 
+concurrent object with multiple condition predicates, or you want to exercise more control over the visibility of the 
+condition  queue,  the  explicit  Lock  and  Condition  classes  offer  a  more  flexible  alternative  to  intrinsic  locks  and 
+condition queues. 
+A Condition is associated with a single Lock, just as a condition queue is associated with a single intrinsic lock; to create 
+a Condition, call Lock.newCondition on the associated lock. And just as Lock offers a richer feature set than intrinsic 
+locking, Condition offers a richer feature set than intrinsic condition queues: multiple wait sets per lock, interruptible 
+and uninterruptible condition waits, deadline‐based waiting, and a choice of fair or nonfair queueing. 
+Listing 14.10. Condition Interface. 
+public interface Condition { 
+    void await() throws InterruptedException; 
+    boolean await(long time, TimeUnit unit) 
+            throws InterruptedException; 
+    long awaitNanos(long nanosTimeout) throws InterruptedException; 
+    void awaitUninterruptibly(); 
+    boolean awaitUntil(Date deadline) throws InterruptedException; 
+ 
+    void signal(); 
+    void signalAll(); 
+} 
+Unlike intrinsic condition queues, you can have as many Condition objects per Lock as you want. Condition objects 
+inherit the fairness setting of their associated Lock; for fair locks, threads are released from Condition.await in FIFO 
+order. 
+Hazard  warning:  The  equivalents  of  wait,  notify,  and  notifyAll  for  Condition  objects  are  await,  signal,  and 
+signalAll. However, Condition extends Object, which means that it also has wait and notify methods. Be sure to 
+use the proper versions ‐ await and signal - instead! 
+Listing  14.11  shows  yet  another  bounded  buffer  implementation,  this  time  using  two  Conditions,  notFull  and 
+notEmpty, to represent explicitly the "not full" and "not empty" condition predicates. When take blocks because the 
+buffer is empty, it waits on notEmpty, and put unblocks any threads blocked in take by signaling on notEmpty. 
+The  behavior  of  ConditionBoundedBuffer  is  the  same  as  BoundedBuffer,  but  its  use  of  condition  queues  is  more 
+readable ‐ it is easier to analyze a class that uses multiple Conditions than one that uses a single intrinsic condition 
+queue  with  multiple  condition  predicates.  By  separating  the  two  condition  predicates  into  separate  wait  sets, 
+Condition makes it easier to meet the requirements for single notification. Using the more efficient signal instead of 
+signalAll reduces the number of context switches and lock acquisitions triggered by each buffer operation. 
+Just as with built‐in locks and condition queues, the three‐way relationship among the lock, the condition predicate, and 
+the condition variable must also hold when using explicit Locks and Conditions. The variables involved in the condition 
+predicate must be guarded by the Lock, and the Lock must be held when testing the condition predicate and when 
+calling await and signal.[11] 
+[11] ReentrantLock  requires that the Lock be held when calling signal or  signalAll, but  Lock  implementations are permitted to 
+construct Conditions that do not have this requirement.

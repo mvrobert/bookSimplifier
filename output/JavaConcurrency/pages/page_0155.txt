@@ -1,0 +1,58 @@
+138 
+Java Concurrency In Practice 
+Ironically, many of the tricks that improve performance in single‐threaded programs are bad for scalability (see Section 
+11.4.4 for an example). 
+The familiar three‐tier application model ‐ in which presentation, business logic, and persistence are separated and may 
+be  handled  by  different  systems  ‐  illustrates  how  improvements  in  scalability  often  come  at  the  expense  of 
+performance.  A  monolithic  application  where  presentation,  business  logic,  and  persistence  are  intertwined  would 
+almost  certainly  provide  better  performance  for  the  first  unit  of  work  than  would  a  well‐factored  multitier 
+implementation distributed over multiple systems. How could it not? The monolithic application would not have the 
+network latency inherent in handing off tasks between tiers, nor would it have to pay the costs inherent in separating a 
+computational  process  into  distinct  abstracted  layers  (such  as  queuing  overhead,  coordination  overhead,  and  data 
+copying). 
+However,  when  the  monolithic  system  reaches  its processing  capacity,  we  could  have  a serious  problem:  it  may  be 
+prohibitively difficult to significantly increase capacity. So we often accept the performance costs of longer service time 
+or greater computing resources used per unit of work so that our application can scale to handle greater load by adding 
+more resources. 
+Of the various aspects of performance, the "how much" aspects ‐ scalability, throughput, and capacity ‐ are usually of 
+greater concern for server applications than the "how fast" aspects. (For interactive applications, latency tends to be 
+more important, so that users need not wait for indications of progress and wonder what is going on.) This chapter 
+focuses primarily on scalability rather than raw single‐threaded performance. 
+11.1.2. Evaluating Performance Tradeoffs 
+Nearly all engineering decisions involve some form of tradeoff. Using thicker steel in a bridge span may increase its 
+capacity and safety, but also its construction cost. While software engineering decisions don't usually involve tradeoffs 
+between money and risk to human life, we often have less information with which to make the right tradeoffs. For 
+example,  the  "quicksort"  algorithm  is  highly  efficient  for  large  data  sets,  but  the  less  sophisticated  "bubble  sort"  is 
+actually more efficient for small data sets. If you are asked to implement an efficient sort routine, you need to know 
+something about the sizes of data sets it will have to process, along with metrics that tell you whether you are trying to 
+optimize average‐case time, worst‐case time, or predictability. Unfortunately, that information is often not part of the 
+requirements  given  to  the  author  of  a  library  sort  routine.  This  is  one  of  the  reasons  why  most  optimizations  are 
+premature: they are often undertaken before a clear set of requirements is available. 
+Avoid premature optimization. First make it right, then make it fast ‐ if it is not already fast enough. 
+When  making  engineering  decisions,  sometimes  you  are  trading  one  form  of  cost  for  another  (service  time  versus 
+memory consumption); sometimes you are trading cost for safety. Safety doesn't necessarily mean risk to human lives, 
+as it did in the bridge example. Many performance optimizations come at the cost of readability or maintainability ‐ the 
+more  "clever"  or  non‐obvious  code  is,  the  harder  it  is  to  understand  and  maintain.  Sometimes  optimizations  entail 
+compromising good object‐oriented design principles, such as breaking encapsulation; sometimes they involve greater 
+risk of error, because faster algorithms are usually more complicated. (If you can't spot the costs or risks, you probably 
+haven't thought it through carefully enough to proceed.) 
+Most performance decisions involve multiple variables and are highly situational. Before deciding that one approach is 
+"faster" than another, ask yourself some questions: 
+• 
+What do you mean by "faster"? 
+• 
+Under what conditions will this approach actually be faster? Under light or heavy load? With large or small data 
+sets? Can you support your answer with measurements? 
+• 
+How  often  are  these  conditions  likely  to  arise  in  your  situation?  Can  you  support  your  answer  with 
+measurements? 
+• 
+Is this code likely to be used in other situations where the conditions may be different? 
+• 
+What  hidden  costs,  such  as  increased  development  or  maintenance  risk,  are  you  trading  for  this  improved 
+performance? Is this a good tradeoff? 
+These considerations apply to any performance‐related engineering decision, but this is a book about concurrency. Why 
+are we recommending such a conservative approach to optimization? The quest for performance is probably the single 
+greatest source of concurrency bugs. The belief that synchronization was "too slow" led to many clever‐looking but 
+dangerous  idioms  for  reducing  synchronization  (such  as  double‐checked  locking,  discussed  in  Section  16.2.4),  and  is 
+often cited as an excuse for not following the rules regarding synchronization. Because concurrency bugs are among the

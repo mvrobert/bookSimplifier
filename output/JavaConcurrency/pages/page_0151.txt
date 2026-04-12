@@ -1,0 +1,49 @@
+134 
+Java Concurrency In Practice 
+In programs that use fine‐grained locking, audit your code for deadlock freedom using a two‐part strategy: first, identify 
+where multiple locks could be acquired (try to make this a small set), and then perform a global analysis of all such 
+instances  to  ensure  that  lock  ordering  is  consistent  across  your  entire  program.  Using  open  calls  wherever  possible 
+simplifies this analysis substantially. With no non‐open calls, finding instances where multiple locks are acquired is fairly 
+easy, either by code review or by automated bytecode or source code analysis. 
+10.2.1. Timed Lock Attempts 
+Another technique for detecting and recovering from deadlocks is to use the timed tryLock feature of the explicit Lock 
+classes (see Chapter 13) instead of intrinsic locking. Where intrinsic locks wait forever if they cannot acquire the lock, 
+explicit locks let you specify a timeout after which tryLock returns failure. By using a timeout that is much longer than 
+you expect acquiring the lock to take, you can regain control when something unexpected happens. (Listing 13.3 on 
+page 280 shows an alternative implementation of transferMoney using the polled tryLock with retries for probabilistic 
+deadlock avoidance.) 
+When  a  timed  lock  attempt  fails,  you  do  not  necessarily  know  why.  Maybe  there  was  a  deadlock;  maybe  a  thread 
+erroneously entered an infinite loop while holding that lock; or maybe some activity is just running a lot slower than you 
+expected. Still, at least you have the opportunity to record that your attempt failed, log any useful information about 
+what you were trying to do, and restart the computation somewhat more gracefully than killing the entire process. 
+Using timed lock acquisition to acquire multiple locks can be effective against deadlock even when timed locking is not 
+used consistently throughout the program. If a lock acquisition times out, you can release the locks, back off and wait 
+for a while, and try again, possibly clearing the deadlock condition and allowing the program to recover. (This technique 
+works only when the two locks are acquired together; if multiple locks are acquired due to the nesting of method calls, 
+you cannot just release the outer lock, even if you know you hold it.) 
+10.2.2. Deadlock Analysis with Thread Dumps 
+While preventing deadlocks is mostly your problem, the JVM can help identify them when they do happen using thread 
+dumps. A thread dump includes a stack trace for each running thread, similar to the stack trace that accompanies an 
+exception. Thread dumps also include locking information, such as which locks are held by each thread, in which stack 
+frame they were acquired, and which lock a blocked thread is waiting to acquire.[4] Before generating a thread dump, 
+the JVM searches the is‐waiting‐for graph for cycles to find deadlocks. If it finds one, it includes deadlock information 
+identifying which locks and threads are involved, and where in the program the offending lock acquisitions are. 
+[4] This information is useful for debugging even when you don't have a deadlock; periodically triggering thread dumps lets you observe your 
+program's locking behavior. 
+To trigger a thread dump, you can send the JVM process a SIGQUIT signal (kill -3) on Unix platforms, or press the 
+Ctrl-\ key on Unix or Ctrl-Break on Windows platforms. Many IDEs can request a thread dump as well. 
+If  you  are  using  the  explicit  Lock  classes  instead  of  intrinsic  locking,  Java  5.0  has  no  support  for  associating  Lock 
+information with the thread dump; explicit Locks do not show up at all in thread dumps. Java 6 does include thread 
+dump  support  and  deadlock  detection  with  explicit  Locks,  but  the  information  on  where  Locks  are  acquired  is 
+necessarily less precise than for intrinsic locks. Intrinsic locks are associated with the stack frame in which they were 
+acquired; explicit Locks are associated only with the acquiring thread. 
+Listing 10.7 shows portions of a thread dump taken from a production J2EE application. The failure that caused the 
+deadlock  involves  three  componentsa  J2EE  application,  a  J2EE  container,  and  a  JDBC  driver,  each  from  different 
+vendors.  (The  names  have  been  changed  to  protect  the  guilty.)  All  three  were  commercial  products  that  had  been 
+through extensive testing cycles; each had a bug that was harmless until they all interacted and caused a fatal server 
+failure. 
+We've shown only the portion of the thread dump relevant to identifying the deadlock. The JVM has done a lot of work 
+for us in diagnosing the deadlockwhich locks are causing the problem, which threads are involved, which other locks 
+they  hold,  and  whether  other  threads  are  being  indirectly  inconvenienced.  One  thread  holds  the  lock  on  the 
+MumbleDBConnection and is waiting to acquire the lock on the MumbleDBCallableStatement; the other holds the lock 
+on the MumbleDBCallableStatement and is waiting for the lock on the MumbleDBConnection.

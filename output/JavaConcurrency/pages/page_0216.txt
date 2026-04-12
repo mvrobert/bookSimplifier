@@ -1,0 +1,55 @@
+199 
+7BPart IV: Advanced Topics ‐ 27BChapter 15. Atomic Variables and Non‐blocking Synchronization
+15.3.1. Atomics as "Better Volatiles" 
+In Section 3.4.2, we used a volatile reference to an immutable object to update multiple state variables atomically. 
+That example relied on check‐then‐act, but in that particular case the race was harmless because we did not care if we 
+occasionally  lost  an  update.  In  most  other  situations,  such  a  check‐then‐act  would  not  be  harmless  and  could 
+compromise data integrity. For example, NumberRange on page 67 could not be implemented safely with a volatile 
+reference to an immutable holder object for the upper and lower bounds, nor with using atomic integers to store the 
+bounds. Because an invariant constrains the two numbers and they cannot be updated simultaneously while preserving 
+the invariant, a number range class using volatile references or multiple atomic integers will have unsafe check‐then‐
+act sequences. 
+We can combine the technique from OneValueCache with atomic references to close the race condition by atomically 
+updating the reference to an immutable object holding the lower and upper bounds. CasNumberRange in Listing 15.3 
+uses an AtomicReference to an IntPair to hold the state; by using compareAndSet it can update the upper or lower 
+bound without the race conditions of NumberRange. 
+Listing 15.3. Preserving Multivariable Invariants Using CAS. 
+public class CasNumberRange { 
+    @Immutable 
+    private static class IntPair { 
+        final int lower;  // Invariant: lower <= upper 
+        final int upper; 
+        ... 
+    } 
+    private final AtomicReference<IntPair> values = 
+        new AtomicReference<IntPair>(new IntPair(0, 0)); 
+ 
+    public int getLower() { return values.get().lower; } 
+    public int getUpper() { return values.get().upper; } 
+ 
+    public void setLower(int i) { 
+        while (true) { 
+            IntPair oldv = values.get(); 
+            if (i > oldv.upper) 
+                throw new IllegalArgumentException( 
+                   "Can't set lower to " + i + " > upper"); 
+            IntPair newv = new IntPair(i, oldv.upper); 
+            if (values.compareAndSet(oldv, newv)) 
+                return; 
+        } 
+    } 
+    // similarly for setUpper 
+} 
+15.3.2. Performance Comparison: Locks Versus Atomic Variables 
+To  demonstrate  the  differences  in  scalability  between  locks  and  atomic  variables,  we  constructed  a  benchmark 
+comparing  several  implementations  of  a  pseudorandom  number  generator  (PRNG).  In  a  PRNG,  the  next  "random" 
+number is a deterministic function of the previous number, so a PRNG must remember the previous number as part of 
+its state. 
+Listings 15.4 and 15.5 show two implementations of a thread‐safe PRNG, one using ReentrantLock and the other using 
+AtomicInteger. The test driver invokes each repeatedly; each iteration generates a random number (which fetches and 
+modifies the shared seed state) and also performs a number of "busy‐work" iterations that operate strictly on thread‐
+local data. This simulates typical operations that include some portion of operating on shared state and some portion of 
+operating on thread‐local state. 
+Figures 15.1 and 15.2 show throughput with low and moderate levels of simulated work in each iteration. With a low 
+level of thread‐local computation, the lock or atomic variable experiences heavy contention; with more thread‐local 
+computation, the lock or atomic variable experiences less contention since it is accessed less often by each thread.

@@ -1,0 +1,62 @@
+213 
+7BPart IV: Advanced Topics ‐ 28BChapter 16. The Java Memory Model
+at the level of individual memory accesses ‐ it is a sort of "concurrency assembly language". Safe publication operates at 
+a level closer to that of your program's design. 
+16.2.3. Safe Initialization Idioms 
+It sometimes makes sense to defer initialization of objects that are expensive to initialize until they are actually needed, 
+but we have seen how the misuse of lazy initialization can lead to trouble. UnsafeLazyInitialization can be fixed by 
+making the geTResource method synchronized, as shown in Listing 16.4. Because the code path through getInstance 
+is fairly short (a test and a predicted branch), if getInstance is not called frequently by many threads, there is little 
+enough contention for the SafeLazyInitialization lock that this approach offers adequate performance. 
+The treatment of static fields with initializers (or fields whose value is initialized in a static initialization block [JPL 2.2.1 
+and 2.5.3]) is somewhat special and offers additional thread‐safety guarantees. Static initializers are run by the JVM at 
+class initialization time, after class loading but before the class is used by any thread. Because the JVM acquires a lock 
+during initialization [JLS 12.4.2] and this lock is acquired by each thread at least once to ensure that the class has been 
+loaded, memory writes made during static initialization are automatically visible to all threads. Thus statically initialized 
+objects require no explicit synchronization either during construction or when being referenced. However, this applies 
+only to the as‐constructed state ‐ if the object is mutable, synchronization is still required by both readers and writers to 
+make subsequent modifications visible and to avoid data corruption. 
+Listing 16.4. Thread­safe Lazy Initialization. 
+@ThreadSafe 
+public class SafeLazyInitialization { 
+    private static Resource resource; 
+ 
+    public  synchronized  static Resource getInstance() { 
+        if (resource == null) 
+            resource = new Resource(); 
+        return resource; 
+    } 
+} 
+Listing 16.5. Eager Initialization. 
+@ThreadSafe 
+public class EagerInitialization { 
+    private static Resource resource  = new Resource(); 
+ 
+    public static Resource getResource() { return resource; } 
+} 
+Using  eager  initialization,  shown  in  Listing  16.5,  eliminates  the  synchronization  cost  incurred  on  each  call  to 
+getInstance in SafeLazyInitialization. This technique can be combined with the JVM's lazy class loading to create 
+a lazy initialization technique that does not require synchronization on the common code path. The lazy initialization 
+holder class idiom [EJ Item 48] in Listing 16.6 uses a class whose only purpose is to initialize the Resource. The JVM 
+defers initializing the ResourceHolder class until it is actually used [JLS 12.4.1], and because the Resource is initialized 
+with  a  static  initializer,  no  additional  synchronization  is  needed.  The  first  call  to  getresource  by  any  thread  causes 
+ResourceHolder to be loaded and initialized, at which time the initialization of the Resource happens through the static 
+initializer. 
+Listing 16.6. Lazy Initialization Holder Class Idiom. 
+@ThreadSafe 
+public class ResourceFactory { 
+     private static class ResourceHolder { 
+         public static Resource resource = new Resource(); 
+     } 
+ 
+     public static Resource getResource() { 
+         return  ResourceHolder.resource ; 
+     } 
+} 
+16.2.4. Double­checked Locking 
+No book on concurrency would be complete without a discussion of the infamous double‐checked locking (DCL) anti‐
+pattern, shown in Listing 16.7. In very early JVMs, synchronization, even uncontended synchronization, had a significant 
+performance cost. As a result, many clever (or at least clever‐looking) tricks were invented to reduce the impact of 
+synchronization ‐ some good, some bad, and some ugly. DCL falls into the "ugly" category. 
+Again, because the performance of early JVMs left something to be desired, lazy initialization was often used to avoid 
+potentially unnecessary expensive operations or reduce application startup time. A properly written lazy initialization

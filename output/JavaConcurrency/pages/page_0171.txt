@@ -1,0 +1,72 @@
+154 
+Java Concurrency In Practice 
+[2] In a counting semaphore, the permits are not represented explicitly or associated with an owning thread; a release operation creates a 
+permit and an acquire operation consumes one. 
+Listing 12.1. Bounded Buffer Using Semaphore. 
+@ThreadSafe 
+public class BoundedBuffer<E> { 
+    private final Semaphore availableItems, availableSpaces; 
+    @GuardedBy("this") private final E[] items; 
+    @GuardedBy("this") private int putPosition = 0, takePosition = 0; 
+ 
+    public BoundedBuffer(int capacity) { 
+        availableItems = new Semaphore(0); 
+        availableSpaces = new Semaphore(capacity); 
+        items = (E[]) new Object[capacity]; 
+    } 
+    public boolean isEmpty() { 
+        return availableItems.availablePermits() == 0; 
+    } 
+    public boolean isFull() { 
+        return availableSpaces.availablePermits() == 0; 
+    } 
+ 
+    public void put(E x) throws InterruptedException { 
+        availableSpaces.acquire(); 
+        doInsert(x); 
+        availableItems.release(); 
+    } 
+    public E take() throws InterruptedException { 
+        availableItems.acquire(); 
+        E item = doExtract(); 
+        availableSpaces.release(); 
+        return item; 
+    } 
+ 
+    private synchronized void doInsert(E x) { 
+        int i = putPosition; 
+        items[i] = x; 
+        putPosition = (++i == items.length)? 0 : i; 
+    } 
+    private synchronized E doExtract() { 
+        int i = takePosition; 
+        E x = items[i]; 
+        items[i] = null; 
+        takePosition = (++i == items.length)? 0 : i; 
+        return x; 
+    } 
+} 
+12.1.1. Basic Unit Tests 
+The most basic unit tests for  BoundedBuffer are similar to what we'd use in a sequential contextcreate a bounded 
+buffer, call its methods, and assert post‐conditions and invariants. Some invariants that quickly come to mind are that a 
+freshly created buffer should identify itself as empty, and also as not full. A similar but slightly more complicated safety 
+test is to insert N elements into a buffer with capacity N (which should succeed without blocking), and test that the 
+buffer recognizes that it is full (and not empty). JUnit test methods for these properties are shown in Listing 12.2. 
+Listing 12.2. Basic Unit Tests for BoundedBuffer. 
+class BoundedBufferTest extends TestCase { 
+    void testIsEmptyWhenConstructed() { 
+        BoundedBuffer<Integer> bb = new BoundedBuffer<Integer>(10); 
+        assertTrue(bb.isEmpty()); 
+        assertFalse(bb.isFull()); 
+    } 
+ 
+    void testIsFullAfterPuts() throws InterruptedException { 
+        BoundedBuffer<Integer> bb = new BoundedBuffer<Integer>(10); 
+        for (int i = 0; i < 10; i++) 
+            bb.put(i); 
+        assertTrue(bb.isFull()); 
+        assertFalse(bb.isEmpty()); 
+    } 
+} 
+These simple test methods are entirely sequential. Including a set of sequential tests in your test suite is often helpful, 
+since they can disclose when a problem is not related to concurrency issues before you start looking for data races.

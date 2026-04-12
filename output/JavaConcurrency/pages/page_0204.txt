@@ -1,0 +1,61 @@
+187 
+7BPart IV: Advanced Topics ‐ 26BChapter 14 ‐ Building Custom Synchronizers
+14.2.6. Subclass Safety Issues 
+Using conditional or single notification introduces constraints that can complicate subclassing [CPJ 3.3.3.3]. If you want 
+to support subclassing at all, you must structure your class so subclasses can add the appropriate notification on behalf 
+of the base class if it is subclassed in a way that violates one of the requirements for single or conditional notification. 
+Listing 14.9. Recloseable Gate Using Wait and Notifyall. 
+@ThreadSafe 
+public class ThreadGate { 
+    // CONDITION-PREDICATE: opened-since(n) (isOpen || generation>n) 
+    @GuardedBy("this") private boolean isOpen; 
+    @GuardedBy("this") private int generation; 
+ 
+    public synchronized void close() { 
+        isOpen = false; 
+    } 
+ 
+    public synchronized void open() { 
+        ++generation; 
+        isOpen = true; 
+        notifyAll(); 
+    } 
+ 
+    // BLOCKS-UNTIL: opened-since(generation on entry) 
+    public synchronized void await() throws InterruptedException { 
+        int arrivalGeneration = generation; 
+        while (!isOpen && arrivalGeneration == generation) 
+            wait(); 
+    } 
+} 
+A state‐dependent class should either fully expose (and document) its waiting and notification protocols to subclasses, 
+or prevent subclasses from participating in them at all. (This is an extension of "design and document for inheritance, or 
+else prohibit it" [EJ Item 15].) At the very least, designing a state‐dependent class for inheritance requires exposing the 
+condition queues and locks and documenting the condition predicates and synchronization policy; it may also require 
+exposing the underlying state variables. (The worst thing a state‐dependent class can do is expose its state to subclasses 
+but  not  document  its  protocols  for  waiting  and  notification;  this  is  like  a  class  exposing  its  state  variables  but  not 
+documenting its invariants.) 
+One  option  for  doing  this  is  to  effectively  prohibit  subclassing,  either  by  making  the  class  final  or  by  hiding  the 
+condition queues, locks, and state variables from subclasses. Otherwise, if the subclass does something to undermine 
+the way the base class uses notify, it needs to be able to repair the damage. Consider an unbounded blocking stack in 
+which  the  pop  operation  blocks  if  the  stack  is  empty  but  the  push  operation  can  always  proceed.  This  meets  the 
+requirements  for  single  notification.  If  this  class  uses  single  notification  and  a  subclass  adds  a  blocking  "pop  two 
+consecutive  elements" method, there are now two classes of waiters: those waiting  to pop one element and those 
+waiting to pop two. But if the base class exposes the condition queue and documents its protocols for using it, the 
+subclass can override the push method to perform a notifyAll, restoring safety. 
+14.2.7. Encapsulating Condition Queues 
+It is generally best to encapsulate the condition queue so that it is not accessible outside the class hierarchy in which it is 
+used. Otherwise, callers might be tempted to think they understand your protocols for waiting and notification and use 
+them in a manner inconsistent with your design. (It is impossible to enforce the uniform waiters requirement for single 
+notification unless the condition queue object is inaccessible to code you do not control; if alien code mistakenly waits 
+on your condition queue, this could subvert your notification protocol and cause a hijacked signal.) 
+Unfortunately, this advice ‐ to encapsulate objects used as condition queues ‐ is not consistent with the most common 
+design  pattern  for  thread‐safe  classes,  in  which  an  object's  intrinsic  lock  is  used  to  guard  its  state.  BoundedBuffer 
+illustrates this common idiom, where the buffer object itself is the lock and condition queue. However, BoundedBuffer 
+could be easily restructured to use a private lock object and condition queue; the only difference would be that it would 
+no longer support any form of client‐side locking. 
+14.2.8. Entry and Exit Protocols 
+Wellings (Wellings, 2004) characterizes the proper use of wait and notify in terms of entry and exit protocols. For each 
+state‐dependent  operation  and  for  each  operation  that  modifies  state  on  which  another  operation  has  a  state 
+dependency,  you  should  define  and  document  an  entry  and  exit  protocol.  The  entry  protocol  is  the  operation's 
+condition predicate; the exit protocol involves examining any state variables that have been changed by the operation

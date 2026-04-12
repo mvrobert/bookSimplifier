@@ -1,0 +1,72 @@
+vi 
+Java Concurrency In Practice 
+Listing 3.15. Class at Risk of Failure if Not Properly Published. 
+34 
+ 
+Chapter 4. Composing Objects 
+37 
+Listing 4.1. Simple Thread‐safe Counter Using the Java Monitor Pattern. 
+37 
+Listing 4.2. Using Confinement to Ensure Thread Safety. 
+39 
+Listing 4.3. Guarding State with a Private Lock. 
+40 
+Listing 4.4. Monitor‐based Vehicle Tracker Implementation. 
+42 
+Listing 4.5. Mutable Point Class Similar to Java.awt.Point. 
+42 
+Listing 4.6. Immutable Point class used by DelegatingVehicleTracker. 
+42 
+Listing 4.7. Delegating Thread Safety to a ConcurrentHashMap. 
+43 
+Listing 4.8. Returning a Static Copy of the Location Set Instead of a "Live" One. 
+43 
+Listing 4.9. Delegating Thread Safety to Multiple Underlying State Variables. 
+44 
+Listing 4.10. Number Range Class that does Not Sufficiently Protect Its Invariants. Don't Do this. 
+45 
+Listing 4.11. Thread‐safe Mutable Point Class. 
+46 
+Listing 4.12. Vehicle Tracker that Safely Publishes Underlying State. 
+46 
+Listing 4.13. Extending Vector to have a Put‐if‐absent Method. 
+47 
+Listing 4.14. Non‐thread‐safe Attempt to Implement Put‐if‐absent. Don't Do this. 
+48 
+Listing 4.15. Implementing Put‐if‐absent with Client‐side Locking. 
+48 
+Listing 4.16. Implementing Put‐if‐absent Using Composition. 
+49 
+Chapter 5. Building Blocks 
+51 
+Listing 5.1. Compound Actions on a Vector that may Produce Confusing Results. 
+51 
+Figure 5.1. Interleaving of Getlast and Deletelast that throws 
+ArrayIndexOutOfBoundsException. 
+51 
+Listing 5.2. Compound Actions on Vector Using Client‐side Locking. 
+52 
+Listing 5.3. Iteration that may Throw ArrayIndexOutOfBoundsException. 
+52 
+Listing 5.4. Iteration with Client‐side Locking. 
+52 
+Listing 5.5. Iterating a List with an Iterator. 
+53 
+Listing 5.6. Iteration Hidden within String Concatenation. Don't Do this. 
+54 
+Listing 5.7. ConcurrentMap Interface. 
+56 
+Listing 5.8. Producer and Consumer Tasks in a Desktop Search Application. 
+58 
+Listing 5.9. Starting the Desktop Search. 
+58 
+Listing 5.10. Restoring the Interrupted Status so as Not to Swallow the Interrupt. 
+60 
+Listing 5.11. Using CountDownLatch for Starting and Stopping Threads in Timing Tests. 
+61 
+Listing 5.12. Using FutureTask to Preload Data that is Needed Later. 
+62 
+Listing 5.13. Coercing an Unchecked Throwable to a RuntimeException. 
+62 
+Listing 5.14. Using Semaphore to Bound a Collection. 
+64

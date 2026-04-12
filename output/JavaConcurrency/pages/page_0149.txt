@@ -1,0 +1,66 @@
+132 
+Java Concurrency In Practice 
+[3] The need to rely on open calls and careful lock ordering reflects the fundamental messiness of composing synchronized objects rather than 
+synchronizing composed objects. 
+Listing 10.5. Lock­ordering Deadlock Between Cooperating Objects. Don't Do this. 
+ 
+// Warning: deadlock-prone! 
+class Taxi { 
+    @GuardedBy("this") private Point location, destination; 
+    private final Dispatcher dispatcher; 
+ 
+    public Taxi(Dispatcher dispatcher) { 
+        this.dispatcher = dispatcher; 
+    } 
+ 
+    public synchronized Point getLocation() { 
+        return location; 
+    } 
+ 
+    public synchronized void setLocation(Point location) { 
+        this.location = location; 
+        if (location.equals(destination)) 
+            dispatcher.notifyAvailable(this); 
+    } 
+} 
+ 
+class Dispatcher { 
+    @GuardedBy("this") private final Set<Taxi> taxis; 
+    @GuardedBy("this") private final Set<Taxi> availableTaxis; 
+ 
+    public Dispatcher() { 
+        taxis = new HashSet<Taxi>(); 
+        availableTaxis = new HashSet<Taxi>(); 
+    } 
+ 
+    public synchronized void notifyAvailable(Taxi taxi) { 
+        availableTaxis.add(taxi); 
+    } 
+ 
+    public synchronized Image getImage() { 
+        Image image = new Image(); 
+        for (Taxi t : taxis) 
+            image.drawMarker(t.getLocation()); 
+        return image; 
+    } 
+} 
+Taxi and Dispatcher in Listing 10.5 can be easily refactored to use open calls and thus eliminate the deadlock risk. This 
+involves shrinking the synchronized blocks to guard only operations that involve shared state, as in Listing 10.6. Very 
+often,  the  cause  of  problems  like  those  in  Listing  10.5  is  the  use  of  synchronized  methods  instead  of  smaller 
+synchronized  blocks  for  reasons  of  compact  syntax  or  simplicity  rather  than  because  the  entire  method  must  be 
+guarded  by a lock.  (As a  bonus, shrinking  the  synchronized block may also improve scalability as well; see Section 
+11.4.1 for advice on sizing synchronized blocks.) 
+Strive  to  use  open  calls  throughout  your  program.  Programs  that  rely  on  open  calls  are  far  easier  to  analyze  for 
+deadlock‐freedom than those that allow calls to alien methods with locks held. 
+Restructuring a synchronized block to allow open calls can sometimes have undesirable consequences, since it takes an 
+operation that was atomic and makes it not atomic. In many cases, the loss of atomicity is perfectly acceptable; there's 
+no reason that updating a taxi's location and notifying the dispatcher that it is ready for a new destination need be an 
+atomic operation. In other cases, the loss of atomicity is noticeable but the semantic changes are still acceptable. In the 
+deadlock‐prone version, getImage produces a complete snapshot of the fleet locations at that instant; in the refactored 
+version, it fetches the location of each taxi at slightly different times. 
+In some cases, however, the loss of atomicity is a problem, and here you will have to use another technique to achieve 
+atomicity. One such technique is to structure a concurrent object so that only one thread can execute the code path 
+following the open call. For example, when shutting down a service, you may want to wait for in‐progress operations to 
+complete  and  then  release  resources  used  by  the  service.  Holding  the  service  lock  while  waiting  for  operations  to 
+complete is inherently deadlock‐prone, but releasing the service lock before the service is shut down may let other 
+threads  start  new  operations.  The  solution  is  to  hold  the  lock  long  enough  to  update  the  service  state  to  "shutting

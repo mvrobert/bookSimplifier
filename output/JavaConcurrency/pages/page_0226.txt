@@ -1,0 +1,61 @@
+209 
+7BPart IV: Advanced Topics ‐ 28BChapter 16. The Java Memory Model
+Listing 16.1. Insufficiently Synchronized Program that can have Surprising Results. Don't Do this. 
+ 
+public class PossibleReordering { 
+    static int x = 0, y = 0; 
+    static int a = 0, b = 0; 
+ 
+    public static void main(String[] args) 
+            throws InterruptedException { 
+        Thread one = new Thread(new Runnable() { 
+            public void run() { 
+                a = 1; 
+                x = b; 
+            } 
+        }); 
+        Thread other = new Thread(new Runnable() { 
+            public void run() { 
+                b = 1; 
+                y = a; 
+            } 
+        }); 
+        one.start(); other.start(); 
+        one.join();   other.join(); 
+        System.out.println("( "+ x + "," + y + ")"); 
+    } 
+} 
+A data race occurs when a variable is read by more than one thread, and written by at least one thread, but the reads 
+and writes are not ordered by happens‐before. A correctly synchronized program is one with no data races; correctly 
+synchronized programs exhibit sequential consistency, meaning that all actions within the program appear to happen in 
+a fixed, global order. 
+The rules for happens‐before are: 
+• 
+Program order rule. Each action in a thread happens‐before every action in that thread  that comes later in the 
+program order. 
+• 
+Monitor lock rule. An unlock on a monitor lock happens‐before every subsequent lock on that same monitor lock.[3] 
+• 
+Volatile variable rule. A write to a volatile field happens‐before every subsequent read of that same field.[4] 
+• 
+Thread start rule. A call to Thread.start on a thread happens‐before every action in the started thread. 
+• 
+Thread  termination  rule.  Any  action  in  a  thread  happens‐before  any  other  thread  detects  that  thread  has 
+terminated, either by successfully return from Thread.join or by Thread.isAlive returning false. 
+• 
+Interruption rule. A thread calling interrupt on another thread happens‐before the interrupted thread detects the 
+interrupt (either by having InterruptedException thrown, or invoking isInterrupted or interrupted). 
+• 
+Finalizer rule. The end of a constructor for an object happens‐before the start of the finalizer for that object. 
+• 
+Transitivity. If A happens‐before B, and B happens‐before C, then A happens‐before C. 
+[3] Locks and unlocks on explicit Lock objects have the same memory semantics as intrinsic locks. 
+[4] Reads and writes of atomic variables have the same memory semantics as volatile variables. 
+Even though actions are only partially ordered, synchronization actions ‐ lock acquisition and release, and reads and 
+writes  of  volatile  variables  ‐  are  totally  ordered.  This  makes  it  sensible  to  describe  happens‐before  in  terms  of 
+"subsequent" lock acquisitions and reads of volatile variables. 
+Figure 16.2 illustrates the happens‐before relation when two threads synchronize using a common lock. All the actions 
+within thread A are ordered by the program order rule, as are the actions within thread B. Because A releases lock M 
+and B subsequently acquires M, all the actions in A before releasing the lock are therefore ordered before the actions in 
+B after acquiring the lock. When two threads synchronize on different locks, we can't say anything about the ordering of 
+actions between them ‐ there is no happens‐before relation between the actions in the two threads.

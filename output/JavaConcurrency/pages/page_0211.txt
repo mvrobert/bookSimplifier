@@ -1,0 +1,34 @@
+194 
+Java Concurrency In Practice 
+14.6.3. FutureTask 
+At first glance, FutureTask doesn't even look like a synchronizer. But Future.get has semantics that are very similar to 
+that of a latchif some event (the completion or cancellation of the task represented by the FutureTask) has occurred, 
+then threads can proceed, otherwise they are queued until that event occurs. 
+FutureTask  uses  the  AQS  synchronization  state  to  hold  the  task  statusrunning,  completed,  or  cancelled.  It  also 
+maintains additional state variables to hold the result of the computation or the exception it threw. It further maintains 
+a  reference  to  the  thread  that  is  running  the  computation  (if  it  is  currently  in  the  running  state),  so  that  it  can  be 
+interrupted if the task is cancelled. 
+14.6.4. ReentrantReadWriteLock 
+The  interface  for  ReadWriteLock  suggests  there  are  two  locksa  reader  lock  and  a  writer  lockbut  in  the  AQS‐based 
+implementation  of  ReentrantReadWriteLock,  a  single  AQS  subclass  manages  both  read  and  write  locking. 
+ReentrantRead-WriteLock uses 16 bits of the state for the write‐lock count, and the other 16 bits for the read‐lock 
+count. Operations on the read lock use the shared acquire and release methods; operations on the write lock use the 
+exclusive acquire and release methods. 
+Internally, AQS maintains a queue of waiting threads, keeping track of whether a thread has requested exclusive or 
+shared access. In ReentrantRead-WriteLock, when the lock becomes available, if the thread at the head of the queue 
+was looking for write access it will get it, and if the thread at the head of the queue was looking for read access, all 
+queued threads up to the first writer will get it.[15] 
+[15] This mechanism does not permit the choice of a reader‐preference or writer‐preference policy, as some read‐write lock implementations do. 
+For that, either the AQS wait queue would need to be something other than a FIFO queue, or two queues would be needed. However, such a strict 
+ordering policy is rarely needed in practice; if the nonfair version of ReentrantReadWriteLock does not offer acceptable liveness, the fair 
+version usually provides satisfactory ordering and guarantees nonstarvation of readers and writers. 
+Summary 
+If you need to implement a state‐dependent class ‐ one whose methods must block if a state‐based precondition does 
+not hold ‐ the best strategy is usually to build upon an existing library class such as  Semaphore,  BlockingQueue, or 
+CountDownLatch, as in ValueLatch on page 187. However, sometimes existing library classes do not provide a sufficient 
+foundation; in these cases, you can build your own synchronizers using intrinsic condition queues, explicit Condition 
+objects, or  AbstractQueuedSynchronizer. Intrinsic condition queues are tightly bound to intrinsic locking, since the 
+mechanism  for  managing  state  dependence  is  necessarily  tied  to  the  mechanism  for  ensuring  state  consistency. 
+Similarly,  explicit  Conditions  are  tightly  bound  to  explicit  Locks,  and  offer  an  extended  feature  set  compared  to 
+intrinsic condition queues, including multiple wait sets per lock, interruptible or uninterruptible condition waits, fair or 
+nonfair queuing, and deadline‐based waiting.

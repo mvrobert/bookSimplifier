@@ -1,0 +1,66 @@
+77 
+5BPart II: Structuring Concurrent Applications ‐ 18BChapter 6. Task Execution
+between. Since Executors provide a service to applications, they should be able to be shut down as well, both gracefully 
+and abruptly, and feedback information to the application about the status of tasks that were affected by the shutdown. 
+To address the issue of execution service lifecycle, the ExecutorService interface extends Executor, adding a number 
+of  methods  for  lifecycle  management  (as  well  as  some  convenience  methods  for  task  submission).  The  lifecycle 
+management methods of ExecutorService are shown in Listing 6.7. 
+Listing 6.7. Lifecycle Methods in ExecutorService. 
+public interface ExecutorService extends Executor { 
+    void shutdown(); 
+    List<Runnable> shutdownNow(); 
+    boolean isShutdown(); 
+    boolean isTerminated(); 
+    boolean awaitTermination(long timeout, TimeUnit unit) 
+        throws InterruptedException; 
+    //  ... additional convenience methods for task submission 
+} 
+The  lifecycle  implied  by  ExecutorService  has  three  states  ‐  running,  shutting  down,  and  terminated. 
+ExecutorServices are initially created in the running state. The shutdown method initiates a graceful shutdown: no 
+new tasks are accepted but previously submitted tasks are allowed to complete ‐ including those that have not yet 
+begun execution. The shutdownNow method initiates an abrupt shutdown: it attempts to cancel outstanding tasks and 
+does not start any tasks that are queued but not begun. 
+Tasks submitted to an ExecutorService after it has been shut down are handled by the rejected execution handler (see 
+Section  8.3.3),  which  might  silently  discard  the  task  or  might  cause  execute  to  throw  the  unchecked 
+RejectedExecutionException.  Once  all  tasks  have  completed,  the  ExecutorService  transitions  to  the  terminated 
+state. You can wait for an ExecutorService to reach the terminated state with awaitTermination, or poll for whether 
+it has yet terminated with isTerminated. It is common to follow shutdown immediately by awaitTermination, creating 
+the  effect  of  synchronously  shutting  down  the  ExecutorService.(Executor  shutdown  and  task  cancellation  are 
+covered in more detail in Chapter 7.) 
+LifecycleWebServer in Listing 6.8 extends our web server with lifecycle support. It can be shut down in two ways: 
+programmatically by calling stop, and through a client request by sending the web server a specially formatted HTTP 
+request. 
+Listing 6.8. Web Server with Shutdown Support. 
+class LifecycleWebServer { 
+    private final ExecutorService exec = ...; 
+ 
+    public void start() throws IOException { 
+        ServerSocket socket = new ServerSocket(80); 
+        while (!exec.isShutdown()) { 
+            try { 
+                final Socket conn = socket.accept(); 
+                exec.execute(new Runnable() { 
+                    public void run() { handleRequest(conn); } 
+                }); 
+            } catch (RejectedExecutionException e) { 
+                if (!exec.isShutdown()) 
+                    log("task submission rejected", e); 
+            } 
+        } 
+    } 
+ 
+    public void stop() { exec.shutdown(); } 
+ 
+    void handleRequest(Socket connection) { 
+        Request req = readRequest(connection); 
+        if (isShutdownRequest(req)) 
+            stop(); 
+        else 
+            dispatchRequest(req); 
+    } 
+} 
+6.2.5. Delayed and Periodic Tasks 
+The Timer facility manages the execution of deferred ("run this task in 100 ms") and periodic ("run this task every 10 
+ms")  tasks.  However,  Timer  has  some  drawbacks,  and  ScheduledThreadPoolExecutor  should  be  thought  of  as  its 
+replacement.[6]  You  can  construct  a  ScheduledThreadPoolExecutor  through  its  constructor  or  through  the 
+newScheduledThreadPool factory.

@@ -1,0 +1,59 @@
+183 
+7BPart IV: Advanced Topics ‐ 26BChapter 14 ‐ Building Custom Synchronizers
+don't let you do anything you can't do with sleeping and polling[5], but they make it a lot easier and more efficient to 
+express and manage state dependence. 
+[5] This is not quite true; a fair condition queue can guarantee the relative order in which threads are released from the wait set. Intrinsic condition 
+queues, like intrinsic locks, do not offer fair queuing; explicit Conditions offer a choice of fair or non‐fair queuing. 
+Listing 14.6. Bounded Buffer Using Condition Queues. 
+@ThreadSafe 
+public class BoundedBuffer<V> extends BaseBoundedBuffer<V> { 
+    // CONDITION PREDICATE: not-full (!isFull()) 
+    // CONDITION PREDICATE: not-empty (!isEmpty()) 
+ 
+    public BoundedBuffer(int size) { super(size); } 
+ 
+    // BLOCKS-UNTIL: not-full 
+    public  synchronized  void put(V v) throws InterruptedException { 
+        while (isFull()) 
+            wait(); 
+        doPut(v); 
+        notifyAll(); 
+    } 
+ 
+    // BLOCKS-UNTIL: not-empty 
+    public  synchronized  V take() throws InterruptedException { 
+        while (isEmpty()) 
+            wait(); 
+        V v = doTake(); 
+        notifyAll(); 
+        return v; 
+    } 
+} 
+BoundedBuffer is finally good enough to use ‐ it is easy to use and manages state dependence sensibly.[6] A production 
+version should also include timed versions of put and  take, so that blocking operations can time out if they cannot 
+complete within a time budget. The timed version of Object.wait makes this easy to implement. 
+[6] ConditionBoundedBuffer in Section 14.3 is even better: it is more efficient because it can use single notification instead of notifyAll. 
+14.2. Using Condition Queues 
+Condition queues make it easier to build efficient and responsive state‐dependent classes, but they are still easy to use 
+incorrectly; there are a lot of rules regarding their proper use that are not enforced by the compiler or platform. (This is 
+one  of  the  reasons  to  build  on  top  of  classes  like  LinkedBlockingQueue,  CountDown-Latch,  Semaphore,  and 
+FutureTask when you can; if you can get away with it, it is a lot easier.) 
+14.2.1. The Condition Predicate 
+The key to using condition queues correctly is identifying the condition predicates that the object may wait for. It is the 
+condition predicate that causes much of the confusion surrounding wait and notify, because it has no instantiation in 
+the API and nothing in either the language specification or the JVM implementation ensures its correct use. In fact, it is 
+not mentioned directly at all in the language specification or the Javadoc. But without it, condition waits would not 
+work. 
+The condition predicate is the precondition that makes an operation state‐dependent in the first place. In a bounded 
+buffer, take can proceed only if the buffer is not empty; otherwise it must wait. For take, the condition predicate is "the 
+buffer is not empty", which  take  must test for before proceeding. Similarly, the condition predicate for  put is "the 
+buffer  is  not  full".  Condition  predicates  are  expressions  constructed  from  the  state  variables  of  the  class; 
+BaseBoundedBuffer  tests  for  "buffer  not  empty"  by  comparing  count  to  zero,  and  tests  for  "buffer  not  full"  by 
+comparing count to the buffer size. 
+Document the condition predicate(s) associated with a condition queue and the operations that wait on them. 
+There is an important three‐way relationship in a condition wait involving locking, the wait method, and a condition 
+predicate. The condition predicate involves state variables, and the state variables are guarded by a lock, so before 
+testing the condition predicate, we must hold that lock. The lock object and the condition queue object (the object on 
+which wait and notify are invoked) must also be the same object. 
+In BoundedBuffer, the buffer state is guarded by the buffer lock and the buffer object is used as the condition queue. 
+The take method acquires the buffer lock and then tests the condition predicate (that the buffer is nonempty). If the

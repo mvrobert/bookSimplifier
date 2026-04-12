@@ -1,0 +1,51 @@
+208 
+Java Concurrency In Practice 
+models across architectures, Java provides its own memory model, and the JVM deals with the differences between the 
+JMM and the underlying platform's memory model by inserting memory barriers at the appropriate places. 
+One convenient mental model for program execution is to imagine that there is a single order in which the operations 
+happen in a program, regardless of what processor they execute on, and that each read of a variable will see the last 
+write  in  the  execution  order  to  that  variable  by  any  processor.  This  happy,  if  unrealistic,  model  is  called  sequential 
+consistency. Software developers often mistakenly assume sequential consistency, but no modern multiprocessor offers 
+sequential consistency and the JMM does not either. The classic sequential computing model, the von Neumann model, 
+is only a vague approximation of how modern multiprocessors behave. 
+The bottom line is that modern shared‐memory multiprocessors (and compilers) can do some surprising things when 
+data is shared across threads, unless you've told them not to through the use of memory barriers. Fortunately, Java 
+programs  need  not  specify  the  placement  of  memory  barriers;  they  need  only  identify  when  shared  state  is  being 
+accessed, through the proper use of synchronization. 
+16.1.2. Reordering 
+In  describing  race  conditions  and  atomicity  failures  in  Chapter  2,  we  used  interaction  diagrams  depicting  "unlucky 
+timing"  where  the  scheduler  interleaved  operations  so  as  to  cause  incorrect  results  in  insufficiently  synchronized 
+programs.  To  make  matters  worse,  the  JMM  can  permit  actions  to  appear  to  execute  in  different  orders  from  the 
+perspective  of  different  threads,  making  reasoning  about  ordering  in  the  absence  of  synchronization  even  more 
+complicated. The various reasons why operations might be delayed or appear to execute out of order can all be grouped 
+into the general category of reordering. 
+PossibleReordering  in  Listing  16.1  illustrates  how  difficult  it  is  to  reason  about  the  behavior  of  even  the  simplest 
+concurrent programs unless they are correctly synchronized. It is fairly easy to imagine how PossibleReordering could 
+print (1, 0), or (0, 1), or (1, 1): thread A could run to completion before B starts, B could run to completion before A 
+starts, or their actions could be interleaved. But, strangely, PossibleReordering can also print (0, 0)! The actions in 
+each thread have no dataflow dependence on each other, and accordingly can be executed out of order. (Even if they 
+are executed in order, the timing by which caches are flushed to main memory can make it appear, from the perspective 
+of  B,  that  the  assignments  in  A  occurred  in  the  opposite  order.)  Figure  16.1  shows  a  possible  interleaving  with 
+reordering that results in printing (0, 0). 
+Figure 16.1. Interleaving Showing Reordering in PossibleReordering. 
+ 
+ 
+PossibleReordering is a trivial program, and it is still surprisingly tricky to enumerate its possible results. Reordering at 
+the memory level can make programs behave unexpectedly. It is prohibitively difficult to reason about ordering in the 
+absence  of  synchronization;  it  is  much  easier  to  ensure  that  your  program  uses  synchronization  appropriately. 
+Synchronization inhibits the compiler, runtime, and hardware from reordering memory operations in ways that would 
+violate the visibility guarantees provided by the JMM.[1] 
+[1] On most popular processor architectures, the memory model is strong enough that the performance cost of a volatile read is in line with that of 
+a nonvolatile read. 
+16.1.3. The Java Memory Model in 500 Words or Less 
+The Java Memory Model is specified in terms of actions, which include reads and writes to variables, locks and unlocks 
+of monitors, and starting and joining with threads. The JMM defines a partial ordering [2] called happens‐before on all 
+actions within the program. To guarantee that the thread executing action B can see the results of action A (whether or 
+not A and B occur in different threads), there must be a happens‐before relationship between A and B. In the absence of 
+a happens‐before ordering between two operations, the JVM is free to reorder them as it pleases. 
+[2] A partial ordering 
+is a relation on a set that is antisymmetric, reflexive, and transitive, but for any two elements x and y, it need not be the 
+case that x 
+y or y 
+x. We use partial orderings every day to express preferences; we may prefer sushi to cheeseburgers and Mozart to Mahler, 
+but we don't necessarily have a clear preference between cheeseburgers and Mozart.

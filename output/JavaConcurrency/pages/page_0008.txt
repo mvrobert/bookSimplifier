@@ -1,0 +1,74 @@
+vii
+1BListing and Image Index
+Listing 5.15. Coordinating Computation in a Cellular Automaton with 
+64 
+Listing 5.16. Initial Cache Attempt Using HashMap and Synchronization. 
+66 
+Figure 5.2. Poor Concurrency of 
+66 
+Figure 5.3. Two Threads Computing the Same Value When Using 
+67 
+Listing 5.17. Replacing HashMap with ConcurrentHashMap. 
+67 
+Figure 5.4. Unlucky Timing that could Cause Memorizer3 to Calculate the Same Value Twice. 
+68 
+Listing 5.18. Memorizing Wrapper Using FutureTask. 
+68 
+Listing 5.19. Final Implementation of Memorizer. 
+69 
+Listing 5.20. Factorizing Servlet that Caches Results Using Memorizer. 
+69 
+Chapter 6. Task Execution 
+72 
+Listing 6.1. Sequential Web Server. 
+72 
+Listing 6.2. Web Server that Starts a New Thread for Each Request. 
+73 
+Listing 6.3. Executor Interface. 
+74 
+Listing 6.4. Web Server Using a Thread Pool. 
+75 
+Listing 6.5. Executor that Starts a New Thread for Each Task. 
+75 
+Listing 6.6. Executor that Executes Tasks Synchronously in the Calling Thread. 
+75 
+Listing 6.7. Lifecycle Methods in ExecutorService. 
+77 
+Listing 6.8. Web Server with Shutdown Support. 
+77 
+Listing 6.9. Class Illustrating Confusing Timer Behavior. 
+78 
+Listing 6.10. Rendering Page Elements Sequentially. 
+79 
+Listing 6.11. Callable and Future Interfaces. 
+80 
+Listing 6.12. Default Implementation of newTaskFor in ThreadPoolExecutor. 
+80 
+Listing 6.13. Waiting for Image Download with Future. 
+81 
+Listing 6.14. QueueingFuture Class Used By ExecutorCompletionService. 
+82 
+Listing 6.15. Using CompletionService to Render Page Elements as they Become Available. 
+82 
+Listing 6.16. Fetching an Advertisement with a Time Budget. 
+83 
+Listing 6.17. Requesting Travel Quotes Under a Time Budget. 
+84 
+Chapter 7. Cancellation and Shutdown 
+85 
+Listing 7.1. Using a Volatile Field to Hold Cancellation State. 
+86 
+Listing 7.2. Generating a Second's Worth of Prime Numbers. 
+86 
+Listing 7.3. Unreliable Cancellation that can Leave Producers Stuck in a Blocking Operation. Don't Do this. 
+87 
+Listing 7.4. Interruption Methods in Thread. 
+87 
+Listing 7.5. Using Interruption for Cancellation. 
+88 
+Listing 7.6. Propagating InterruptedException to Callers. 
+89 
+Listing 7.7. Non‐cancelable Task that Restores Interruption Before Exit. 
+90 
+Listing 7.8. Scheduling an Interrupt on a Borrowed Thread. Don't Do this. 
+90

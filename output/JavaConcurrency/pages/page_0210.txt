@@ -1,0 +1,63 @@
+193 
+7BPart IV: Advanced Topics ‐ 26BChapter 14 ‐ Building Custom Synchronizers
+[14] Because the protected state‐manipulation methods have the memory semantics of a volatile read or write and ReentrantLock is careful to 
+read the owner field only after calling getState and write it only before calling setState, ReentrantLock can piggyback on the memory 
+semantics of the synchronization state, and thus avoid further synchronization ‐ see Section 16.1.4. 
+When a thread attempts to acquire a lock, tryAcquire first consults the lock state. If it is unheld, it tries to update the 
+lock state to indicate that it is held. Because the state could have changed since it was first inspected a few instructions 
+ago, tryAcquire uses compareAndSetState to attempt to atomically update the state to indicate that the lock is now 
+held and confirm that the state has not changed since last observed. (See the description of compareAndSet in Section 
+15.3.) If the lock state indicates that it is already held, if the current thread is the owner of the lock, the acquisition 
+count is incremented; if the current thread is not the owner of the lock, the acquisition attempt fails. 
+Listing 14.15. tryAcquire Implementation From Non­fair ReentrantLock. 
+protected boolean tryAcquire(int ignored) { 
+    final Thread current = Thread.currentThread(); 
+    int c = getState(); 
+    if (c == 0) { 
+        if (compareAndSetState(0, 1)) { 
+            owner = current; 
+            return true; 
+        } 
+    } else if (current == owner) { 
+        setState(c+1); 
+        return true; 
+    } 
+    return false; 
+} 
+ReentrantLock  also  takes  advantage  of  AQS's  built‐in  support  for  multiple  condition  variables  and  wait  sets. 
+Lock.newCondition returns a new instance of ConditionObject, an inner class of AQS. 
+14.6.2. Semaphore and CountDownLatch 
+Semaphore uses the AQS synchronization state to hold the count of permits currently available. The tryAcquireShared 
+method (see Listing 14.16) first computes the number of permits remaining, and if there are not enough, returns a value 
+indicating that the acquire failed. If sufficient permits appear to be left, it attempts to atomically reduce the permit 
+count  using  compareAndSetState.  If  that  succeeds  (meaning  that  the  permit  count  had  not  changed  since  it  last 
+looked), it returns a value indicating that the acquire succeeded. The return value also encodes whether other shared 
+acquisition attempts might succeed, in which case other waiting threads will also be unblocked. 
+The  while  loop  terminates  either  when  there  are  not  enough  permits  or  when  TRyAcquireShared  can  atomically 
+update the permit count to reflect acquisition. While any given call to compareAndSetState may fail due to contention 
+with another thread (see Section 15.3), causing it to retry, one of these two termination criteria will become true within 
+a reasonable number of retries. Similarly, tryReleaseShared increases the permit count, potentially unblocking waiting 
+threads, and retries until the update succeeds. The return value of TRyReleaseShared indicates whether other threads 
+might have been unblocked by the release. 
+CountDownLatch uses AQS in a similar manner to Semaphore: the synchronization state holds the current count. The 
+countDown method calls  release, which causes the counter to be decremented and unblocks waiting threads if the 
+counter  has  reached  zero;  await  calls  acquire,  which  returns  immediately  if  the  counter  has  reached  zero  and 
+otherwise blocks. 
+Listing 14.16. tryacquireshared and tryreleaseshared from Semaphore. 
+protected int tryAcquireShared(int acquires) { 
+    while (true) { 
+        int available = getState(); 
+        int remaining = available - acquires; 
+        if (remaining < 0 
+                || compareAndSetState(available, remaining)) 
+            return remaining; 
+    } 
+} 
+ 
+protected boolean tryReleaseShared(int releases) { 
+    while (true) { 
+        int p = getState(); 
+        if (compareAndSetState(p, p + releases)) 
+            return true; 
+    } 
+}

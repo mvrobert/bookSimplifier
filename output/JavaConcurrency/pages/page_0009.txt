@@ -1,0 +1,73 @@
+viii 
+Java Concurrency In Practice 
+Listing 7.9. Interrupting a Task in a Dedicated Thread. 
+91 
+Listing 7.10. Cancelling a Task Using Future. 
+92 
+Listing 7.11. Encapsulating Nonstandard Cancellation in a Thread by Overriding Interrupt. 
+93 
+Listing 7.12. Encapsulating Nonstandard Cancellation in a Task with Newtaskfor. 
+94 
+Listing 7.13. Producer‐Consumer Logging Service with No Shutdown Support. 
+95 
+Listing 7.14. Unreliable Way to Add Shutdown Support to the Logging Service. 
+95 
+Listing 7.15. Adding Reliable Cancellation to LogWriter. 
+96 
+Listing 7.16. Logging Service that Uses an ExecutorService. 
+97 
+Listing 7.17. Shutdown with Poison Pill. 
+97 
+Listing 7.18. Producer Thread for IndexingService. 
+98 
+Listing 7.19. Consumer Thread for IndexingService. 
+98 
+Listing 7.20. Using a Private Executor Whose Lifetime is Bounded by a Method Call. 
+98 
+Listing 7.21. ExecutorService that Keeps Track of Cancelled Tasks After Shutdown. 
+99 
+Listing 7.22. Using TRackingExecutorService to Save Unfinished Tasks for Later Execution. 
+100 
+Listing 7.23. Typical Thread‐pool Worker Thread Structure. 
+101 
+Listing 7.24. UncaughtExceptionHandler Interface. 
+101 
+Listing 7.25. UncaughtExceptionHandler that Logs the Exception. 
+101 
+Listing 7.26. Registering a Shutdown Hook to Stop the Logging Service. 
+103 
+Chapter 8. Applying Thread Pools 
+104 
+Listing 8.1. Task that Deadlocks in a Single‐threaded Executor. Don't Do this. 
+105 
+Listing 8.2. General Constructor for ThreadPoolExecutor. 
+107 
+Listing 8.3. Creating a Fixed‐sized Thread Pool with a Bounded Queue and the Caller‐runs Saturation Policy.  109 
+Listing 8.4. Using a Semaphore to Throttle Task Submission. 
+109 
+Listing 8.5. ThreadFactory Interface. 
+109 
+Listing 8.6. Custom Thread Factory. 
+110 
+Listing 8.7. Custom Thread Base Class. 
+111 
+Listing 8.8. Modifying an Executor Created with the Standard Factories. 
+111 
+Listing 8.9. Thread Pool Extended with Logging and Timing. 
+112 
+Listing 8.10. Transforming Sequential Execution into Parallel Execution. 
+112 
+Listing 8.11. Transforming Sequential Tail‐recursion into Parallelized Recursion. 
+113 
+Listing 8.12. Waiting for Results to be Calculated in Parallel. 
+113 
+Listing 8.13. Abstraction for Puzzles Like the "Sliding Blocks Puzzle". 
+113 
+Listing 8.14. Link Node for the Puzzle Solver Framework. 
+114 
+Listing 8.15. Sequential Puzzle Solver. 
+115 
+Listing 8.16. Concurrent Version of Puzzle Solver. 
+115 
+Listing 8.17. Result‐bearing Latch Used by ConcurrentPuzzleSolver. 
+116

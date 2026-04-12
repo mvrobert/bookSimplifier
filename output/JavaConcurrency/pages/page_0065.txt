@@ -1,0 +1,59 @@
+48 
+Java Concurrency In Practice 
+Listing 4.14. Non­thread­safe Attempt to Implement Put­if­absent. Don't Do this. 
+ 
+@NotThreadSafe 
+public class ListHelper<E> { 
+    public List<E> list = 
+        Collections.synchronizedList(new ArrayList<E>()); 
+    ... 
+    public synchronized boolean putIfAbsent(E x) { 
+        boolean absent = !list.contains(x); 
+        if (absent) 
+            list.add(x); 
+        return absent; 
+    } 
+} 
+Why wouldn't this work? After all,  putIfAbsent is  synchronized, right? The problem is that it synchronizes on the 
+wrong  lock.  Whatever  lock  the  List  uses  to  guard  its  state,  it  sure  isn't  the  lock  on  the  ListHelper.  ListHelper 
+provides only the illusion of synchronization; the various list operations, while all synchronized, use different locks, 
+which means that putIfAbsent is not atomic relative to other operations on the List. So there is no guarantee that 
+another thread won't modify the list while putIfAbsent is executing. 
+To make this approach work, we have to use the same lock that the List uses by using client‐side locking or external 
+locking. Client‐side locking entails guarding client code that uses some object X with the lock X uses to guard its own 
+state. In order to use client‐side locking, you must know what lock X uses. 
+The documentation for Vector and the synchronized wrapper classes states, albeit obliquely, that they support client‐
+side locking, by using the intrinsic lock for the Vector or the wrapper collection (not the wrapped collection). Listing 
+4.15 shows a putIfAbsent operation on a thread‐safe List that correctly uses client‐side locking. 
+Listing 4.15. Implementing Put­if­absent with Client­side Locking. 
+@ThreadSafe 
+public class ListHelper<E> { 
+    public List<E> list = 
+        Collections.synchronizedList(new ArrayList<E>()); 
+    ... 
+    public boolean putIfAbsent(E x) { 
+        synchronized (list)  { 
+            boolean absent = !list.contains(x); 
+            if (absent) 
+                list.add(x); 
+            return absent; 
+        } 
+    } 
+} 
+If extending a class to add another atomic operation is fragile because it distributes the locking code for a class over 
+multiple classes in an object hierarchy, client‐side locking is even more fragile because it entails putting locking code for 
+class C into classes that are totally unrelated to C. Exercise care when using client‐side locking on classes that do not 
+commit to their locking strategy. 
+Client‐side locking has a lot in common with class extension ‐ they both couple the behavior of the derived class to the 
+implementation of the base class. Just as extension violates encapsulation of implementation [EJ Item 14], client‐side 
+locking violates encapsulation of synchronization policy. 
+4.4.2. Composition 
+There is a less fragile alternative for adding an atomic operation to an existing class: composition.  ImprovedList in 
+Listing 4.16 implements the List operations by delegating them to an underlying List instance, and adds an atomic 
+putIfAbsent method. (Like Collections.synchronizedList and other collections wrappers, ImprovedList assumes 
+that once a list is passed to its constructor, the client will not use the underlying list directly again, accessing it only 
+through the ImprovedList.) 
+ImprovedList adds an additional level of locking using its own intrinsic lock. It does not care whether the underlying 
+List is thread‐safe, because it provides its own consistent locking that provides thread safety even if the List is not 
+thread‐safe  or  changes  its  locking  implementation.  While  the  extra  layer  of  synchronization  may  add  some  small 
+performance  penalty,[7]  the  implementation  in  ImprovedList  is  less  fragile  than  attempting  to  mimic  the  locking

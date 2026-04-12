@@ -1,0 +1,75 @@
+69 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 17BChapter 5. Building 
+Blocks
+Listing 5.19. Final Implementation of Memorizer. 
+public class Memorizer<A, V> implements Computable<A, V> { 
+    private final ConcurrentMap<A, Future<V>> cache 
+        = new ConcurrentHashMap<A, Future<V>>(); 
+    private final Computable<A, V> c; 
+ 
+    public Memorizer(Computable<A, V> c) { this.c = c; } 
+ 
+    public V compute(final A arg) throws InterruptedException { 
+        while (true) { 
+            Future<V> f = cache.get(arg); 
+            if (f == null) { 
+                Callable<V> eval = new Callable<V>() { 
+                    public V call() throws InterruptedException { 
+                        return c.compute(arg); 
+                    } 
+                }; 
+                FutureTask<V> ft = new FutureTask<V>(eval); 
+                f = cache.putIfAbsent(arg, ft); 
+                if (f == null) { f = ft; ft.run(); } 
+            } 
+            try { 
+                return f.get(); 
+            } catch (CancellationException e) { 
+                cache.remove(arg, f); 
+            } catch (ExecutionException e) { 
+                throw launderThrowable(e.getCause()); 
+            } 
+        } 
+    } 
+} 
+Listing 5.20. Factorizing Servlet that Caches Results Using Memorizer. 
+@ThreadSafe 
+public class Factorizer implements Servlet { 
+    private final Computable<BigInteger, BigInteger[]> c = 
+        new Computable<BigInteger, BigInteger[]>() { 
+            public BigInteger[] compute(BigInteger arg) { 
+                return factor(arg); 
+            } 
+        }; 
+    private final Computable<BigInteger, BigInteger[]> cache 
+        = new Memorizer<BigInteger, BigInteger[]>(c); 
+ 
+    public void service(ServletRequest req, 
+                        ServletResponse resp) { 
+        try { 
+            BigInteger i = extractFromRequest(req); 
+            encodeIntoResponse(resp, cache.compute(i)); 
+        } catch (InterruptedException e) { 
+            encodeError(resp, "factorization interrupted"); 
+        } 
+    } 
+} 
+Summary of Part I 
+We've covered a lot of material so far! The following "concurrency cheat sheet" summarizes the main concepts and 
+rules presented in Part I. 
+• 
+It's the mutable state, stupid. [1] 
+ 
+All concurrency issues boil down to coordinating access to mutable state. The less mutable state, the easier it is to 
+ensure thread safety. 
+• 
+Make fields final unless they need to be mutable. 
+• 
+Immutable objects are automatically thread‐safe. 
+ 
+Immutable objects simplify concurrent programming tremendously. They are simpler and safer, and can be shared 
+freely without locking or defensive copying. 
+• 
+Encapsulation makes it practical to manage the complexity.

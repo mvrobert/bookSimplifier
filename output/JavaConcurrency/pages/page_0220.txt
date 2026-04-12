@@ -1,0 +1,59 @@
+203 
+7BPart IV: Advanced Topics ‐ 27BChapter 15. Atomic Variables and Non‐blocking Synchronization
+Listing 15.6. Non­blocking Stack Using Treiber's Algorithm (Treiber, 1986). 
+@ThreadSafe 
+public class ConcurrentStack <E> { 
+    AtomicReference<Node<E>> top = new AtomicReference<Node<E>>(); 
+ 
+    public void push(E item) { 
+        Node<E> newHead = new Node<E>(item); 
+        Node<E> oldHead; 
+        do { 
+            oldHead = top.get(); 
+            newHead.next = oldHead; 
+        } while (!top.compareAndSet(oldHead, newHead)); 
+    } 
+ 
+    public E pop() { 
+        Node<E> oldHead; 
+        Node<E> newHead; 
+        do { 
+            oldHead = top.get(); 
+            if (oldHead == null) 
+                return null; 
+            newHead = oldHead.next; 
+        } while (!top.compareAndSet(oldHead, newHead)); 
+        return oldHead.item; 
+    } 
+ 
+    private static class Node <E> { 
+        public final E item; 
+        public Node<E> next; 
+ 
+        public Node(E item) { 
+            this.item = item; 
+        } 
+    } 
+} 
+We need several tricks to develop this plan. The first is to ensure that the data structure is always in a consistent state, 
+even in the middle of an multi‐step update. That way, if thread A is in the middle of a update when thread B arrives on 
+the scene, B can tell that an operation has been partially completed and knows not to try immediately to apply its own 
+update. Then B can wait (by repeatedly examining the queue state) until A finishes, so that the two don't get in each 
+other's way. 
+While this trick by itself would suffice to let threads "take turns" accessing the data structure without corrupting it, if 
+one thread failed in the middle of an update, no thread would be able to access the queue at all. To make the algorithm 
+non‐blocking, we must ensure that the failure of a thread does not prevent other threads from making progress. Thus, 
+the second trick is to make sure that if B arrives to find the data structure in the middle of an update by A, enough 
+information is already embodied in the data structure for B to finish the update for A. If B "helps" A by finishing A's 
+operation, B can proceed with its own operation without waiting for A. When A gets around to finishing its operation, it 
+will find that B already did the job for it. 
+LinkedQueue  in  Listing  15.7  shows  the  insertion  portion  of  the  Michael‐Scott  non‐blocking  linked‐queue  algorithm 
+(Michael and Scott, 1996), which is used by ConcurrentLinkedQueue. As in many queue algorithms, an empty queue 
+consists of a "sentinel" or "dummy" node, and the head and tail pointers are initialized to refer to the sentinel. The tail 
+pointer always refers to the sentinel (if the queue is empty), the last element in the queue, or (in the case that an 
+operation is in mid‐update) the second‐to‐last element. Figure 15.3 illustrates a queue with two elements in the normal, 
+or quiescent, state. 
+Figure 15.3. Queue with Two Elements in Quiescent State. 
+ 
+Inserting a new element involves updating two pointers. The first links the new node to the end of the list by updating 
+the next pointer of the current last element; the second swings the tail pointer around to point to the new last element.

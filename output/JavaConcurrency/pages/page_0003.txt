@@ -1,0 +1,91 @@
+ii 
+Java Concurrency In Practice 
+Index 
+Index 
+ii 
+Preface 
+xiii 
+How to Use this Book 
+xiii 
+Code Examples 
+xiv 
+Acknowledgments 
+xv 
+Chapter 1 - Introduction 
+1 
+1.1. A (Very) Brief History of Concurrency 
+2 
+1.2. Benefits of Threads 
+3 
+1.2.1. Exploiting Multiple Processors 
+3 
+1.2.2. Simplicity of Modeling 
+3 
+1.2.3. Simplified Handling of Asynchronous Events 
+3 
+1.2.4. More Responsive User Interfaces 
+4 
+1.3. Risks of Threads 
+5 
+1.3.1. Safety Hazards 
+5 
+1.3.2. Liveness Hazards 
+6 
+1.3.3. Performance Hazards 
+6 
+1.4. Threads are Everywhere 
+8 
+Part I: Fundamentals 
+10 
+Chapter 2. Thread Safety 
+11 
+2.1. What is Thread Safety? 
+12 
+2.2. Atomicity 
+13 
+2.3. Locking 
+16 
+2.4. Guarding State with Locks 
+19 
+2.5. Liveness and Performance 
+20 
+Chapter 3. Sharing Objects 
+23 
+3.1. Visibility 
+23 
+3.2. Publication and Escape 
+26 
+3.3. Thread Confinement 
+28 
+3.4. Immutability 
+31 
+3.5. Safe Publication 
+33 
+Chapter 4. Composing Objects 
+37 
+4.1. Designing a Thread‐safe Class 
+37 
+4.2. Instance Confinement 
+39 
+4.3. Delegating Thread Safety 
+41 
+4.4. Adding Functionality to Existing Thread‐safe Classes 
+47 
+4.5. Documenting Synchronization Policies 
+49 
+Chapter 5. Building Blocks 
+51 
+5.1. Synchronized Collections 
+51 
+5.2. Concurrent Collections 
+54 
+5.3. Blocking Queues and the Producer‐consumer Pattern 
+56 
+5.4. Blocking and Interruptible Methods 
+59 
+5.5. Synchronizers 
+60 
+5.6. Building an Efficient, Scalable Result Cache 
+64 
+Summary of Part I 
+69

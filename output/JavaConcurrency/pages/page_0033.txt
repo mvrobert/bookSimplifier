@@ -1,0 +1,45 @@
+16 
+Java Concurrency In Practice 
+safe. In the next section, we'll consider locking, Java's built‐in mechanism for ensuring atomicity. For now, we're going to 
+fix the problem another way, by using an existing thread‐safe class, as shown in CountingFactorizer in Listing 2.4. 
+Listing 2.4. Servlet that Counts Requests Using AtomicLong. 
+@ThreadSafe 
+public class CountingFactorizer implements Servlet { 
+    private final AtomicLong count = new AtomicLong(0); 
+ 
+    public long getCount() { return count.get(); } 
+ 
+    public void service(ServletRequest req, ServletResponse resp) { 
+        BigInteger i = extractFromRequest(req); 
+        BigInteger[] factors = factor(i); 
+        count.incrementAndGet(); 
+        encodeIntoResponse(resp, factors); 
+    } 
+} 
+The java.util.concurrent.atomic package contains atomic variable classes for effecting atomic state transitions on 
+numbers and object references. By replacing the  long counter  with an  AtomicLong, we  ensure that  all actions that 
+access the counter state are atomic. [5] Because the state of the servlet is the state of the counter and the counter is 
+thread‐safe, our servlet is once again thread‐safe. 
+[5] CountingFactorizer calls incrementAndGet to increment the counter, which also returns the incremented value; in this case the return value is 
+ignored. 
+We were able to add a counter to our factoring servlet and maintain thread safety by using an existing thread‐safe class 
+to manage the counter state, AtomicLong. When a single element of state is added to a stateless class, the resulting 
+class will be thread‐safe if the state is entirely managed by a thread‐safe object. But, as we'll see in the next section, 
+going from one state variable to more than one is not necessarily as simple as going from zero to one. 
+Where practical, use existing thread‐safe objects, like AtomicLong, to manage your class's state. It is simpler to reason 
+about the possible states and state transitions for existing thread‐safe objects than it is for arbitrary state variables, and 
+this makes it easier to maintain and verify thread safety. 
+2.3. Locking 
+We were able to add one state variable to our servlet while maintaining thread safety by using a thread‐safe object to 
+manage the entire state of the servlet. But if we want to add more state to our servlet, can we just add more thread‐
+safe state variables? 
+Imagine that we want to improve the performance of our servlet by caching the most recently computed result, just in 
+case  two  consecutive  clients  request  factorization  of  the  same  number.  (This  is  unlikely  to  be  an  effective  caching 
+strategy; we offer a better one in Section 5.6.) To implement this strategy, we need to remember two things: the last 
+number factored, and its factors. 
+We  used  AtomicLong  to  manage  the  counter  state  in  a  thread‐safe  manner;  could  we  perhaps  use  its  cousin, 
+AtomicReference, 
+[6]  to  manage  the  last  number  and  its  factors?  An  attempt  at  this  is  shown  in 
+UnsafeCachingFactorizer in Listing 2.5. 
+[6] Just as AtomicLong is a thread‐safe holder class for a long integer, AtomicReference is a thread safe holder class for an object reference. Atomic 
+variables and their benefits are covered in Chapter 15.

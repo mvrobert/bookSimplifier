@@ -1,0 +1,53 @@
+105 
+5BPart II: Structuring Concurrent Applications ‐ 20BChapter 8. Applying Thread Pools
+another pool task, such as waiting for the return value or side effect of another task, unless you can guarantee that the 
+pool is large enough. 
+ThreadDeadlock in Listing 8.1 illustrates thread starvation deadlock. Render-PageTask submits two additional tasks to 
+the Executor to fetch the page header and footer, renders the page body, waits for the results of the header and footer 
+tasks,  and  then  combines  the  header,  body,  and  footer  into  the  finished  page.  With  a  single‐threaded  executor, 
+ThreadDeadlock will always deadlock. Similarly, tasks coordinating amongst themselves with a barrier could also cause 
+thread starvation deadlock if the pool is not big enough. 
+Whenever you submit to an Executor tasks that are not independent, be aware of the possibility of thread starvation 
+deadlock,  and  document  any  pool  sizing  or  configuration  constraints  in  the  code  or  configuration  file  where  the 
+Executor is configured. 
+In addition to any explicit bounds on the size of a thread pool, there may also be implicit limits because of constraints on 
+other resources. If your application uses a JDBC connection pool with ten connections and each task needs a database 
+connection,  it  is  as  if  your  thread  pool  only  has  ten  threads  because  tasks  in  excess  of  ten  will  block  waiting  for  a 
+connection. 
+Listing 8.1. Task that Deadlocks in a Single­threaded Executor. Don't Do this. 
+ 
+public class ThreadDeadlock { 
+    ExecutorService exec = Executors.newSingleThreadExecutor(); 
+ 
+    public class RenderPageTask implements Callable<String> { 
+        public String call() throws Exception { 
+            Future<String> header, footer; 
+            header = exec.submit(new LoadFileTask("header.html")); 
+            footer = exec.submit(new LoadFileTask("footer.html")); 
+            String page = renderBody(); 
+            // Will deadlock -- task waiting for result of subtask 
+            return header.get() + page + footer.get(); 
+        } 
+    } 
+} 
+8.1.2. Long­running Tasks 
+Thread pools can have responsiveness problems if tasks can block for extended periods of time, even if deadlock is not a 
+possibility. A thread pool can become clogged with long‐running tasks, increasing the service time even for short tasks. If 
+the pool size is too small relative to the expected steady‐state number of longrunning tasks, eventually all the pool 
+threads will be running long‐running tasks and responsiveness will suffer. 
+One technique that can mitigate the ill effects of long‐running tasks is for tasks to use timed resource waits instead of 
+unbounded waits. Most blocking methods in the plaform libraries come in both untimed and timed versions, such as 
+Thread.join, BlockingQueue.put, CountDownLatch.await, and Selector.select. If the wait times out, you can mark 
+the task as failed and abort it or requeue it for execution later. This guarantees that each task eventually makes progress 
+towards  either  successful  or  failed  completion,  freeing  up  threads  for  tasks  that  might  complete  more  quickly.  If  a 
+thread pool is frequently full of blocked tasks, this may also be a sign that the pool  
+8.2. Sizing Thread Pools 
+The ideal size for a thread pool depends on the types of tasks that will be submitted and the characteristics of the 
+deployment  system.  Thread  pool  sizes  should  rarely  be  hard‐coded;  instead  pool  sizes  should  be  provided  by  a 
+configuration mechanism or computed dynamically by consulting Runtime.availableProcessors. 
+Sizing thread pools is not an exact science, but fortunately you need only avoid the extremes of "too big" and "too 
+small". If a  thread pool is too big, then threads  compete for scarce CPU and memory resources, resulting in higher 
+memory usage and possible resource exhaustion. If it is too small, throughput suffers as processors go unused despite 
+available work. 
+To size a thread pool properly, you need to understand your computing environment, your resource budget, and the 
+nature of your tasks. How many processors does the deployment system have? How much memory? Do tasks perform

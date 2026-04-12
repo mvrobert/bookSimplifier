@@ -1,0 +1,43 @@
+165 
+6BPart III: Liveness, Performance, and Testing ‐ 24BChapter 12. Testing Concurrent Programs
+12.3. Avoiding Performance Testing Pitfalls 
+In theory, developing performance tests is easyfind a typical usage scenario, write a program that executes that scenario 
+many times, and time it. In practice, you have to watch out for a number of coding pitfalls that prevent performance 
+tests from yielding meaningful results. 
+12.3.1. Garbage Collection 
+The timing of garbage collection is unpredictable, so there is always the possibility that the garbage collector will run 
+during a measured test run. If a test program performs N iterations and triggers no garbage collection but iteration N + 
+1would trigger a garbage collection, a small variation in the size of the run could have a big (but spurious) effect on the 
+measured time per iteration. 
+There  are  two  strategies  for  preventing  garbage  collection  from  biasing  your  results.  One  is  to  ensure  that  garbage 
+collection does not run at all during your test (you can invoke the JVM with -verbose:gc to find out); alternatively, you 
+can make sure that the garbage collector runs a number of times during your run so that the test program adequately 
+reflects the cost of ongoing allocation and garbage collection. The latter strategy is often betterit requires a longer test 
+and is more likely to reflect real‐world performance. 
+Most producer‐consumer applications involve a fair amount of allocation and garbage collectionproducers allocate new 
+objects that are used and discarded by consumers. Running the bounded buffer test for long enough to incur multiple 
+garbage collections yields more accurate results. 
+12.3.2. Dynamic Compilation 
+Writing and interpreting performance benchmarks for dynamically compiled languages like Java is far more difficult than 
+for  statically  compiled  languages  like  C  or  C++.  The  HotSpot  JVM  (and  other  modern  JVMs)  uses  a  combination  of 
+bytecode interpretation and dynamic compilation. When a class is first loaded, the JVM executes it by interpreting the 
+bytecode. At some point, if a method is run often enough, the dynamic compiler kicks in and converts it to machine 
+code; when compilation completes, it switches from interpretation to direct execution. 
+The timing of compilation is unpredictable. Your timing tests should run only after all code has been compiled; there is 
+no  value  in  measuring  the  speed  of  the  interpreted  code  since  most  programs  run  long  enough  that  all  frequently 
+executed code paths are compiled. Allowing the compiler to run during a measured test run can bias test results in two 
+ways: compilation consumes CPU resources, and measuring the run time of a combination of interpreted and compiled 
+code is not a meaningful performance metric. Figure 12.5 shows how this can bias your results. The three timelines 
+represent the execution of the same number of iterations: timeline A represents all interpreted execution, B represents 
+compilation halfway through the run, and C represents compilation early in the run. The point at which compilation runs 
+seriously affects the measured per‐operation runtime.[7] 
+[7] The JVM may choose to perform compilation in the application thread or in the background thread; each can bias timing results in different 
+ways. 
+Figure 12.5. Results Biased by Dynamic Compilation. 
+ 
+Code may also be decompiled (reverting to interpreted execution) and recompiled for various reasons, such as loading a 
+class that invalidates assumptions made by prior compilations, or gathering sufficient profiling data to decide that a 
+code path should be recompiled with different optimizations. 
+One  way  to  prevent  compilation  from  biasing  your  results  is  to  run  your  program  for  a  long  time  (at  least  several 
+minutes)  so  that  compilation  and  interpreted  execution  represent  a  small  fraction  of  the  total  run  time.  Another 
+approach is to use an unmeasured "warm‐up" run, in which your code is executed enough to be fully compiled when

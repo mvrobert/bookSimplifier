@@ -1,0 +1,59 @@
+14 
+Java Concurrency In Practice 
+Listing 2.2. Servlet that Counts Requests without the Necessary Synchronization. Don't Do this. 
+ 
+ 
+@NotThreadSafe 
+public class UnsafeCountingFactorizer implements Servlet { 
+    private long count = 0; 
+ 
+    public long getCount() { return count; } 
+ 
+    public void service(ServletRequest req, ServletResponse resp) { 
+        BigInteger i = extractFromRequest(req); 
+        BigInteger[] factors = factor(i); 
+        ++count; 
+        encodeIntoResponse(resp, factors); 
+    } 
+ 
+} 
+Figure  1.1  on  page  6  shows  what  can  happen  if  two  threads  try  to  increment  a  counter  simultaneously  without 
+synchronization. If the counter is initially 9, with some unlucky timing each thread could read the value, see that it is 9, 
+add one to it, and each set the counter to 10. This is clearly not what is supposed to happen; an increment got lost along 
+the way, and the hit counter is now permanently off by one. 
+You might think that having a slightly inaccurate count of hits in a web‐based service is an acceptable loss of accuracy, 
+and sometimes it is. But if the counter is being used to generate sequences or unique object identifiers, returning the 
+same value from multiple invocations could cause serious data integrity problems.[3] The possibility of incorrect results 
+in the presence of unlucky timing is so important in concurrent programming that it has a name: a race condition. 
+[3]  The  approach  taken  by  UnsafeSequence  and  UnsafeCountingFactorizer  has  other  serious  problems,  including  the  possibility  of  stale  data 
+(Section 3.1.1). 
+2.2.1. Race Conditions 
+UnsafeCountingFactorizer has several race conditions that make its results unreliable. A race condition occurs when 
+the correctness of a computation depends on the relative timing or interleaving of multiple threads by the runtime; in 
+other words, when getting the right answer relies on lucky timing.[4] The most common type of race condition is check‐
+then‐act, where a potentially stale observation is used to make a decision on what to do next. 
+[4] The term race condition is often confused with the related term data race, which arises when synchronization is not used to coordinate all 
+access to a shared non‐final field. You risk a data race whenever a thread writes a variable that might next be read by another thread or reads a 
+variable that might have last been written by another thread if both threads do not use synchronization; code with data races has no useful 
+defined semantics under the Java Memory Model. Not all race conditions are data races, and not all data races are race conditions, but they both 
+can cause concurrent programs to fail in unpredictable ways. UnsafeCountingFactorizer has both race conditions and data races. See Chapter 
+16 for more on data races. 
+We often encounter race conditions in real life. Let's say you planned to meet a friend at noon at the Starbucks on 
+University Avenue. But when you get there, you realize there are two Starbucks on University Avenue, and you're not 
+sure which one you agreed to meet at. At 12:10, you don't see your friend at Starbucks A, so you walk over to Starbucks 
+B  to  see  if  he's  there,  but  he  isn't  there  either.  There  are  a  few  possibilities:  your  friend  is  late  and  not  at  either 
+Starbucks; your friend arrived at Starbucks A after you left; or your friend was at Starbucks B, but went to look for you, 
+and is now en route to Starbucks A. Let's assume the worst and say it was the last possibility. Now it's 12:15, you've both 
+been to both Starbucks, and you're both wondering if you've been stood up. What do you do now? Go back to the other 
+Starbucks? How many times are you going to go back and forth? Unless you have agreed on a protocol, you could both 
+spend the day walking up and down University Avenue, frustrated and undercaffeinated. 
+The problem with the "I'll just nip up the street and see if he's at the other one" approach is that while you're walking up 
+the street, your friend might have moved. You look around Starbucks A, observe "he's not here", and go looking for him. 
+And you can do the same for Starbucks B, but not at the same time. It takes a few minutes to walk up the street, and 
+during those few minutes, the state of the system may have changed. 
+The Starbucks example illustrates a race condition because reaching the desired outcome (meeting your friend) depends 
+on the relative timing of events (when each of you arrives at one Starbucks or the other, how long you wait there before 
+switching, etc). The observation that he is not at Starbucks A becomes potentially invalid as soon as you walk out the 
+front door; he could have come in through the back door and you wouldn't know. It is this invalidation of observations 
+that  characterizes  most  race  conditions  ‐  using  a  potentially  stale  observation  to  make  a  decision  or  perform  a 
+computation. This type of race condition is called check‐then‐act: you observe something to be true (file X doesn't exist)

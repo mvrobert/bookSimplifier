@@ -1,0 +1,66 @@
+97 
+5BPart II: Structuring Concurrent Applications ‐ 19BChapter 7. Cancellation and Shutdown
+Listing 7.16. Logging Service that Uses an ExecutorService. 
+public class LogService { 
+    private final ExecutorService exec = newSingleThreadExecutor(); 
+    ... 
+    public void start() { } 
+ 
+    public void stop() throws InterruptedException { 
+        try { 
+            exec.shutdown(); 
+            exec.awaitTermination(TIMEOUT, UNIT); 
+        } finally { 
+            writer.close(); 
+        } 
+    } 
+    public void log(String msg) { 
+        try { 
+            exec.execute(new WriteTask(msg)); 
+        } catch (RejectedExecutionException ignored) { } 
+    } 
+} 
+7.2.3. Poison Pills 
+Another way to convince a producer‐consumer service to shut down is with a poison pill: a recognizable object placed 
+on the queue that means "when you get this, stop." With a FIFO queue, poison pills ensure that consumers finish the 
+work on their queue before shutting down, since any work submitted prior to submitting the poison pill will be retrieved 
+before the pill; producers should not submit any work after putting a poison pill on the queue. IndexingService in 
+Listings  7.17,  7.18,  and  7.19  shows  a  single‐producer,  single‐consumer  version  of  the  desktop  search  example  from 
+Listing 5.8 on page 91 that uses a poison pill to shut down the service. 
+Listing 7.17. Shutdown with Poison Pill. 
+public class IndexingService { 
+    private static final File POISON = new File(""); 
+    private final IndexerThread consumer = new IndexerThread(); 
+    private final CrawlerThread producer = new CrawlerThread(); 
+    private final BlockingQueue<File> queue; 
+    private final FileFilter fileFilter; 
+    private final File root; 
+ 
+    class CrawlerThread extends Thread { /* Listing 7.18 */ } 
+    class IndexerThread extends Thread { /* Listing 7.19 */ } 
+ 
+    public void start() { 
+        producer.start(); 
+        consumer.start(); 
+    } 
+ 
+    public void stop() { producer.interrupt(); } 
+ 
+    public void awaitTermination() throws InterruptedException { 
+        consumer.join(); 
+    } 
+} 
+Poison pills work only when the number of producers and consumers is known. The approach in IndexingService can 
+be extended tomultiple producers by having each producer place a pill on the queue and having the consumer stop only 
+when it receives Nproducers pills. It can be extended to multiple consumers by having each producer place Nconsumers pills on 
+the queue, though this can get unwieldy with large numbers of producers and consumers. Poison pills work reliably only 
+with unbounded queues. 
+7.2.4. Example: A One­shot Execution Service 
+If a method needs to process a batch of tasks and does not return until all the tasks are finished, it can simplify service 
+lifecycle management by  using a private  Executor  whose lifetime is bounded by that  method. (The  invokeAll and 
+invokeAny methods can often be useful in such situations.) 
+The checkMail method in Listing 7.20 checks for new mail in parallel on a number of hosts. It creates a private executor 
+and submits a task for each host: it then shuts down the executor and waits for termination, which occurs when all the 
+mail‐checking tasks have completed.[4] 
+[4] The reason an AtomicBoolean is used instead of a volatile boolean is that in order to access the hasNewMail flag from the inner 
+Runnable, it would have to be final, which would preclude modifying it.

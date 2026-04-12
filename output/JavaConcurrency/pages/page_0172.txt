@@ -1,0 +1,43 @@
+155 
+6BPart III: Liveness, Performance, and Testing ‐ 24BChapter 12. Testing Concurrent Programs
+12.1.2. Testing Blocking Operations 
+Tests of essential concurrency properties require introducing more than one thread. Most testing frameworks are not 
+very concurrency‐friendly: they rarely include facilities to create threads or monitor them to ensure that they do not die 
+unexpectedly. If a helper thread created by a test case discovers a failure, the framework usually does not know with 
+which test the thread is associated, so some work may be required to relay success or failure information back to the 
+main test runner thread so it can be reported. 
+For  the  conformance  tests  for  java.util.concurrent,  it  was  important  that  failures  be  clearly  associated  with  a 
+specific test. Hence the JSR 166 Expert Group created a base class[3] that provided methods to relay and report failures 
+during tearDown, following the convention that every test must wait until all the threads it created terminate. You may 
+not need to go to such lengths; the key requirements are that it be clear whether the tests passed and that failure 
+information is reported somewhere for use in diagnosing the problem. 
+[3] http://gee.cs.oswego.edu/cgi-bin/viewcvs.cgi/jsr166/src/test/tck/JSR166TestCase.java 
+If a method  is supposed  to block under certain conditions, then a test for that behavior should succeed only if the 
+thread does not proceed. Testing that a method blocks is similar to testing that a method throws an exception; if the 
+method returns normally, the test has failed. 
+Testing that a method blocks introduces an additional complication: once the method successfully blocks, you have to 
+convince it somehow to unblock. The obvious way to do this is via interruptionstart a blocking activity in a separate 
+thread, wait until the thread blocks, interrupt it, and then assert that the blocking operation completed. Of course, this 
+requires your blocking methods to respond to interruption by returning early or throwing InterruptedException. 
+The "wait until the thread blocks" part is easier said than done; in practice, you have to make an arbitrary decision 
+about  how  long  the  few  instructions  being  executed  could  possibly  take,  and  wait  longer  than  that.  You  should  be 
+prepared to increase this value if you are wrong (in which case you will see spurious test failures). 
+Listing 12.3 shows an approach to testing blocking  operations. It creates a "taker" thread that attempts to  take  an 
+element from an empty buffer. If take succeeds, it registers failure. The test runner thread starts the taker thread, waits 
+a  long  time,  and  then  interrupts  it.  If  the  taker  thread  has  correctly  blocked  in  the  take  operation,  it  will  throw 
+InterruptedException, and the catch block for this exception treats this as success and lets the thread exit. The main 
+test runner thread then attempts to join with the taker thread and verifies that the join returned successfully by calling 
+Thread.isAlive; if the taker thread responded to the interrupt, the join should complete quickly. 
+The timed join ensures that the test completes even if take gets stuck in some unexpected way. This test method tests 
+several properties of takenot only that it blocks but that, when interrupted, it throws InterruptedException. This is 
+one of the few cases in which it is appropriate to subclass Thread explicitly instead of using a Runnable in a pool: in 
+order to test proper termination with join. The same approach can be used to test that the taker thread unblocks after 
+an element is placed in the queue by the main thread. 
+It  is  tempting  to  use  Thread.getState  to  verify  that  the  thread  is  actually  blocked  on  a  condition  wait,  but  this 
+approach is not reliable. There is nothing that requires a blocked thread ever to enter the WAITING or TIMED_WAITING 
+states, since the JVM can choose to implement blocking by spin‐waiting instead. Similarly, because spurious wakeups 
+from  Object.wait or  Condition.await are permitted (see Chapter 14), a thread in the  WAITING or  TIMED_WAITING 
+state may temporarily transition to RUNNABLE even if the condition for which it is waiting is not yet true. Even ignoring 
+these implementation options, it may take some time for the target thread to settle into a blocking state. The result of 
+Thread.getState should not be used for concurrency control, and is of limited usefulness for testing ‐ its primary utility 
+is as a source of debugging information.

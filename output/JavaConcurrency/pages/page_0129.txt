@@ -1,0 +1,68 @@
+112 
+Java Concurrency In Practice 
+Listing 8.9. Thread Pool Extended with Logging and Timing. 
+public class TimingThreadPool extends ThreadPoolExecutor { 
+    private final ThreadLocal<Long> startTime 
+            = new ThreadLocal<Long>(); 
+    private final Logger log = Logger.getLogger("TimingThreadPool"); 
+    private final AtomicLong numTasks = new AtomicLong(); 
+    private final AtomicLong totalTime = new AtomicLong(); 
+ 
+    protected void beforeExecute(Thread t, Runnable r) { 
+        super.beforeExecute(t, r); 
+        log.fine(String.format("Thread %s: start %s", t, r)); 
+        startTime.set(System.nanoTime()); 
+    } 
+ 
+    protected void afterExecute(Runnable r, Throwable t) { 
+        try { 
+            long endTime = System.nanoTime(); 
+            long taskTime = endTime - startTime.get(); 
+            numTasks.incrementAndGet(); 
+            totalTime.addAndGet(taskTime); 
+            log.fine(String.format("Thread %s: end %s, time=%dns", 
+                    t, r, taskTime)); 
+        } finally { 
+            super.afterExecute(r, t); 
+        } 
+    } 
+ 
+    protected void terminated() { 
+        try { 
+            log.info(String.format("Terminated: avg time=%dns", 
+                    totalTime.get() / numTasks.get())); 
+        } finally { 
+            super.terminated(); 
+        } 
+    } 
+} 
+8.5. Parallelizing Recursive Algorithms 
+The page rendering examples in Section 6.3 went through a series of refinements in search of exploitable parallelism. 
+The first attempt was entirely sequential; the second used two threads but still performed all the image downloads 
+sequentially; the final version treated each image download as a separate task to achieve greater parallelism. Loops 
+whose bodies contain nontrivial computation or perform potentially blocking I/O are frequently good candidates for 
+parallelization, as long as the iterations are independent. 
+If we have a loop whose iterations are independent and we  don't need  to wait for all  of them to complete before 
+proceeding,  we  can  use  an  Executor  to  transform  a  sequential  loop  into  a  parallel  one,  as  shown  in 
+processSequentially and processInParallel in Listing 8.10. 
+Listing 8.10. Transforming Sequential Execution into Parallel Execution. 
+void processSequentially(List<Element> elements) { 
+    for (Element e : elements) 
+        process(e); 
+} 
+ 
+void processInParallel(Executor exec, List<Element> elements) { 
+    for (final Element e : elements) 
+        exec.execute(new Runnable() { 
+            public void run() { process(e); } 
+        }); 
+} 
+A call to processInParallel returns more quickly than a call to processSequentially because it returns as soon as all 
+the tasks are queued to the Executor, rather than waiting for them all to complete. If you want to submit a set of tasks 
+and wait for them all to complete, you can use ExecutorService.invokeAll; to retrieve the results as they become 
+available, you can use a CompletionService, as in Renderer on page 130. 
+Sequential loop iterations are suitable for parallelization when each iteration is independent of the others and the work 
+done in each iteration of the loop body is significant enough to offset the cost of managing a new task. 
+Loop parallelization can also be applied to some recursive designs; there are often sequential loops within the recursive 
+algorithm that can be parallelized in the same manner as Listing 8.10. The easier case is when each iteration does not 
+require  the  results  of  the  recursive  iterations  it  invokes.  For  example,  sequentialRecursive  in  Listing  8.11  does  a

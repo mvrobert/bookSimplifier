@@ -1,0 +1,54 @@
+54 
+Java Concurrency In Practice 
+Listing 5.6. Iteration Hidden within String Concatenation. Don't Do this. 
+ 
+public class HiddenIterator { 
+    @GuardedBy("this") 
+    private final Set<Integer> set = new HashSet<Integer>(); 
+ 
+    public synchronized void add(Integer i) { set.add(i); } 
+    public synchronized void remove(Integer i) { set.remove(i); } 
+ 
+    public void addTenThings() { 
+        Random r = new Random(); 
+        for (int i = 0; i < 10; i++) 
+            add(r.nextInt()); 
+        System.out.println("DEBUG: added ten elements to " + set); 
+   } 
+} 
+Iteration  is  also  indirectly  invoked  by  the  collection's  hashCode  and  equals  methods,  which  may  be  called  if  the 
+collection is used as an element or key of another collection. Similarly, the containsAll, removeAll, and retainAll 
+methods, as well as the constructors that take collections are arguments, also iterate the collection. All of these indirect 
+uses of iteration can cause ConcurrentModificationException. 
+5.2. Concurrent Collections 
+Java  5.0  improves  on  the  synchronized  collections  by  providing  several  concurrent  collection  classes.  Synchronized 
+collections achieve their thread safety by serializing all access to the collection's state. The cost of this approach is poor 
+concurrency; when multiple threads contend for the collection‐wide lock, throughput suffers. 
+The concurrent collections, on the other hand, are designed for concurrent access from multiple threads. Java 5.0 adds 
+ConcurrentHashMap, a replacement for synchronized hash‐based Map implementations, and CopyOnWriteArrayList, a 
+replacement  for  synchronized  List  implementations  for  cases  where  traversal  is  the  dominant  operation.  The  new 
+ConcurrentMap interface adds support for common compound actions such as put‐if‐absent, replace, and conditional 
+remove. 
+Replacing synchronized collections with concurrent collections can offer dramatic scalability improvements with little 
+risk. 
+Java 5.0 also adds two new collection types, Queue and BlockingQueue. A Queue is intended to hold a set of elements 
+temporarily while they await processing. Several implementations are provided, including ConcurrentLinkedQueue, a 
+traditional FIFO queue, and PriorityQueue, a (non concurrent) priority ordered queue. Queue operations do not block; 
+if the queue is empty, the retrieval operation returns  null. While you can simulate the behavior of a  Queue with a 
+Listin fact, LinkedList also implements Queue ‐ the Queue classes were added because eliminating the random‐access 
+requirements of List admits more efficient concurrent implementations. 
+BlockingQueue  extends  Queue  to  add  blocking  insertion  and  retrieval  operations.  If  the  queue  is  empty,  a  retrieval 
+blocks until an element is available, and if the queue is full (for bounded queues) an insertion blocks until there is space 
+available.  Blocking  queues  are  extremely  useful  in  producer‐consumer  designs,  and  are  covered  in  greater  detail  in 
+Section 5.3. 
+Just  as  ConcurrentHashMap  is  a  concurrent  replacement  for  a  synchronized  hash‐based  Map,  Java  6  adds 
+ConcurrentSkipListMap  and  ConcurrentSkipListSet,  which  are  concurrent  replacements  for  a  synchronized 
+SortedMap or SortedSet (such as TreeMap or TreeSet wrapped with synchronizedMap). 
+5.2.1. ConcurrentHashMap 
+The  synchronized  collections  classes  hold  a  lock  for  the  duration  of  each  operation.  Some  operations,  such  as 
+HashMap.get or List.contains, may involve more work than is initially obvious: traversing a hash bucket or list to find 
+a specific object entails calling equals (which itself may involve a fair amount of computation) on a number of candidate 
+objects.  In  a  hash‐based  collection,  if  hashCode  does  not  spread  out  hash  values  well,  elements  may  be  unevenly 
+distributed  among  buckets;  in  the  degenerate  case,  a  poor  hash  function  will  turn  a  hash  table  into  a  linked  list. 
+Traversing a long list and calling equals on some or all of the elements can take a long time, and during that time no 
+other thread can access the collection.

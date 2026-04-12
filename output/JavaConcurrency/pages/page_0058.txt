@@ -1,0 +1,44 @@
+41 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 16BChapter 4. 
+Composing Objects
+Similarly, the updater threads would modify vehicle locations with data received from GPS devices or entered manually 
+by a dispatcher through a GUI interface: 
+void vehicleMoved(VehicleMovedEvent evt) { 
+    Point loc = evt.getNewLocation(); 
+    vehicles.setLocation(evt.getVehicleId(), loc.x, loc.y); 
+} 
+Since the view thread and the updater threads will access the data model concurrently, it must be thread‐safe. Listing 
+4.4 shows an implementation of the vehicle tracker using the Java monitor pattern that uses MutablePoint in Listing 4.5 
+for representing the vehicle locations. 
+Even though MutablePoint is not thread‐safe, the tracker class is. Neither the map nor any of the mutable points it 
+contains is ever published. When we need to a return vehicle locations to callers, the appropriate values are copied 
+using either the MutablePoint copy constructor or deepCopy, which creates a new Map whose values are copies of the 
+keys and values from the old Map.[3] 
+[3] Note that deepCopy can't just wrap the Map with an unmodifiableMap, because that protects only the collection from modification; it does not 
+prevent callers from modifying the mutable objects stored in it. For the same reason, populating the HashMap in deepCopy via a copy constructor 
+wouldn't work either, because only the references to the points would be copied, not the point objects themselves. 
+This implementation maintains thread safety in part by copying mutable data before returning it to the client. This is 
+usually not a performance issue, but could become one if the set of vehicles is very large.[4] Another consequence of 
+copying the data on each call to getLocation is that the contents of the returned collection do not change even if the 
+underlying locations change. Whether this is good or bad depends on your requirements. It could be a benefit if there 
+are internal consistency requirements on the location set, in which case returning a consistent snapshot is critical, or a 
+drawback if callers require up‐to‐date information for each vehicle and therefore need to refresh their snapshot more 
+often. 
+[4] Because deepCopy is called from a synchronized method, the tracker's intrinsic lock is held for the duration of what might be a long‐running 
+copy operation, and this could degrade the responsiveness of the user interface when many vehicles are being tracked. 
+4.3. Delegating Thread Safety 
+All but the most trivial objects are composite objects. The Java monitor pattern is useful when building classes from 
+scratch or composing classes out of objects that are not thread‐safe. But what if the components of our class are already 
+thread‐safe? Do we need to add an additional layer of thread safety? The answer is . . . "it depends". In some cases a 
+composite made of thread‐safe components is thread‐safe (Listings 4.7 and 4.9), and in others it is merely a good start 
+(4.10). 
+In  CountingFactorizer  on  page  23,  we  added  an  AtomicLong  to  an  otherwise  stateless  object,  and  the  resulting 
+composite  object  was  still  thread‐safe.  Since  the  state  of  CountingFactorizer  is  the  state  of  the  thread‐safe 
+AtomicLong, and since CountingFactorizer imposes no additional validity constraints on the state of the counter, it is 
+easy  to  see  that  CountingFactorizer  is  thread‐safe.  We  could  say  that  CountingFactorizer  delegates  its  thread 
+safety responsibilities to the AtomicLong: CountingFactorizer is thread‐safe because AtomicLong is.[5] 
+[5] If count were not final, the thread safety analysis of CountingFactorizer would be more complicated. If CountingFactorizer could modify count 
+to reference a different AtomicLong, we would then have to ensure that this update was visible to all threads that might access the count, and that 
+there were no race conditions regarding the value of the count reference. This is another good reason to use final fields wherever practical.

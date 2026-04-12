@@ -1,0 +1,73 @@
+x 
+Java Concurrency In Practice 
+Listing 12.2. Basic Unit Tests for BoundedBuffer. 
+154 
+Listing 12.3. Testing Blocking and Responsiveness to Interruption. 
+156 
+Listing 12.4. Medium‐quality Random Number Generator Suitable for Testing. 
+157 
+Listing 12.5. Producer‐consumer Test Program for BoundedBuffer. 
+158 
+Listing 12.6. Producer and Consumer Classes Used in PutTakeTest. 
+158 
+Listing 12.7. Testing for Resource Leaks. 
+159 
+Listing 12.8. Thread Factory for Testing ThreadPoolExecutor. 
+160 
+Listing 12.9. Test Method to Verify Thread Pool Expansion. 
+160 
+Listing 12.10. Using Thread.yield to Generate More Interleavings. 
+160 
+Listing 12.11. Barrier‐based Timer. 
+161 
+Figure 12.1. TimedPutTakeTest with Various Buffer Capacities. 
+162 
+Listing 12.12. Testing with a Barrier‐based Timer. 
+162 
+Listing 12.13. Driver Program ‐ for TimedPutTakeTest. 
+163 
+Figure 12.2. Comparing Blocking Queue Implementations. 
+163 
+Figure 12.3. Completion Time Histogram for TimedPutTakeTest with Default (Non‐fair) and Fair 
+Semaphores. 
+164 
+Figure 12.4. Completion Time Histogram for TimedPutTakeTest with Single‐item Buffers. 
+164 
+Figure 12.5. Results Biased by Dynamic Compilation. 
+165 
+Chapter 13 - Explicit Locks 
+171 
+Listing 13.1. Lock Interface. 
+171 
+Listing 13.2. Guarding Object State Using ReentrantLock. 
+171 
+Listing 13.3. Avoiding Lock‐ordering Deadlock Using trylock. 
+173 
+Listing 13.4. Locking with a Time Budget. 
+173 
+Listing 13.5. Interruptible Lock Acquisition. 
+173 
+Figure 13.1. Intrinsic Locking Versus ReentrantLock Performance on Java 5.0 and Java 6. 
+174 
+Figure 13.2. Fair Versus Non‐fair Lock Performance. 
+175 
+Listing 13.6. ReadWriteLock Interface. 
+176 
+Listing 13.7. Wrapping a Map with a Read‐write Lock. 
+178 
+Figure 13.3. Read‐write Lock Performance. 
+178 
+Chapter 14 - Building Custom Synchronizers 
+179 
+Listing 14.1. Structure of Blocking State‐dependent Actions. 
+179 
+Listing 14.2. Base Class for Bounded Buffer Implementations. 
+180 
+Listing 14.3. Bounded Buffer that Balks When Preconditions are Not Met. 
+180 
+Listing 14.4. Client Logic for Calling GrumpyBoundedBuffer. 
+181 
+Figure 14.1. Thread Oversleeping Because the Condition Became True Just After It Went to Sleep. 
+181 
+Listing 14.5. Bounded Buffer Using Crude Blocking. 
+182

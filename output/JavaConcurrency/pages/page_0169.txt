@@ -1,0 +1,14 @@
+152 
+Java Concurrency In Practice 
+delivered to the fire), plus greater inefficiency because each worker is continuously switching modes (filling, running, 
+dumping, running, etc.). In the bucket‐brigade approach, the flow of water from the source to the burning building is 
+constant,  less  energy  is  expended  transporting  the  water  to  the  fire,  and  each  worker  focuses  on  doing  one  job 
+continuously. Just as interruptions are disruptive and productivity‐reducing to humans, blocking and context switching 
+are disruptive to threads. 
+Summary 
+Because  one  of  the  most  common  reasons  to  use  threads  is  to  exploit  multiple  processors,  in  discussing  the 
+performance of concurrent applications, we are usually more concerned with throughput or scalability than we are with 
+raw service time. Amdahl's law tells us that the scalability of an application is driven by the proportion of code that must 
+be executed serially. Since the primary source of serialization in Java programs is the exclusive resource lock, scalability 
+can often be improved by spending less time holding locks, either by reducing lock granularity, reducing the duration for 
+which locks are held, or replacing exclusive locks with nonexclusive or non‐blocking alternatives.

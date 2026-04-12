@@ -1,0 +1,46 @@
+102 
+Java Concurrency In Practice 
+To  set  an  UncaughtExceptionHandler  for  pool  threads,  provide  a  ThreadFactory  to  the  ThreadPoolExecutor 
+constructor. (As with all thread manipulation, only the thread's owner should change its UncaughtExceptionHandler.) 
+The standard thread pools allow an uncaught task exception to terminate the pool thread, but use a try-finally block 
+to be notified when this happens so the thread can be replaced. Without an uncaught exception handler or other failure 
+notification mechanism, tasks can appear to fail silently, which can be very confusing. If you want to be notified when a 
+task  fails  due  to  an  exception  so  that  you  can  take  some  task‐specific  recovery  action,  either  wrap  the  task  with  a 
+Runnable or Callable that catches the exception or override the afterExecute hook in ThreadPoolExecutor. 
+Somewhat  confusingly,  exceptions  thrown  from  tasks  make  it  to  the  uncaught  exception  handler  only  for  tasks 
+submitted with execute; for tasks submitted with submit, any thrown exception, checked or not, is considered to be 
+part  of  the  task's  return  status.  If  a  task  submitted  with  submit  terminates  with  an  exception,  it  is  rethrown  by 
+Future.get, wrapped in an ExecutionException. 
+7.4. JVM Shutdown 
+The JVM can shut down in either an orderly or abrupt manner. An orderly shutdown is initiated when the last "normal" 
+(non‐daemon) thread terminates, someone calls System.exit, or by other platform‐specific means (such as sending a 
+SIGINT or hitting Ctrl-C). While this is the standard and preferred way for the JVM to shut down, it can also be shut 
+down abruptly by calling Runtime.halt or by killing the JVM process through the operating system (such as sending a 
+SIGKILL). 
+7.4.1. Shutdown Hooks 
+In an orderly shutdown, the JVM first starts all registered shutdown hooks. Shutdown hooks are unstarted threads that 
+are registered with Runtime.addShutdownHook. The JVM makes no guarantees on the order in which shutdown hooks 
+are started. If any application threads (daemon or nondaemon) are still running at shutdown time, they continue to run 
+concurrently  with  the  shutdown  process.  When  all  shutdown  hooks  have  completed,  the  JVM  may  choose  to  run 
+finalizers  if  runFinalizersOnExit  is  true,  and  then  halts.  The  JVM  makes  no  attempt  to  stop  or  interrupt  any 
+application threads that are still running at shutdown time; they are abruptly terminated when the JVM eventually halts. 
+If the shutdown hooks or finalizers don't complete, then the orderly shutdown process "hangs" and the JVM must be 
+shut down abruptly. In an abrupt shutdown, the JVM is not required to do anything other than halt the JVM; shutdown 
+hooks will not run. 
+Shutdown  hooks  should  be  thread‐safe:  they  must  use  synchronization  when  accessing  shared  data  and  should  be 
+careful to avoid deadlock, just like any other concurrent code. Further, they should not make assumptions about the 
+state of the application (such as whether other services have shut down already or all normal threads have completed) 
+or about why the JVM is shutting down, and must therefore be coded extremely defensively. Finally, they should exit as 
+quickly as possible, since their existence delays JVM termination at a time when the user may be expecting the JVM to 
+terminate quickly. 
+Shutdown  hooks  can  be  used  for  service  or  application  cleanup,  such  as  deleting  temporary  files  or  cleaning  up 
+resources that are not automatically cleaned up by the OS. Listing 7.26 shows how LogService in Listing 7.16 could 
+register a shutdown hook from its start method to ensure the log file is closed on exit. 
+Because shutdown hooks all run concurrently, closing the log file could cause trouble for other shutdown hooks who 
+want to use the logger. To avoid this problem, shutdown hooks should not rely on services that can be shut down by the 
+application or other shutdown hooks. One way to accomplish this is to use a single shutdown hook for all services, 
+rather than  one for each service, and have it call  a series of shutdown actions. This ensures that shutdown actions 
+execute sequentially in a single thread, thus avoiding the possibility of race conditions or deadlock between shutdown 
+actions. This technique can be used whether or not you use shutdown hooks; executing shutdown actions sequentially 
+rather than concurrently eliminates many potential sources of failure. In applications that maintain explicit dependency 
+information among services, this technique can also ensure that shutdown actions are performed in the right order.

@@ -1,0 +1,66 @@
+62 
+Java Concurrency In Practice 
+Listing 5.12. Using FutureTask to Preload Data that is Needed Later. 
+public class Preloader { 
+    private final FutureTask<ProductInfo> future = 
+        new FutureTask<ProductInfo>(new Callable<ProductInfo>() { 
+            public ProductInfo call() throws DataLoadException { 
+                return loadProductInfo(); 
+            } 
+        }); 
+    private final Thread thread = new Thread(future); 
+ 
+    public void start() { thread.start(); } 
+ 
+    public ProductInfo get() 
+            throws DataLoadException, InterruptedException { 
+        try { 
+            return future.get(); 
+        } catch (ExecutionException e) { 
+            Throwable cause = e.getCause(); 
+            if (cause instanceof DataLoadException) 
+                throw (DataLoadException) cause; 
+            else 
+                throw launderThrowable(cause); 
+        } 
+    } 
+} 
+Preloader creates a FutureTask that describes the task of loading product information from a database and a thread in 
+which the computation will be performed. It provides a start method to start the thread, since it is inadvisable to start 
+a thread from a constructor or static initializer. When the program later needs the ProductInfo, it can call get, which 
+returns the loaded data if it is ready, or waits for the load to complete if not. 
+Tasks  described  by  Callable  can  throw  checked  and  unchecked  exceptions,  and  any  code  can  throw  an  Error. 
+Whatever the task code  may throw, it is wrapped in an  ExecutionException and rethrown from  Future.get.  This 
+complicates code that calls  get, not only because it must deal with the possibility of  ExecutionException (and the 
+unchecked  CancellationException),  but  also  because  the  cause  of  the  ExecutionException  is  returned  as  a 
+THRowable, which is inconvenient to deal with. 
+When  get throws an  ExecutionException in  Preloader, the cause will fall into one of three categories: a checked 
+exception thrown by the Callable, a RuntimeException, or an Error. We must handle each of these cases separately, 
+but we will use the  launderThrowable utility method in Listing 5.13 to encapsulate some of the messier exception‐
+handling  logic.  Before  calling  launderThrowable,  Preloader  tests  for  the  known  checked  exceptions  and  rethrows 
+them. That leaves only unchecked exceptions, which Preloader handles by calling launderThrowable and throwing the 
+result. If the Throwable passed to launderThrowable is an Error, launderThrowable rethrows it directly; if it is not a 
+RuntimeException, it throws an IllegalStateException to indicate a logic error. That leaves only RuntimeException, 
+which launderThrowable returns to its caller, and which the caller generally rethrows. 
+Listing 5.13. Coercing an Unchecked Throwable to a RuntimeException. 
+/** If the Throwable is an Error, throw it; if it is a 
+ *  RuntimeException return it, otherwise throw IllegalStateException 
+ */ 
+public static RuntimeException launderThrowable(Throwable t) { 
+    if (t instanceof RuntimeException) 
+        return (RuntimeException) t; 
+    else if (t instanceof Error) 
+        throw (Error) t; 
+    else 
+        throw new IllegalStateException("Not unchecked", t); 
+} 
+5.5.3. Semaphores 
+Counting semaphores are used to control the number of activities that can access a certain resource or perform a given 
+action at the same time [CPJ 3.4.1]. Counting semaphores can be used to implement resource pools or to impose a 
+bound on a collection. 
+A Semaphore manages a set of virtual permits; the initial number of permits is passed to the Semaphore constructor. 
+Activities can acquire permits (as long as some remain) and release permits when they are done with them. If no permit 
+is available, acquire blocks until one is (or until interrupted or the operation times out). The release method returns a 
+permit to the semaphore. [4] A degenerate case of a counting semaphore is a binary semaphore, a Semaphore with an 
+initial count of one. A binary semaphore can be used as a mutex with non‐reentrant locking semantics; whoever holds 
+the sole permit holds the mutex.

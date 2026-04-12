@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Java Concurrency in Practice Workshop</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --text: #1a1a2e;
+      --muted: #64748b;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --secondary: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 32%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.10), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    code, pre, .diagram {
+      font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+    }
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      width: 0;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      z-index: 1000;
+    }
+    #app {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 16px 36px;
+    }
+    #header {
+      position: sticky;
+      top: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      z-index: 100;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    }
+    #header .left,
+    #header .center,
+    #header .right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #header .center {
+      justify-content: center;
+      flex: 1;
+    }
+    #header .left {
+      min-width: 220px;
+      font-weight: 600;
+    }
+    #pct {
+      min-width: 46px;
+      text-align: right;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    button {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover {
+      border-color: var(--primary);
+    }
+    #slide {
+      background: var(--surface);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      padding: 40px 48px;
+      min-height: 520px;
+      border: 1px solid rgba(226, 232, 240, 0.85);
+    }
+    #slide h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+    #slide h2 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+    #slide p,
+    #slide li,
+    #slide td,
+    #slide th {
+      line-height: 1.7;
+      font-size: 1.03rem;
+    }
+    #slide pre {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    #slide table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    #slide th,
+    #slide td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    #slide tr:hover td {
+      background: #f8fafc;
+    }
+    .diagram {
+      border: 2px dashed #cbd5e1;
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 16px;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 18px 0;
+    }
+    .note,
+    .tip,
+    .warn,
+    .real {
+      border-left: 5px solid;
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin: 18px 0;
+    }
+    .note { border-color: #2563eb; background: #eff6ff; }
+    .tip { border-color: #22c55e; background: #f0fdf4; }
+    .warn { border-color: #eab308; background: #fefce8; }
+    .real { border-color: #7c3aed; background: #faf5ff; }
+    .quiz-container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .quiz-opt {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 12px;
+      border: 2px solid var(--border);
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .quiz-opt.correct {
+      border-color: var(--good);
+      background: #f0fdf4;
+    }
+    .quiz-opt.wrong {
+      border-color: var(--bad);
+      background: #fef2f2;
+    }
+    .quiz-opt.disabled {
+      pointer-events: none;
+      opacity: 0.78;
+    }
+    .quiz-feedback {
+      display: none;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 16px;
+    }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.pass {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .quiz-feedback.fail {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    #nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    #nav .prev {
+      background: #e2e8f0;
+    }
+    #nav .next {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    #toc {
+      position: fixed;
+      top: 0;
+      left: -360px;
+      width: 350px;
+      height: 100vh;
+      background: #ffffff;
+      border-right: 1px solid var(--border);
+      z-index: 201;
+      transition: left 0.2s ease;
+      padding: 24px 18px;
+      overflow-y: auto;
+      box-shadow: 8px 0 24px rgba(15, 23, 42, 0.1);
+    }
+    #toc.open {
+      left: 0;
+    }
+    #toc-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.32);
+      z-index: 200;
+    }
+    #toc-overlay.open {
+      display: block;
+    }
+    .toc-module {
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .toc-module h3 {
+      margin: 0 0 10px 0;
+      color: var(--secondary);
+    }
+    .toc-link {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 6px;
+      background: #fff;
+    }
+    .toc-link.current {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+    .quiz-meta {
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    @media (max-width: 768px) {
+      #slide { padding: 20px 24px; }
+      #header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      #header .left,
+      #header .center,
+      #header .right {
+        justify-content: space-between;
+        min-width: 0;
+      }
+    }
+    @media print {
+      #header, #nav, #progress-bar, #toc, #toc-overlay { display: none !important; }
+      #slide { box-shadow: none; border: none; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+  <div id="app">
+    <div id="header">
+      <div class="left" id="module-label">Module 0</div>
+      <div class="center" id="slide-counter">1 / 1</div>
+      <div class="right">
+        <button onclick="toggleTOC()" title="Table of Contents (T)">TOC</button>
+        <button onclick="retryFailed()" title="Retry failed quiz questions (R)">Retry</button>
+        <span id="pct">0%</span>
+      </div>
+    </div>
+    <div id="slide"></div>
+    <div id="nav">
+      <button class="prev" onclick="go(-1)">Prev</button>
+      <button class="next" onclick="go(1)">Next</button>
+    </div>
+  </div>
+  <div id="toc-overlay" onclick="toggleTOC(false)"></div>
+  <div id="toc">
+    <h2>Table of Contents</h2>
+    <div id="toc-body"></div>
+  </div>
+
+  <script>
+    const QUIZ_DATA = {"title": "Java Concurrency in Practice Workshop - Developer-friendly overview built from JavaConcurrency.pdf", "version": "1.0", "totalQuestions": 24, "modules": [{"id": 0, "name": "M0: Orientation", "questions": [{"question": "Why does the book front-load thread safety?", "options": ["Because later concurrency techniques depend on shared state being managed correctly", "Because GUI code always comes first", "Because performance tuning must happen before correctness", "Because thread pools remove safety bugs"], "answer": 0, "explanation": "The preface treats safety as the base layer for everything else.", "id": "javaconcurrency_m0_q1"}, {"question": "Which pair matches the introduction?", "options": ["Threads can improve overlap and responsiveness, but they add coordination risk", "Threads remove the need for synchronization", "Threads only matter for GUIs", "Threads always improve performance linearly"], "answer": 0, "explanation": "The book balances benefits against hazards from the start.", "id": "javaconcurrency_m0_q2"}, {"question": "What is the best first step when a concurrency bug feels vague?", "options": ["Classify it as safety, visibility, liveness, or performance", "Increase thread priority", "Replace all collections", "Disable interrupts"], "answer": 0, "explanation": "The workshop uses the book's structure as a debugging map.", "id": "javaconcurrency_m0_q3"}, {"question": "What are the source page spans for?", "options": ["To jump back into the original PDF for full examples and detail", "To skip the PDF entirely", "To find only figures", "To choose pool sizes"], "answer": 0, "explanation": "The deck is a guide, not a full replacement for the book.", "id": "javaconcurrency_m0_q4"}]}, {"id": 1, "name": "M1: Safety and Visibility", "questions": [{"question": "What best defines a thread-safe class?", "options": ["It behaves correctly under concurrent access without extra caller-side synchronization", "It contains a synchronized method", "It avoids object allocation", "It uses only final methods"], "answer": 0, "explanation": "The book defines thread safety as a behavioral property.", "id": "javaconcurrency_m1_q1"}, {"question": "Why are check-then-act sequences risky?", "options": ["Another thread can change state between the check and the action", "They always throw InterruptedException", "The JVM forbids them in threads", "They disable caching"], "answer": 0, "explanation": "Compound actions become races unless protected as one unit.", "id": "javaconcurrency_m1_q2"}, {"question": "What extra job does synchronization do besides atomicity?", "options": ["It provides visibility of writes across threads", "It increases queue capacity", "It schedules garbage collection", "It changes thread priority"], "answer": 0, "explanation": "Chapter 3 emphasizes visibility strongly.", "id": "javaconcurrency_m1_q3"}, {"question": "When is volatile most appropriate?", "options": ["For simple visibility-based state protocols, not rich multi-step invariants", "As a replacement for every lock", "For iterating collections safely", "For blocking I/O"], "answer": 0, "explanation": "Volatile helps, but it is not a universal substitute for locking.", "id": "javaconcurrency_m1_q4"}]}, {"id": 2, "name": "M2: Composition and Building Blocks", "questions": [{"question": "Why are thread-safe parts not enough by themselves?", "options": ["Because the full object may have invariants that span multiple operations or fields", "Because thread-safe classes cannot be reused", "Because composition disables locking", "Because Java forbids nested objects"], "answer": 0, "explanation": "Composition can create new correctness requirements.", "id": "javaconcurrency_m2_q1"}, {"question": "What is a major message of Chapter 5?", "options": ["Use JDK concurrent collections and synchronizers before inventing your own coordination protocol", "Avoid all collection classes", "Use polling loops instead of blocking", "Replace queues with volatile arrays"], "answer": 0, "explanation": "The book consistently favors stronger built-in abstractions.", "id": "javaconcurrency_m2_q2"}, {"question": "Why can synchronized collections still surprise callers?", "options": ["Compound actions like iteration or put-if-absent may still need extra coordination", "They cannot store mutable objects", "They stop working on multicore CPUs", "They disable exceptions"], "answer": 0, "explanation": "Method-level thread safety is not the same as workflow-level safety.", "id": "javaconcurrency_m2_q3"}, {"question": "When is BlockingQueue especially helpful?", "options": ["In producer-consumer designs with natural blocking behavior", "For replacing immutable objects", "For keeping UI work on the event thread", "For safe publication of final fields"], "answer": 0, "explanation": "It directly models a common coordination pattern.", "id": "javaconcurrency_m2_q4"}]}, {"id": 3, "name": "M3: Tasks, Cancellation, and Pools", "questions": [{"question": "What is the benefit of separating tasks from thread management?", "options": ["Task logic and execution policy can change independently", "It makes all code lock-free", "It removes the need for shutdown", "It guarantees perfect CPU usage"], "answer": 0, "explanation": "Chapter 6 treats executors as separation of concerns.", "id": "javaconcurrency_m3_q1"}, {"question": "Which abstractions fit the book's preferred execution style?", "options": ["Executor, Callable, and Future", "stop, suspend, and ThreadGroup", "Vector, Hashtable, and Timer", "clone, finalize, and notify"], "answer": 0, "explanation": "The book strongly steers work toward executor-based execution.", "id": "javaconcurrency_m3_q2"}, {"question": "Why is cancellation a design problem?", "options": ["Because tasks, blocking points, shutdown boundaries, and recovery behavior all have to cooperate", "Because Java cannot interrupt threads", "Because only GUIs cancel work", "Because cancellation is handled by the garbage collector"], "answer": 0, "explanation": "Robust cancellation depends on protocol and structure.", "id": "javaconcurrency_m3_q3"}, {"question": "Why can a thread pool hurt liveness?", "options": ["Tasks can block, depend on each other, or exhaust the limited execution budget", "Pools always create too many threads", "Pools disable queueing", "Pools break memory visibility"], "answer": 0, "explanation": "Chapter 8 focuses on hidden coupling between tasks and policy.", "id": "javaconcurrency_m3_q4"}]}, {"id": 4, "name": "M4: Responsiveness, Liveness, and Performance", "questions": [{"question": "What is the broad lesson from the GUI chapter?", "options": ["Some threads own responsiveness-critical work and must stay short and predictable", "Every background task should run on the UI thread", "GUI code never needs synchronization", "Thread pools should not touch models"], "answer": 0, "explanation": "Chapter 9 generalizes to any latency-sensitive subsystem.", "id": "javaconcurrency_m4_q1"}, {"question": "What best separates deadlock from livelock?", "options": ["Deadlock blocks progress in a cycle, while livelock keeps reacting without useful completion", "Deadlock affects syntax, livelock affects memory", "They are identical", "Livelock happens only with semaphores"], "answer": 0, "explanation": "Chapter 10 distinguishes blocked progress from endless useless activity.", "id": "javaconcurrency_m4_q2"}, {"question": "What does Amdahl's Law highlight?", "options": ["A serialized fraction can cap speedup from added parallelism", "Every workload scales linearly", "More locks always improve throughput", "Thread pools remove bottlenecks"], "answer": 0, "explanation": "Chapter 11 uses Amdahl's Law to set realistic scalability expectations.", "id": "javaconcurrency_m4_q3"}, {"question": "What change is most likely to improve scalability?", "options": ["Reducing contention at a shared hotspot", "Adding threads without measuring", "Making more fields global", "Holding locks longer"], "answer": 0, "explanation": "The book focuses on narrowing the serialized and contended parts.", "id": "javaconcurrency_m4_q4"}]}, {"id": 5, "name": "M5: Testing and Advanced Topics", "questions": [{"question": "Why are ordinary unit tests often weak for concurrent code?", "options": ["Many bugs depend on rare timing and interleaving conditions", "Concurrent code cannot be tested", "The JVM disables assertions in threads", "Only production traffic can exercise it"], "answer": 0, "explanation": "Chapter 12 emphasizes how hard timing-sensitive failures are to expose.", "id": "javaconcurrency_m5_q1"}, {"question": "When are explicit locks especially useful?", "options": ["When you need timed acquisition, interruptible acquisition, or multiple condition queues", "When synchronized is illegal", "Only for immutable classes", "Only for GUI code"], "answer": 0, "explanation": "Chapter 13 explains why explicit locks exist beyond intrinsic locking.", "id": "javaconcurrency_m5_q2"}, {"question": "What do atomic variables do well?", "options": ["They support narrow state transitions with low coordination overhead", "They preserve arbitrary multi-object invariants automatically", "They eliminate publication concerns", "They make blocking code non-blocking"], "answer": 0, "explanation": "Chapter 15 treats atomics as precise tools, not universal replacements.", "id": "javaconcurrency_m5_q3"}, {"question": "Why does the Java Memory Model still matter?", "options": ["Because visibility, ordering, and publication guarantees determine what other threads can observe", "Because it only affects legacy JVMs", "Because it applies only to GUIs", "Because it replaces thread safety"], "answer": 0, "explanation": "The memory model underlies all the visibility rules the book relies on.", "id": "javaconcurrency_m5_q4"}]}]};
+    const SLIDES = [{"m": 0, "t": "How the Book Is Organized", "c": "<p>This deck turns `JavaConcurrency.pdf` into a shorter study route.</p>\n<p>The book moves from thread-safety basics into executors, cancellation, liveness, performance, testing, and advanced synchronization tools.</p>\n<p>Use the source spans to jump back into the PDF when you want the fuller code examples.</p>\n<ul><li>Part I: safety, visibility, composition, building blocks</li><li>Part II: tasks, cancellation, pools, GUI responsiveness</li><li>Part III: liveness, scalability, testing</li><li>Part IV: explicit locks, custom synchronizers, atomics, memory model</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0018.png\" alt=\"Chapter 1 opening page.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Chapter 1 opening page.</p></div>\n<div class=\"note\"><strong>Source span:</strong> Source pages 18-27.</div>\n<div class=\"tip\"><strong>Reading rule:</strong> classify problems as safety, visibility, liveness, or performance issues before choosing a fix.</div>"}, {"m": 0, "t": "Why Concurrency Helps and Hurts", "c": "<p>Threads help overlap work, use multiple cores, and keep blocking operations from freezing the whole application.</p>\n<p>They also introduce shared-state races, stale reads, deadlock risk, and coordination overhead.</p>\n<p>The book's message is to use concurrency deliberately, not by default.</p>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0020.png\" alt=\"Introduction pages summarizing benefits and risks.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Introduction pages summarizing benefits and risks.</p></div>\n<div class=\"note\"><strong>Source span:</strong> Source pages 19-25.</div>"}, {"m": 0, "t": "Quiz: M0: Orientation", "q": true}, {"m": 1, "t": "Thread Safety in Practice", "c": "<p>A class is thread-safe when it behaves correctly under concurrent access without forcing callers to add hidden extra locking.</p>\n<p>Most failures come from shared mutable state, compound actions, and undocumented invariants.</p>\n<p>The book repeatedly asks: what state exists, who mutates it, and what rule protects it?</p>\n<ul><li>Stateless objects are easiest to make safe.</li><li>Check-then-act and read-modify-write sequences need real protection.</li><li>Thread safety is a behavior guarantee, not just a keyword.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0028.png\" alt=\"Chapter 2 on thread safety.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Chapter 2 on thread safety.</p></div>\n<div class=\"note\"><strong>Source span:</strong> Source pages 28-39.</div>"}, {"m": 1, "t": "Visibility, Confinement, and Publication", "c": "<p>Chapter 3 adds the subtle problem: one thread may not see another thread's writes when you expect.</p>\n<p>Synchronization is therefore about visibility as well as atomicity. Volatile, locking, and safe publication patterns tell the runtime what must become visible across threads.</p>\n<p>Confinement and immutability shrink the amount of state that needs coordination in the first place.</p>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0040.png\" alt=\"Chapter 3 on visibility and safe publication.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Chapter 3 on visibility and safe publication.</p></div>\n<div class=\"note\"><strong>Source span:</strong> Source pages 40-53.</div>\n<div class=\"warn\"><strong>Common mistake:</strong> code that 'usually works' is not evidence that visibility or publication is correct.</div>"}, {"m": 1, "t": "Quiz: M1: Safety and Visibility", "q": true}, {"m": 2, "t": "Composing Safe Classes", "c": "<p>A class built from thread-safe parts is not automatically thread-safe as a whole.</p>\n<p>Composition can introduce cross-field invariants and compound operations that the parts do not protect together.</p>\n<p>That is why Chapter 4 pushes hard on documenting synchronization policy and ownership of state.</p>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0054.png\" alt=\"Chapter 4 on composition and delegation.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Chapter 4 on composition and delegation.</p></div>\n<div class=\"note\"><strong>Source span:</strong> Source pages 54-67.</div>"}, {"m": 2, "t": "Prefer Library Building Blocks", "c": "<p>Chapter 5 argues for using concurrent collections, blocking queues, futures, latches, and semaphores instead of hand-rolled wait/notify protocols whenever possible.</p>\n<p>These abstractions package concurrency policies more clearly and usually more safely than custom coordination code.</p>\n<p>The broad lesson is to move upward in abstraction before reaching for lower-level primitives.</p>\n<ul><li>BlockingQueue simplifies producer-consumer work.</li><li>Concurrent collections improve shared-access patterns.</li><li>Synchronizers express coordination directly.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0068.png\" alt=\"Chapter 5 on concurrent collections and synchronizers.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Chapter 5 on concurrent collections and synchronizers.</p></div>\n<div class=\"note\"><strong>Source span:</strong> Source pages 68-88.</div>"}, {"m": 2, "t": "Quiz: M2: Composition and Building Blocks", "q": true}, {"m": 3, "t": "Think in Tasks, Not Raw Threads", "c": "<p>Chapter 6 reframes concurrency around units of work. Define tasks and hand them to an execution policy instead of micromanaging thread creation everywhere.</p>\n<p>That separation lets task logic evolve separately from queueing, sizing, reuse, shutdown, and monitoring.</p>\n<p>Executor, Callable, and Future are central because they decouple what work is done from how it runs.</p>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0089.png\" alt=\"Chapter 6 on task execution.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Chapter 6 on task execution.</p></div>\n<div class=\"note\"><strong>Source span:</strong> Source pages 89-101.</div>"}, {"m": 3, "t": "Cancellation and Pool Policy", "c": "<p>Chapter 7 treats cancellation as part of service design, not a side feature. Interruption is the standard cooperative signal and code has to honor it consistently.</p>\n<p>Chapter 8 adds that thread pools are resource-management policies. Size, queue choice, task dependencies, and blocking behavior all affect throughput and liveness.</p>\n<p>A pool is not just a performance trick. It is a concurrency contract.</p>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0121.png\" alt=\"Chapters 7 and 8 on shutdown, interruption, and pool design.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Chapters 7 and 8 on shutdown, interruption, and pool design.</p></div>\n<div class=\"note\"><strong>Source span:</strong> Source pages 102-133.</div>\n<div class=\"warn\"><strong>Pool sizing:</strong> base it on workload shape and blocking behavior, not copied defaults.</div>"}, {"m": 3, "t": "Quiz: M3: Tasks, Cancellation, and Pools", "q": true}, {"m": 4, "t": "Protecting Responsiveness", "c": "<p>Chapter 9 uses GUI work to show that some threads own responsiveness-critical work and must stay fast and predictable.</p>\n<p>Long-running work belongs on background threads, but coordination back to the owning thread has to stay disciplined.</p>\n<p>This lesson applies outside GUIs too: some subsystems have a latency budget that background work must respect.</p>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0134.png\" alt=\"Chapter 9 on responsiveness in single-threaded subsystems.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Chapter 9 on responsiveness in single-threaded subsystems.</p></div>\n<div class=\"note\"><strong>Source span:</strong> Source pages 134-144.</div>"}, {"m": 4, "t": "Deadlock to Scalability", "c": "<p>Chapter 10 covers deadlock, starvation, and livelock: different ways a program can stop making useful progress.</p>\n<p>Chapter 11 adds the performance view: more threads do not guarantee more throughput. Contention, serialized sections, and context switching cap scalability.</p>\n<p>Amdahl's Law is the reminder that a small serialized bottleneck can dominate the speedup ceiling.</p>\n<ul><li>Deadlock: progress stops in a waiting cycle.</li><li>Livelock: work keeps reacting but never finishes.</li><li>Scalability depends on reducing contention and serialized work.</li></ul>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0154.png\" alt=\"Chapters 10 and 11 on liveness and scalability.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Chapters 10 and 11 on liveness and scalability.</p></div>\n<div class=\"note\"><strong>Source span:</strong> Source pages 145-169.</div>"}, {"m": 4, "t": "Quiz: M4: Responsiveness, Liveness, and Performance", "q": true}, {"m": 5, "t": "Testing Concurrent Code", "c": "<p>Chapter 12 explains why normal unit tests are not enough for concurrent code. Timing-sensitive failures may appear only under specific interleavings or stress levels.</p>\n<p>Testing therefore has to mix correctness checks, stress, performance checks, and designs that make concurrency errors easier to provoke and observe.</p>\n<p>Poorly structured concurrent code is harder to test because its coordination rules are hidden.</p>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0170.png\" alt=\"Chapter 12 on testing correctness and performance.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Chapter 12 on testing correctness and performance.</p></div>\n<div class=\"note\"><strong>Source span:</strong> Source pages 170-187.</div>"}, {"m": 5, "t": "Locks, Atomics, and the Memory Model", "c": "<p>Chapters 13 and 14 introduce explicit locks and custom synchronizers for cases where intrinsic locking or existing utilities are not expressive enough.</p>\n<p>Chapters 15 and 16 show where atomics shine and why the Java Memory Model still governs visibility, ordering, and safe publication underneath every higher-level abstraction.</p>\n<p>Advanced primitives do not remove the need to reason carefully about invariants. They raise the bar for precision.</p>\n<div style=\"margin:18px 0 10px;\"><img src=\"page_previews/page_0224.png\" alt=\"Chapters 13-16 on advanced synchronization tools and memory semantics.\" style=\"width:100%;max-height:420px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;\"><p style=\"font-size:0.95rem;color:#475569;margin-top:8px;\">Chapters 13-16 on advanced synchronization tools and memory semantics.</p></div>\n<div class=\"note\"><strong>Source span:</strong> Source pages 188-235.</div>\n<div class=\"tip\"><strong>Decision rule:</strong> use atomics for narrow state changes; use locks when you must preserve richer invariants across multiple variables or operations.</div>"}, {"m": 5, "t": "Quiz: M5: Testing and Advanced Topics", "q": true}];
+    const MODULE_NAMES = ["M0: Orientation", "M1: Safety and Visibility", "M2: Composition and Building Blocks", "M3: Tasks, Cancellation, and Pools", "M4: Responsiveness, Liveness, and Performance", "M5: Testing and Advanced Topics"];
+    const STORE_KEY = 'JavaConcurrency_workshop';
+
+    let cur = 0;
+    let quizState = {};
+    let failedQs = [];
+
+    function save() {
+      const data = { cur, quizState, failedQs, ts: Date.now() };
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
+      try { document.cookie = STORE_KEY + '=' + cur + ';max-age=31536000;path=/'; } catch (e) {}
+    }
+
+    function load() {
+      try {
+        const data = JSON.parse(localStorage.getItem(STORE_KEY));
+        if (data) {
+          cur = data.cur || 0;
+          quizState = data.quizState || {};
+          failedQs = data.failedQs || [];
+        }
+      } catch (e) {}
+    }
+
+    function esc(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function hashSeed(seed) {
+      let h = 2166136261;
+      for (let i = 0; i < seed.length; i += 1) {
+        h ^= seed.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return h >>> 0;
+    }
+
+    function shuffleOpts(opts, seed) {
+      const items = opts.map((text, index) => ({ text, correct: index === 0 }));
+      let state = hashSeed(seed) || 1;
+      for (let i = items.length - 1; i > 0; i -= 1) {
+        state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+        const j = state % (i + 1);
+        const tmp = items[i];
+        items[i] = items[j];
+        items[j] = tmp;
+      }
+      return items;
+    }
+
+    function getModule(moduleId) {
+      return QUIZ_DATA.modules.find((module) => module.id === moduleId);
+    }
+
+    function ensureQuizState(moduleId) {
+      const module = getModule(moduleId);
+      if (!quizState[moduleId]) {
+        quizState[moduleId] = { answers: {}, score: 0, total: module.questions.length, done: false };
+      }
+      return quizState[moduleId];
+    }
+
+    function renderQuiz(moduleId) {
+      const module = getModule(moduleId);
+      const state = ensureQuizState(moduleId);
+      state.total = module.questions.length;
+      state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+
+      const nextQuestion = module.questions.find((question) => !state.answers[question.id]);
+      if (!nextQuestion) {
+        state.done = true;
+        const pct = Math.round((state.score / state.total) * 100);
+        return `
+          <div class="quiz-container">
+            <h1>${esc(module.name)} Quiz</h1>
+            <p class="quiz-meta">You completed ${state.total} questions for this module.</p>
+            <div class="${pct >= 70 ? 'quiz-feedback pass show' : 'quiz-feedback fail show'}">
+              Score: ${state.score} / ${state.total} (${pct}%).
+              Use Retry to revisit questions answered incorrectly.
+            </div>
+          </div>
+        `;
+      }
+
+      const questionIndex = module.questions.findIndex((question) => question.id === nextQuestion.id);
+      const options = shuffleOpts(nextQuestion.options, nextQuestion.id);
+
+      return `
+        <div class="quiz-container">
+          <h1>${esc(module.name)} Quiz</h1>
+          <p class="quiz-meta">Question ${questionIndex + 1} of ${module.questions.length}</p>
+          <h2>${esc(nextQuestion.question)}</h2>
+          ${options.map((option, index) => `
+            <button class="quiz-opt" id="opt-${index}" onclick="answerQuiz(${moduleId}, '${nextQuestion.id}', ${index})">${esc(option.text)}</button>
+          `).join('')}
+          <div class="quiz-feedback" id="quiz-feedback"></div>
+        </div>
+      `;
+    }
+
+    function answerQuiz(moduleId, questionId, chosenIndex) {
+      const module = getModule(moduleId);
+      const state = ensureQuizState(moduleId);
+      if (state.answers[questionId]) {
+        return;
+      }
+
+      const question = module.questions.find((item) => item.id === questionId);
+      const options = shuffleOpts(question.options, question.id);
+      const chosen = options[chosenIndex];
+      const isCorrect = !!chosen.correct;
+
+      state.answers[questionId] = { chosen: chosen.text, correct: isCorrect };
+      state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+
+      if (!isCorrect && !failedQs.some((item) => item.moduleId === moduleId && item.qId === questionId)) {
+        failedQs.push({ moduleId, qId: questionId });
+      }
+      if (Object.keys(state.answers).length === module.questions.length) {
+        state.done = true;
+      }
+
+      options.forEach((option, index) => {
+        const button = document.getElementById(`opt-${index}`);
+        if (!button) return;
+        button.classList.add('disabled');
+        if (option.correct) {
+          button.classList.add('correct');
+        } else if (index === chosenIndex) {
+          button.classList.add('wrong');
+        }
+      });
+
+      const feedback = document.getElementById('quiz-feedback');
+      if (feedback) {
+        feedback.className = `quiz-feedback show ${isCorrect ? 'pass' : 'fail'}`;
+        feedback.innerHTML = `<strong>${isCorrect ? 'Correct.' : 'Not quite.'}</strong> ${esc(question.explanation)}`;
+      }
+
+      save();
+      setTimeout(render, isCorrect ? 1200 : 3000);
+    }
+
+    function retryFailed() {
+      if (!failedQs.length) {
+        alert('No failed quiz questions are currently tracked.');
+        return;
+      }
+
+      const retryItems = failedQs.slice();
+      retryItems.forEach((item) => {
+        const state = ensureQuizState(item.moduleId);
+        delete state.answers[item.qId];
+        state.score = Object.values(state.answers).filter((answer) => answer.correct).length;
+        state.done = false;
+      });
+
+      const first = retryItems[0];
+      failedQs = [];
+      cur = SLIDES.findIndex((slide) => slide.q && slide.m === first.moduleId);
+      render();
+    }
+
+    function go(dir) {
+      cur = Math.max(0, Math.min(SLIDES.length - 1, cur + dir));
+      render();
+    }
+
+    function jump(index) {
+      cur = index;
+      render();
+      toggleTOC(false);
+    }
+
+    function toggleTOC(force) {
+      const toc = document.getElementById('toc');
+      const overlay = document.getElementById('toc-overlay');
+      const shouldOpen = typeof force === 'boolean' ? force : !toc.classList.contains('open');
+      toc.classList.toggle('open', shouldOpen);
+      overlay.classList.toggle('open', shouldOpen);
+    }
+
+    function buildTOC() {
+      const tocBody = document.getElementById('toc-body');
+      const html = MODULE_NAMES.map((moduleName, moduleIndex) => {
+        const links = SLIDES.map((slide, slideIndex) => ({ slide, slideIndex }))
+          .filter((entry) => entry.slide.m === moduleIndex)
+          .map((entry) => `
+            <button class="toc-link ${entry.slideIndex === cur ? 'current' : ''}" onclick="jump(${entry.slideIndex})">
+              ${entry.slide.q ? 'Quiz' : esc(entry.slide.t)}
+            </button>
+          `)
+          .join('');
+        return `<div class="toc-module"><h3>${esc(moduleName)}</h3>${links}</div>`;
+      }).join('');
+      tocBody.innerHTML = html;
+    }
+
+    function render() {
+      const slide = SLIDES[cur];
+      const progress = Math.round(((cur + 1) / SLIDES.length) * 100);
+      document.getElementById('progress-bar').style.width = progress + '%';
+      document.getElementById('pct').textContent = progress + '%';
+      document.getElementById('slide-counter').textContent = `${cur + 1} / ${SLIDES.length}`;
+      document.getElementById('module-label').textContent = MODULE_NAMES[slide.m];
+      document.getElementById('slide').innerHTML = slide.q ? renderQuiz(slide.m) : `<h1>${esc(slide.t)}</h1>${slide.c}`;
+      save();
+      buildTOC();
+    }
+
+    document.addEventListener('keydown', (event) => {
+      const tag = (event.target && event.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') {
+        return;
+      }
+      if (event.key === ' ' && !event.shiftKey) {
+        event.preventDefault();
+        go(1);
+      } else if ((event.key === ' ' && event.shiftKey) || event.key === 'ArrowLeft') {
+        event.preventDefault();
+        go(-1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        go(1);
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        cur = 0;
+        render();
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        cur = SLIDES.length - 1;
+        render();
+      } else if (event.key === 't' || event.key === 'T') {
+        event.preventDefault();
+        toggleTOC();
+      } else if (event.key === 'r' || event.key === 'R') {
+        event.preventDefault();
+        retryFailed();
+      }
+    });
+
+    load();
+    render();
+  </script>
+</body>
+</html>

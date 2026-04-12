@@ -8,12 +8,27 @@ from pathlib import Path
 import fitz
 
 
-CHAPTER_RE = re.compile(r"^(\d+)\s+(.+)$")
+CHAPTER_PREFIX_RE = re.compile(r"^Chapter\s+(\d+)\s*(?:[.\-])\s+(.+)$", re.IGNORECASE)
+CHAPTER_PLAIN_RE = re.compile(r"^(\d+)\s+(.+)$")
 ITEM_RE = re.compile(r"^Item\s+(\d+):\s*(.+)$")
+SECTION_RE = re.compile(r"^(\d+(?:\.\d+)+)\.?\s+(.+)$")
 
 
 def safe_stem(name: str) -> str:
     return "".join(ch if ch.isalnum() or ch in ("-", "_") else "_" for ch in name)
+
+
+def parse_chapter_title(title: str) -> tuple[int, str] | None:
+    text = title.strip()
+    prefixed = CHAPTER_PREFIX_RE.match(text)
+    if prefixed:
+        return int(prefixed.group(1)), prefixed.group(2).strip()
+
+    plain = CHAPTER_PLAIN_RE.match(text)
+    if plain:
+        return int(plain.group(1)), plain.group(2).strip()
+
+    return None
 
 
 def parse_args() -> argparse.Namespace:
@@ -38,20 +53,22 @@ def build_manifest(pdf_path: Path, output_root: Path) -> Path:
     toc = document.get_toc(simple=True)
     chapter_entries: list[dict[str, object]] = []
 
-    for index, (level, title, page) in enumerate(toc):
-        if level != 1:
+    chapter_toc_entries: list[tuple[int, str, int]] = []
+    for level, title, page in toc:
+        parsed = parse_chapter_title(title)
+        if parsed is None:
             continue
-        match = CHAPTER_RE.match(title.strip())
-        if not match:
+        chapter_toc_entries.append((level, title, page))
+
+    for index, (level, title, page) in enumerate(chapter_toc_entries):
+        parsed = parse_chapter_title(title)
+        if parsed is None:
             continue
 
-        chapter_number = int(match.group(1))
-        chapter_title = match.group(2).strip()
+        chapter_number, chapter_title = parsed
         next_chapter_page = document.page_count + 1
-        for next_level, next_title, next_page in toc[index + 1 :]:
-            if next_level == 1 and CHAPTER_RE.match(next_title.strip()):
-                next_chapter_page = next_page
-                break
+        if index + 1 < len(chapter_toc_entries):
+            next_chapter_page = chapter_toc_entries[index + 1][2]
 
         chapter_entries.append(
             {
@@ -61,35 +78,45 @@ def build_manifest(pdf_path: Path, output_root: Path) -> Path:
                 "start_page": page,
                 "end_page": next_chapter_page - 1,
                 "items": [],
+                "_level": level,
             }
         )
 
     chapter_by_start = {int(chapter["start_page"]): chapter for chapter in chapter_entries}
     current_chapter: dict[str, object] | None = None
-    pending_items: list[tuple[int, dict[str, object]]] = []
 
     for level, title, page in toc:
-        chapter_match = CHAPTER_RE.match(title.strip())
-        if level == 1 and chapter_match:
+        if parse_chapter_title(title) is not None:
             current_chapter = chapter_by_start.get(page)
-            pending_items = []
             continue
 
-        if current_chapter is None or level != 2:
+        if current_chapter is None:
+            continue
+
+        expected_item_level = int(current_chapter["_level"]) + 1
+        if level != expected_item_level:
             continue
 
         item_match = ITEM_RE.match(title.strip())
-        if not item_match:
+        section_match = SECTION_RE.match(title.strip())
+        if item_match:
+            item_number: int | str = int(item_match.group(1))
+            item_title = item_match.group(2).strip()
+            item_slug = f"item_{int(item_number):02d}_{safe_stem(item_title.lower())}"
+        elif section_match:
+            item_number = section_match.group(1)
+            item_title = section_match.group(2).strip()
+            item_slug = f"section_{safe_stem(str(item_number))}_{safe_stem(item_title.lower())}"
+        else:
             continue
 
-        item_number = int(item_match.group(1))
-        item_title = item_match.group(2).strip()
         item_entry = {
             "item_number": item_number,
             "title": item_title,
             "full_title": title.strip(),
             "start_page": page,
             "end_page": int(current_chapter["end_page"]),
+            "slug": item_slug,
         }
 
         items = current_chapter["items"]
@@ -101,14 +128,8 @@ def build_manifest(pdf_path: Path, output_root: Path) -> Path:
     for chapter in chapter_entries:
         chapter_slug = f"chapter_{chapter['chapter_number']:02d}_{safe_stem(str(chapter['title']).lower())}"
         chapter["slug"] = chapter_slug
-        chapter["items"] = [
-            {
-                **item,
-                "slug": f"item_{item['item_number']:02d}_{safe_stem(str(item['title']).lower())}",
-            }
-            for item in chapter["items"]
-        ]
         chapter["item_count"] = len(chapter["items"])
+        chapter.pop("_level", None)
         chapters_out.append(chapter)
 
     manifest = {

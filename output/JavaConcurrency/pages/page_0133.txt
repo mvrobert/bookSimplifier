@@ -1,0 +1,65 @@
+116 
+Java Concurrency In Practice 
+Listing 8.17. Result­bearing Latch Used by ConcurrentPuzzleSolver. 
+@ThreadSafe 
+public class ValueLatch<T> { 
+    @GuardedBy("this") private T value = null; 
+    private final CountDownLatch done = new CountDownLatch(1); 
+ 
+    public boolean isSet() { 
+        return (done.getCount() == 0); 
+    } 
+    public synchronized void setValue(T newValue) { 
+        if (!isSet()) { 
+            value = newValue; 
+            done.countDown(); 
+        } 
+    } 
+ 
+    public T getValue() throws InterruptedException { 
+        done.await(); 
+        synchronized (this) { 
+            return value; 
+        } 
+    } 
+} 
+ConcurrentPuzzleSolver  does  not  deal  well  with  the  case  where  there  is  no  solution:  if  all  possible  moves  and 
+positions have been evaluated and no solution has been found,  solve waits forever in the call to getSolution. The 
+sequential version terminated when it had exhausted the search space, but getting concurrent programs to terminate 
+can sometimes be more difficult. One possible solution is to keep a count of active solver tasks and set the solution to 
+null when the count drops to zero, as in Listing 8.18. 
+Finding the solution may also take longer than we are willing to wait; there are several additional termination conditions 
+we could impose on the solver. One is a time limit; this is easily done by implementing a timed getValue in ValueLatch 
+(which would use the timed version of await), and shutting down the Executor and declaring failure if getValue times 
+out. Another is some sort of puzzle‐specific metric such as searching only up to a certain number of positions. Or we can 
+provide a cancellation mechanism and let the client make its own decision about when to stop searching. 
+Listing 8.18. Solver that Recognizes when No Solution Exists. 
+public class PuzzleSolver<P,M> extends ConcurrentPuzzleSolver<P,M> { 
+    ... 
+    private final AtomicInteger taskCount = new AtomicInteger(0); 
+ 
+    protected Runnable newTask(P p, M m, Node<P,M> n) { 
+        return new CountingSolverTask(p, m, n); 
+    } 
+ 
+    class CountingSolverTask extends SolverTask { 
+        CountingSolverTask(P pos, M move, Node<P, M> prev) { 
+            super(pos, move, prev); 
+            taskCount.incrementAndGet(); 
+        } 
+        public void run() { 
+            try { 
+                super.run(); 
+            } finally { 
+                if (taskCount.decrementAndGet() == 0) 
+                    solution.setValue(null); 
+            } 
+        } 
+    } 
+} 
+Summary 
+The Executor framework is a powerful and flexible framework for concurrently executing tasks. It offers a number of 
+tuning options, such as policies for creating and tearing down threads, handling queued tasks, and what to do with 
+excess tasks, and provides several hooks for extending its behavior. As in most powerful frameworks, however, there 
+are combinations of settings that do not work well together; some types of tasks require specific execution policies, and 
+some combinations of tuning parameters may produce strange results.

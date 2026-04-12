@@ -1,0 +1,58 @@
+80 
+Java Concurrency In Practice 
+Listing 6.11. Callable and Future Interfaces. 
+public interface Callable<V> { 
+    V call() throws Exception; 
+} 
+ 
+public interface Future<V> { 
+    boolean cancel(boolean mayInterruptIfRunning); 
+    boolean isCancelled(); 
+    boolean isDone(); 
+    V get() throws InterruptedException, ExecutionException, 
+                   CancellationException; 
+    V get(long timeout, TimeUnit unit) 
+        throws InterruptedException, ExecutionException, 
+               CancellationException, TimeoutException; 
+} 
+There are several ways to create a Future to describe a task. The  submit methods in  ExecutorService all return a 
+Future, so that you can submit a Runnable or a Callable to an executor and get back a Future that can be used to 
+retrieve the result or cancel the task. You can also explicitly instantiate a FutureTask for a given Runnable or Callable. 
+(Because FutureTask implements Runnable, it can be submitted to an Executor for execution or executed directly by 
+calling its run method.) 
+As  of  Java  6,  ExecutorService  implementations  can  override  newTaskFor  in  AbstractExecutorService  to  control 
+instantiation  of  the  Future  corresponding  to  a  submitted  Callable  or  Runnable.  The  default  implementation  just 
+creates a new FutureTask, as shown in Listing 6.12. 
+Listing 6.12. Default Implementation of newTaskFor in ThreadPoolExecutor. 
+protected <T> RunnableFuture<T> newTaskFor(Callable<T> task) { 
+    return new FutureTask<T>(task); 
+} 
+Submitting a Runnable or Callable to an Executor constitutes a safe publication (see Section 3.5) of the Runnable or 
+Callable from the submitting thread to the thread that will eventually execute the task. Similarly, setting the result 
+value for a Future constitutes a safe publication of the result from the thread in which it was computed to any thread 
+that retrieves it via get. 
+6.3.3. Example: Page Renderer with Future 
+As a first step towards making the page renderer more concurrent, let's divide it into two tasks, one that renders the 
+text and one that downloads all the images. (Because one task is largely CPU‐bound and the other is largely I/O‐bound, 
+this approach may yield improvements even on single‐CPU systems.) 
+Callable  and  Future  can  help  us  express  the  interaction  between  these  cooperating  tasks.  In  FutureRenderer  in 
+Listing 6.13, we create a Callable to download all the images, and submit it to an ExecutorService. This returns a 
+Future describing the task's execution; when the main task gets to the point where it needs the images, it waits for the 
+result by calling Future.get. If we're lucky, the results will already be ready by the time we ask; otherwise, at least we 
+got a head start on downloading the images. 
+The state‐dependent nature of  get  means that  the  caller need not be aware of the state of the  task, and  the safe 
+publication properties of task submission and result retrieval make this approach thread‐safe. The exception handling 
+code surrounding Future.get deals with two possible problems: that the task encountered an Exception, or the thread 
+calling get was interrupted before the results were available. (See Sections 5.5.2 and 5.4.) 
+FutureRenderer allows the text to be rendered concurrently with downloading the image data. When all the images 
+are downloaded, they are rendered onto the page. This is an improvement in that the user sees a result quickly and it 
+exploits some parallelism, but we can do considerably better. There is no need for users to wait for all the images to be 
+downloaded; they would probably prefer to see individual images drawn as they become available. 
+6.3.4. Limitations of Parallelizing Heterogeneous Tasks 
+In the last example, we tried to execute two different types of tasks in parallel ‐ downloading the images and rendering 
+the page. But obtaining significant performance improvements by trying to parallelize sequential heterogeneous tasks 
+can be tricky. 
+Two people can divide the work of cleaning the dinner dishes fairly effectively: one person washes while the other dries. 
+However, assigning a different type of task to each worker does not scale well; if several more people show up, it is not 
+obvious how they can help without getting in the way or significantly restructuring the division of labor. Without finding 
+finer‐grained parallelism among similar tasks, this approach will yield diminishing returns.

@@ -1,0 +1,44 @@
+44 
+Java Concurrency In Practice 
+Listing 4.9. Delegating Thread Safety to Multiple Underlying State Variables. 
+public class VisualComponent { 
+    private final List<KeyListener> keyListeners 
+        = new CopyOnWriteArrayList<KeyListener>(); 
+    private final List<MouseListener> mouseListeners 
+        = new CopyOnWriteArrayList<MouseListener>(); 
+ 
+    public void addKeyListener(KeyListener listener) { 
+        keyListeners.add(listener); 
+    } 
+ 
+    public void addMouseListener(MouseListener listener) { 
+        mouseListeners.add(listener); 
+    } 
+ 
+    public void removeKeyListener(KeyListener listener) { 
+        keyListeners.remove(listener); 
+    } 
+ 
+    public void removeMouseListener(MouseListener listener) { 
+        mouseListeners.remove(listener); 
+    } 
+} 
+4.3.3. When Delegation Fails 
+Most composite classes are not as simple as VisualComponent: they have invariants that relate their component state 
+variables.  NumberRange  in  Listing  4.10  uses  two  AtomicIntegers  to  manage  its  state,  but  imposes  an  additional 
+constraint ‐ that the first number be less than or equal to the second. 
+NumberRange is not thread‐safe; it does not preserve the invariant that constrains lower and upper. The setLower and 
+setUpper methods attempt to respect this invariant, but do so poorly. Both setLower and setUpper are check‐then‐act 
+sequences, but they do not use sufficient locking to make them atomic. If the number range holds (0, 10), and one 
+thread calls setLower(5) while another thread calls setUpper(4), with some unlucky timing both will pass the checks 
+in the setters and both modifications will be applied. The result is that the range now holds (5, 4)an invalid state. So 
+while the underlying AtomicIntegers are thread‐safe, the composite class is not. Because the underlying state variables 
+lower  and  upper  are  not  independent,  NumberRange  cannot  simply  delegate  thread  safety  to  its  thread‐safe  state 
+variables. 
+NumberRange could be made thread‐safe by using locking to maintain its invariants, such as guarding lower and upper 
+with a common lock. It must also avoid publishing lower and upper to prevent clients from subverting its invariants. 
+If a class has compound actions, as  NumberRange does, delegation alone is again not a suitable approach for thread 
+safety. In these cases, the class must provide its own locking to ensure that compound actions are atomic, unless the 
+entire compound action can also be delegated to the underlying state variables. 
+If a class is composed of multiple independent thread‐safe state variables and has no operations that have any invalid 
+state transitions, then it can delegate thread safety to the underlying state variables.

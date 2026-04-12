@@ -1,0 +1,63 @@
+64 
+Java Concurrency In Practice 
+Listing 5.14. Using Semaphore to Bound a Collection. 
+public class BoundedHashSet<T> { 
+    private final Set<T> set; 
+    private final Semaphore sem; 
+ 
+    public BoundedHashSet(int bound) { 
+        this.set = Collections.synchronizedSet(new HashSet<T>()); 
+        sem = new Semaphore(bound); 
+    } 
+ 
+    public boolean add(T o) throws InterruptedException { 
+        sem.acquire(); 
+        boolean wasAdded = false; 
+        try { 
+            wasAdded = set.add(o); 
+            return wasAdded; 
+        } 
+        finally { 
+            if (!wasAdded) 
+                sem.release(); 
+        } 
+    } 
+ 
+    public boolean remove(Object o) { 
+        boolean wasRemoved = set.remove(o); 
+        if (wasRemoved) 
+            sem.release(); 
+        return wasRemoved; 
+    } 
+} 
+Barriers are often used in simulations, where the work to calculate one step can be done in parallel but all the work 
+associated  with  a  given  step  must  complete  before  advancing  to  the  next  step.  For  example,  in  n‐body  particle 
+simulations, each step calculates an update to the position of each particle based on the locations and other attributes 
+of the other particles. Waiting on a barrier between each update ensures that all updates for step k have completed 
+before moving on to step k + 1. 
+CellularAutomata  in  Listing  5.15  demonstrates  using  a  barrier  to  compute  a  cellular  automata  simulation,  such  as 
+Conway's Life game (Gardner, 1970). When parallelizing a simulation, it is generally impractical to assign a separate 
+thread  to  each  element  (in  the  case  of  Life,  a  cell);  this  would  require  too  many  threads,  and  the  overhead  of 
+coordinating them would dwarf the computation. Instead, it makes sense to partition the problem into a number of 
+subparts, let each thread solve a subpart, and then merge the results. CellularAutomata partitions the board into Ncpu 
+parts, where Ncpu is the number of CPUs available, and assigns each part to a thread. [5] At each step, the worker threads 
+calculate new values for all the cells in their part of the board. When all worker threads have reached the barrier, the 
+barrier action commits the new values to the data model. After the barrier action runs, the worker threads are released 
+to compute the next step of the calculation, which includes consulting an isDone method to determine whether further 
+iterations are required. 
+[5] For computational problems like this that do no I/O and access no shared data, Ncpu or Ncpu + 1 threads yield optimal throughput; more threads 
+do not help, and may in fact degrade performance as the threads compete for CPU and memory resources. 
+Another form of barrier is Exchanger, a two‐party barrier in which the parties exchange data at the barrier point [CPJ 
+3.4.3]. Exchangers are useful when the parties perform asymmetric activities, for example when one thread fills a buffer 
+with data and the other thread consumes the data from the buffer; these threads could use an Exchanger to meet and 
+exchange  a  full  buffer  for  an  empty  one.  When  two  threads  exchange  objects  via  an  Exchanger,  the  exchange 
+constitutes a safe publication of both objects to the other party. 
+The timing of the exchange depends on the responsiveness requirements of the application. The simplest approach is 
+that the filling task exchanges when the buffer is full, and the emptying task exchanges when the buffer is empty; this 
+minimizes  the  number  of  exchanges  but  can  delay  processing  of  some  data  if  the  arrival  rate  of  new  data  is 
+unpredictable. Another approach would be that the filler exchanges when the buffer is full, but also when the buffer is 
+partially filled and a certain amount of time has elapsed. 
+5.6. Building an Efficient, Scalable Result Cache 
+Nearly every server application uses some form of caching. Reusing the results of a previous computation can reduce 
+latency and increase throughput, at the cost of some additional memory usage. 
+Listing 5.15. Coordinating Computation in a Cellular Automaton with CyclicBarrier.

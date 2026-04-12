@@ -1,0 +1,64 @@
+146 
+Java Concurrency In Practice 
+separate  locks  to  guard  multiple  independent  state  variables  previously  guarded  by  a  single  lock.  These  techniques 
+reduce the granularity at which locking occurs, potentially allowing greater scalabilitybut using more locks also increases 
+the risk of deadlock. 
+As a thought experiment, imagine what would happen if there was only one lock for the entire application instead of a 
+separate lock for each object. Then execution of all synchronized blocks, regardless of their lock, would be serialized. 
+With many threads competing for the global lock, the chance that two threads want the lock at the same time increases, 
+resulting in more contention. So if lock requests were instead distributed over a larger set of locks, there would be less 
+contention. Fewer threads would be blocked waiting for locks, thus increasing scalability. 
+If a lock guards more than one independent state variable, you may be able to improve scalability by splitting it into 
+multiple locks that each guard different variables. This results in each lock being requested less often. 
+ServerStatus in Listing 11.6 shows a portion of the monitoring interface for a database server that maintains the set of 
+currently logged‐on users and the set of currently executing queries. As a user logs on or off or query execution begins 
+or  ends,  the  ServerStatus  object  is  updated  by  calling  the  appropriate  add  or  remove  method.  The  two  types  of 
+information are completely independent; ServerStatus could even be split into two separate classes with no loss of 
+functionality. 
+Instead of guarding both users and queries with the ServerStatus lock, we can instead guard each with a separate 
+lock, as shown in Listing 11.7. After splitting the lock, each new finer‐grained lock will see less locking traffic than the 
+original coarser lock would have. (Delegating to a thread‐safe Set implementation for users and queries instead of 
+using explicit synchronization would implicitly provide lock splitting, as each Set would use a different lock to guard its 
+state.) 
+Splitting a lock into two offers the greatest possibility for improvement when the lock is experiencing moderate but not 
+heavy contention. Splitting locks that are experiencing little contention yields little net improvement in performance or 
+throughput, although it might increase the load threshold at which performance starts to degrade due to contention. 
+Splitting locks experiencing moderate contention might actually turn them into mostly uncontended locks, which is the 
+most desirable outcome for both performance and scalability. 
+Listing 11.6. Candidate for Lock Splitting. 
+@ThreadSafe 
+public class ServerStatus { 
+    @GuardedBy("this") public final Set<String> users; 
+    @GuardedBy("this") public final Set<String> queries; 
+    ... 
+    public synchronized void addUser(String u) { users.add(u); } 
+    public synchronized void addQuery(String q) { queries.add(q); } 
+    public synchronized void removeUser(String u) { 
+        users.remove(u); 
+    } 
+    public synchronized void removeQuery(String q) { 
+        queries.remove(q); 
+    } 
+} 
+Listing 11.7. ServerStatus Refactored to Use Split Locks. 
+@ThreadSafe 
+public class ServerStatus { 
+    @GuardedBy("users") public final Set<String> users; 
+    @GuardedBy("queries") public final Set<String> queries; 
+    ... 
+    public void addUser(String u) { 
+        synchronized  (users) { 
+            users.add(u); 
+        } 
+    } 
+ 
+    public void addQuery(String q) { 
+        synchronized  (queries) { 
+            queries.add(q); 
+        } 
+    } 
+    // remove methods similarly refactored to use split locks 
+} 
+11.4.3. Lock Striping 
+Splitting a heavily contended lock into two is likely to result in two heavily contended locks. While this will produce a 
+small  scalability  improvement  by  enabling  two  threads  to  execute  concurrently  instead  of  one,  it  still  does  not

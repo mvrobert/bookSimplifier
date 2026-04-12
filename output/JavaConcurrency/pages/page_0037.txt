@@ -1,0 +1,42 @@
+20 
+Java Concurrency In Practice 
+When a variable is guarded by a lock ‐ meaning that every access to that variable is performed with that lock held ‐ 
+you've ensured that only one thread at a time can access that variable. When a class has invariants that involve more 
+than one state variable, there is an additional requirement: each variable participating in the invariant must be guarded 
+by  the  same  lock.  This  allows  you  to  access  or  update  them  in  a  single  atomic  operation,  preserving  the  invariant. 
+SynchronizedFactorizer demonstrates this rule: both the cached number and the cached factors are guarded by the 
+servlet object's intrinsic lock. 
+For every invariant that involves more than one variable, all the variables involved in that invariant must be guarded by 
+the same lock. 
+If synchronization is the cure for race conditions, why not just declare every method synchronized? It turns out that 
+such  indiscriminate  application  of  synchronized  might  be  either  too  much  or  too  little  synchronization.  Merely 
+synchronizing every method, as Vector does, is not enough to render compound actions on a Vector atomic: 
+if (!vector.contains(element)) 
+    vector.add(element); 
+This attempt at a put‐if‐absent operation has a race condition, even though both contains and add are atomic. While 
+synchronized methods can make individual operations atomic, additional locking is required ‐ when multiple operations 
+are  combined  into  a  compound  action.  (See  Section  4.4  for  some  techniques  for  safely  adding  additional  atomic 
+operations to thread‐safe objects.) At the same time, synchronizing every method can lead to liveness or performance 
+problems, as we saw in SynchronizedFactorizer. 
+2.5. Liveness and Performance 
+In  UnsafeCachingFactorizer,  we  introduced  some  caching  into  our  factoring  servlet  in  the  hope  of  improving 
+performance. Caching required some shared state, which in turn required synchronization to maintain the integrity of 
+that  state.  But  the  way  we  used  synchronization  in  SynchronizedFactorizer  makes  it  perform  badly.  The 
+synchronization policy for SynchronizedFactorizer is to guard each state variable with the servlet object's intrinsic 
+lock,  and  that  policy  was  implemented  by  synchronizing  the  entirety  of  the  service  method.  This  simple,  coarse‐
+grained approach restored safety, but at a high price. 
+Because service is synchronized, only one thread may execute it at once. This subverts the intended use of the servlet 
+framework ‐ that servlets be able to handle multiple requests simultaneously ‐ and can result in frustrated users if the 
+load is high enough. If the servlet is busy factoring a large number, other clients have to wait until the current request is 
+complete before the servlet can start on the new number. If the system has multiple CPUs, processors may remain idle 
+even if the load is high. In any case, even short‐running requests, such as those for which the value is cached, may take 
+an unexpectedly long time because they must wait for previous long‐running requests to complete. 
+Figure 2.1 shows what happens when multiple requests arrive for the synchronized factoring servlet: they queue up and 
+are  handled  sequentially.  We  would  describe  this  web  application  as  exhibiting  poor  concurrency:  the  number  of 
+simultaneous  invocations  is  limited  not  by  the  availability  of  processing  resources,  but  by  the  structure  of  the 
+application itself. Fortunately, it is easy to improve the concurrency of the servlet while maintaining thread safety by 
+narrowing the scope of the synchronized block. You should be careful not to make the scope of the synchronized 
+block too small; you would not want to divide an operation that should be atomic into more than one synchronized 
+block. But it is reasonable to try to exclude from synchronized blocks long‐running operations that do not affect shared 
+state, so that other threads are not prevented from accessing the shared state while the long‐running operation is in 
+progress.

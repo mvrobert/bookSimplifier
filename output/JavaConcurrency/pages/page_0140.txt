@@ -1,0 +1,28 @@
+123 
+5BPart II: Structuring Concurrent Applications ‐ 21BChapter 9. GUI Applications
+having  done  TRigger  a  completion  task  in  the  event  thread,  we  can  construct  a  BackgroundTask  class  providing  an 
+onCompletion hook that is called in the event thread, as shown in Listing 9.7. 
+BackgroundTask also supports progress indication. The compute method can call setProgress, indicating progress in 
+numerical terms. This causes onProgress to be called from the event thread, which can update the user interface to 
+indicate progress visually. 
+To implement a BackgroundTask you need only implement compute, which is called in the background thread. You also 
+have the option of overriding onCompletion and onProgress, which are invoked in the event thread. 
+Basing BackgroundTask on FutureTask also simplifies cancellation. Rather than having to poll the thread's interrupted 
+status, compute can call Future. is-Cancelled. Listing 9.8 recasts the example from Listing 9.6 using  Background-
+Task. 
+9.3.3. SwingWorker 
+We've built a simple framework using FutureTask and Executor to execute longrunning tasks in background threads 
+without  undermining  the  responsiveness  of  the  GUI.  These  techniques  can  be  applied  to  any  single‐threaded  GUI 
+framework,  not  just  Swing.  In  Swing,  many  of  the  features  developed  here  are  provided  by  the  SwingWorker  class, 
+including  cancellation,  completion  notification,  and  progress  indication.  Various  versions  of  SwingWorker  have  been 
+published in The Swing Connection and The Java Tutorial, and an updated version is included in Java 6. 
+9.4. Shared Data Models 
+Swing presentation objects, including data model objects such as TableModel or treeModel, are confined to the event 
+thread. In simple GUI programs, all the mutable state is held in the presentation objects and the only thread besides the 
+event thread is the main thread. In these programs enforcing the single‐thread rule is easy: don't access the data model 
+or presentation components from the main thread. More complicated programs may use other threads to move data to 
+or from a persistent store, such as a file system or database, so as not to compromise responsiveness. 
+In the simplest case, the data in the data model is entered by the user or loaded statically from a file or other data 
+source at application startup, in which case the data is never touched by any thread other than the event thread. But 
+sometimes the presentation model object is only a view onto another data source, such as a database, file system, or 
+remote service. In this case, more than one thread is likely to touch the data as it goes into or out of the application.

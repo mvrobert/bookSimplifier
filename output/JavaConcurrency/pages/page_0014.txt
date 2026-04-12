@@ -1,0 +1,49 @@
+xiii
+2BPreface
+Preface 
+At this writing, multi‐core processors are just now becoming inexpensive enough for midrange desktop systems. Not 
+coincidentally, many development teams are noticing more and more threading‐related bug reports in their projects. In 
+a  recent  post  on  the  NetBeans  developer  site,  one  of  the  core  maintainers  observed  that  a  single  class  had  been 
+patched over 14 times to fix threading‐related problems. Dion Almaer, former editor of TheServerSide, recently blogged 
+(after a painful debugging session that ultimately revealed a threading bug) that most Java programs are so rife with 
+concurrency bugs that they work only "by accident". 
+Indeed, developing, testing and debugging multithreaded programs can be extremely difficult because concurrency bugs 
+do not manifest themselves predictably. And when they do surface, it is often at the worst possible time in production, 
+under heavy load. 
+One of the challenges of developing concurrent programs in Java is the mismatch between the concurrency features 
+offered by the platform and how developers need to think about concurrency in their programs. The language provides 
+low‐level mechanisms such as synchronization and condition waits, but these mechanisms must be used consistently to 
+implement  application‐level  protocols  or  policies.  Without  such  policies,  it  is  all  too  easy  to  create  programs  that 
+compile and appear to work but are nevertheless broken. Many otherwise excellent books on concurrency fall short of 
+their goal by focusing excessively on low‐level mechanisms and APIs rather than design‐level policies and patterns. 
+Java  5.0  is  a  huge  step  forward  for  the  development  of  concurrent  applications  in  Java,  providing  new  higher‐level 
+components and additional low‐level mechanisms that make it easier for novices and experts alike to build concurrent 
+applications. The authors are the primary members of the JCP Expert Group that created these facilities; in addition to 
+describing their behavior and features, we present the underlying design patterns and anticipated usage scenarios that 
+motivated their inclusion in the platform libraries. 
+Our goal is to give readers a set of design rules and mental models that make it easier and more fun to build correct, 
+performant concurrent classes and applications in Java. 
+We hope you enjoy Java Concurrency in Practice. 
+Brian Goetz 
+Williston, VT 
+March 2006 
+How to Use this Book 
+To address the abstraction mismatch between Java's low‐level mechanisms and the necessary design‐level policies, we 
+present a simplified set of rules for writing concurrent programs. Experts may look at these rules and say "Hmm, that's 
+not entirely true: class C is thread‐safe even though it violates rule R." While it is possible to write correct programs that 
+break our rules, doing so requires a deep understanding of the low‐level details of the Java Memory Model, and we 
+want developers to be able to write correct concurrent programs without having to master these details. Consistently 
+following our simplified rules will produce correct and maintainable concurrent programs. 
+We  assume  the  reader  already  has  some  familiarity  with  the  basic  mechanisms  for  concurrency  in  Java.  Java 
+Concurrency  in  Practice  is  not  an  introduction  to  concurrency  for  that,  see  the  threading  chapter  of  any  decent 
+introductory volume, such as The Java Programming Language (Arnold et al., 2005). Nor is it an encyclopedic reference 
+for All Things Concurrency for that, see Concurrent Programming in Java (Lea, 2000). Rather, it offers practical design 
+rules to assist developers in the difficult process of creating safe and performant concurrent classes. Where appropriate, 
+we cross‐reference relevant sections of The Java Programming Language, Concurrent Programming in Java, The Java 
+Language Specification (Gosling et al., 2005), and Effective Java (Bloch, 2001) using the conventions [JPL n.m], [CPJ n.m], 
+[JLS n.m], and [EJ Item n]. 
+ 
+After the introduction (Chapter 1), the book is divided into four parts: 
+Fundamentals.  Part  I  (Chapters  2‐5)  focuses  on  the  basic  concepts  of  concurrency  and  thread  safety,  and  how  to 
+compose  thread‐safe  classes  out  of  the  concurrent  building  blocks  provided  by  the  class  library.  A  "cheat  sheet" 
+summarizing the most important of the rules presented in Part I appears on page 110.

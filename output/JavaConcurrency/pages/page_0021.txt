@@ -1,0 +1,32 @@
+4 
+Java Concurrency In Practice 
+If an application goes to read from a socket when no data is available, read blocks until some data is available. In a 
+single‐threaded application, this means that not only does processing the corresponding request stall, but processing of 
+all  requests  stalls  while  the  single  thread  is  blocked.  To  avoid  this  problem,  single‐threaded  server  applications  are 
+forced to use non‐blocking I/O, which is far more complicated and error‐prone than synchronous I/O. However, if each 
+request has its own thread, then blocking does not affect the processing of other requests. 
+Historically, operating systems placed relatively low limits on the number of threads that a process could create, as few 
+as several hundred (or even less). As a result, operating systems developed efficient facilities for multiplexed I/O, such 
+as  the  Unix  select  and  poll  system  calls,  and  to  access  these  facilities,  the  Java  class  libraries  acquired  a  set  of 
+packages  (java.nio)  for  non‐blocking  I/O.  However,  operating  system  support  for  larger  numbers  of  threads  has 
+improved  significantly,  making  the  thread‐per‐client  model  practical  even  for  large  numbers  of  clients  on  some 
+platforms.[1] 
+[1] The NPTL threads package, now part of most Linux distributions, was designed to support hundreds of thousands of threads. Non‐blocking I/O 
+has its own benefits, but better OS support for threads means that there are fewer situations for which it is essential. 
+1.2.4. More Responsive User Interfaces 
+GUI applications used to be single‐threaded, which meant that you had to either frequently poll throughout the code for 
+input events (which is messy and intrusive) or execute all application code indirectly through a "main event loop". If 
+code called from the main event loop takes too long to execute, the user interface appears to "freeze" until that code 
+finishes, because subsequent user interface events cannot be processed until control is returned to the main event loop. 
+Modern  GUI  frameworks, such  as  the  AWT  and  Swing  toolkits,  replace  the  main  event  loop  with  an event  dispatch 
+thread (EDT). When a user interface event such as a button press occurs, application‐defined event handlers are called 
+in the event thread. Most GUI frameworks are single‐threaded subsystems, so the main event loop is effectively still 
+present, but it runs in its own thread under the control of the GUI toolkit rather than the application. 
+If only short‐lived tasks execute in the event thread, the interface remains responsive since the event thread is always 
+able to process user actions reasonably quickly. However, processing a long‐running task in the event thread, such as 
+spell‐checking a large document or fetching a resource over the network, impairs responsiveness. If the user performs 
+an action while this task is running, there is a long delay before the event thread can process or even acknowledge it. To 
+add insult to injury, not only does the UI become unresponsive, but it is impossible to cancel the offending task even if 
+the UI provides a cancel button because the event thread is busy and cannot handle the cancel button‐press event until 
+the  lengthy  task  completes!  If,  however,  the  long‐running  task  is  instead  executed  in  a  separate  thread,  the  event 
+thread remains free to process UI events, making the UI more responsive.

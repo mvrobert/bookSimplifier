@@ -1,0 +1,52 @@
+31 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 15BChapter 3. Sharing 
+Objects
+If you are porting a single‐threaded application to a multithreaded environment, you can preserve thread safety by 
+converting shared global variables into ThreadLocals, if the semantics of the shared globals permits this; an application‐
+wide cache would not be as useful if it were turned into a number of thread‐local caches. 
+ThreadLocal  is  widely  used  in  implementing  application  frameworks.  For  example,  J2EE  containers  associate  a 
+transaction context with an executing thread for the duration of an EJB call. This is easily implemented using a static 
+Thread-Local holding the transaction context: when framework code needs to determine what transaction is currently 
+running, it fetches the transaction context from this ThreadLocal. This is convenient in that it reduces the need to pass 
+execution context information into every method, but couples any code that uses this mechanism to the framework. 
+It is easy to abuse ThreadLocal by treating its thread confinement property as a license to use global variables or as a 
+means of creating "hidden" method arguments. Like global variables, thread‐local variables can detract from reusability 
+and introduce hidden couplings among classes, and should therefore be used with care. 
+3.4. Immutability 
+The other end‐run around the need to synchronize is to use immutable objects [EJ Item 13]. Nearly all the atomicity and 
+visibility hazards we've described so far, such as seeing stale values, losing updates, or observing an object to be in an 
+inconsistent state, have to do with the vagaries of multiple threads trying to access the same mutable state at the same 
+time. If an object's state cannot be modified, these risks and complexities simply go away. 
+An  immutable  object  is  one  whose  state  cannot  be  changed  after  construction.  Immutable  objects  are  inherently 
+thread‐safe; their invariants are established by the constructor, and if their state cannot be changed, these invariants 
+always hold. 
+Immutable objects are always thread‐safe. 
+Immutable objects are simple. They can only be in one state, which is carefully controlled by the constructor. One of the 
+most difficult elements of program design is reasoning about the possible states of complex objects. Reasoning about 
+the state of immutable objects, on the other hand, is trivial. 
+Immutable  objects  are  also  safer.  Passing  a  mutable  object  to  untrusted  code,  or  otherwise  publishing  it  where 
+untrusted code could find it, is dangerous ‐ the untrusted code might modify its state, or, worse, retain a reference to it 
+and  modify  its  state  later  from  another  thread.  On  the  other  hand,  immutable  objects  cannot  be  subverted  in  this 
+manner by malicious or buggy code, so they are safe to share and publish freely without the need to make defensive 
+copies [EJ Item 24]. 
+Neither the Java Language Specification nor the Java Memory Model formally defines immutability, but immutability is 
+not equivalent to simply declaring all fields of an object final. An object whose fields are all final may still be mutable, 
+since final fields can hold references to mutable objects. 
+An object is immutable if: 
+• 
+Its state cannot be modified after construction; 
+• 
+All its fields are final;[12] and 
+• 
+It is properly constructed (the this reference does not escape during construction). 
+[12] It is technically possible to have an immutable object without all fields being final. String is such a class ‐ but this relies on delicate reasoning 
+about benign data races that requires a deep understanding of the Java Memory Model. (For the curious: String lazily computes the hash code the 
+first time hashCode is called and caches it in a non‐final field, but this works only because that field can take on only one non‐default value that is 
+the same every time it is computed because it is derived deterministically from immutable state. Don't try this at home.) 
+Immutable  objects  can  still  use  mutable  objects  internally  to  manage  their  state,  as  illustrated  by  ThreeStooges  in 
+Listing 3.11. While the Set that stores the names is mutable, the design of ThreeStooges makes it impossible to modify 
+that Set after construction. The stooges reference is final, so all object state is reached through a final field. The last 
+requirement, proper construction, is easily met since the constructor does nothing that would cause the this reference 
+to become accessible to code other than the constructor and its caller.

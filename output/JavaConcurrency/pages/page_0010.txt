@@ -1,0 +1,73 @@
+ix
+1BListing and Image Index
+Listing 8.18. Solver that Recognizes when No Solution Exists. 
+116 
+Chapter 9. GUI Applications 
+117 
+Figure 9.1. Control Flow of a Simple Button Click. 
+119 
+Listing 9.1. Implementing SwingUtilities Using an Executor. 
+120 
+Listing 9.2. Executor Built Atop SwingUtilities. 
+120 
+Listing 9.3. Simple Event Listener. 
+120 
+Figure 9.2. Control Flow with Separate Model and View Objects. 
+121 
+Listing 9.4. Binding a Long‐running Task to a Visual Component. 
+121 
+Listing 9.5. Long‐running Task with User Feedback. 
+122 
+Listing 9.6. Cancelling a Long‐running Task. 
+122 
+Listing 9.7. Background Task Class Supporting Cancellation, Completion Notification, and Progress Notification.
+ 
+124 
+Listing 9.8. Initiating a Long‐running, Cancellable Task with BackgroundTask. 
+124 
+Chapter 10. Avoiding Liveness Hazards 
+128 
+Figure 10.1. Unlucky Timing in LeftRightDeadlock. 
+128 
+Listing 10.1. Simple Lock‐ordering Deadlock. Don't Do this. 
+129 
+Listing 10.2. Dynamic Lock‐ordering Deadlock. Don't Do this. 
+129 
+Listing 10.3. Inducing a Lock Ordering to Avoid Deadlock. 
+130 
+Listing 10.4. Driver Loop that Induces Deadlock Under Typical Conditions. 
+131 
+Listing 10.5. Lock‐ordering Deadlock Between Cooperating Objects. Don't Do this. 
+132 
+Listing 10.6. Using Open Calls to Avoiding Deadlock Between Cooperating Objects. 
+133 
+Listing 10.7. Portion of Thread Dump After Deadlock. 
+135 
+Chapter 11. Performance and Scalability 
+137 
+Figure 11.1. Maximum Utilization Under Amdahl's Law for Various Serialization Percentages. 
+140 
+Listing 11.1. Serialized Access to a Task Queue. 
+141 
+Figure 11.2. Comparing Queue Implementations. 
+141 
+Listing 11.2. Synchronization that has No Effect. Don't Do this. 
+142 
+Listing 11.3. Candidate for Lock Elision. 
+143 
+Listing 11.4. Holding a Lock Longer than Necessary. 
+145 
+Listing 11.5. Reducing Lock Duration. 
+145 
+Listing 11.6. Candidate for Lock Splitting. 
+146 
+Listing 11.7. ServerStatus Refactored to Use Split Locks. 
+146 
+Listing 11.8. Hash‐based Map Using Lock Striping. 
+148 
+Figure 11.3. Comparing Scalability of Map Implementations. 
+150 
+Chapter 12. Testing Concurrent Programs 
+153 
+Listing 12.1. Bounded Buffer Using Semaphore. 
+154

@@ -1,0 +1,71 @@
+98 
+Java Concurrency In Practice 
+Listing 7.18. Producer Thread for IndexingService. 
+public class CrawlerThread extends Thread { 
+    public void run() { 
+        try { 
+            crawl(root); 
+        } catch (InterruptedException e) { /*  fall through  */  } 
+        finally { 
+            while (true) { 
+                try { 
+                    queue.put(POISON); 
+                    break; 
+                } catch (InterruptedException e1) { /*  retry  */ } 
+            } 
+        } 
+    } 
+ 
+    private void crawl(File root) throws InterruptedException { 
+        ... 
+    } 
+} 
+Listing 7.19. Consumer Thread for IndexingService. 
+public class IndexerThread extends Thread { 
+    public void run() { 
+        try { 
+            while (true) { 
+                File file = queue.take(); 
+                if (file == POISON) 
+                   break; 
+                else 
+                   indexFile(file); 
+            } 
+        } catch (InterruptedException consumed) { } 
+    } 
+} 
+Listing 7.20. Using a Private Executor Whose Lifetime is Bounded by a Method Call. 
+boolean checkMail(Set<String> hosts, long timeout, TimeUnit unit) 
+        throws InterruptedException { 
+    ExecutorService exec = Executors.newCachedThreadPool(); 
+    final AtomicBoolean hasNewMail = new AtomicBoolean(false); 
+    try { 
+        for (final String host : hosts) 
+            exec.execute(new Runnable() { 
+                public void run() { 
+                   if (checkMail(host)) 
+                       hasNewMail.set(true); 
+                } 
+            }); 
+    } finally { 
+        exec.shutdown(); 
+        exec.awaitTermination(timeout, unit); 
+    } 
+    return hasNewMail.get(); 
+} 
+7.2.5. Limitations of Shutdownnow 
+When  an  ExecutorService  is  shut  down  abruptly  with  shutdownNow,  it  attempts  to  cancel  the  tasks  currently  in 
+progress and returns a list of tasks that were submitted but never started so that they can be logged or saved for later 
+processing.[5] 
+[5] The Runnable objects returned by shutdownNow might not be the same objects that were submitted to the ExecutorService: they 
+might be wrapped instances of the submitted tasks. 
+However, there is no general way to find out which tasks started but did not complete. This means that there is no way 
+of  knowing  the  state  of  the  tasks  in  progress  at  shutdown  time  unless  the  tasks  themselves  perform  some  sort  of 
+checkpointing. To know which tasks have not completed, you need to know not only which tasks didn't start, but also 
+which tasks were in progress when the executor was shut down.[6] 
+[6] Unfortunately, there is no shutdown option in which tasks not yet started are returned to the caller but tasks in progress are allowed to 
+complete; such an option would eliminate this uncertain intermediate state. 
+TRackingExecutor in Listing 7.21 shows a technique for determining which tasks were in progress at shutdown time. By 
+encapsulating an ExecutorService and instrumenting execute (and similarly submit, not shown) to remember which 
+tasks  were  cancelled  after  shutdown,  trackingExecutor  can  identify  which  tasks  started  but  did  not  complete 
+normally.  After  the  executor  terminates,  getCancelledTasks  returns  the  list  of  cancelled  tasks.  In  order  for  this

@@ -1,0 +1,53 @@
+11 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 14BChapter 2. Thread 
+Safety
+Chapter 2. Thread Safety 
+Perhaps surprisingly, concurrent programming isn't so much about threads or locks, any more than civil engineering is 
+about rivets and I‐beams. Of course, building bridges that don't fall down requires the correct use of a lot of rivets and I‐
+beams, just as building concurrent programs require the correct use of threads and locks. But these are just mechanisms 
+means to an end. Writing thread‐safe code is, at its core, about managing access to state, and in particular to shared, 
+mutable state. 
+ 
+Informally, an object's state is its data, stored in state variables such as instance or static fields. An object's state may 
+include fields from other, dependent objects; a HashMap's state is partially stored in the HashMap object itself, but also in 
+many Map.Entry objects. An object's state encompasses any data that can affect its externally visible behavior. 
+By shared, we mean that a variable could be accessed by multiple threads; by mutable, we mean that its value could 
+change during its lifetime. We may talk about thread safety as if it were about code, but what we are really trying to do 
+is protect data from uncontrolled concurrent access. 
+Whether an object needs to be thread‐safe depends on whether it will be accessed from multiple threads. This is a 
+property  of  how  the  object  is  used  in  a  program,  not  what  it  does.  Making  an  object  thread‐safe  requires  using 
+synchronization to coordinate access to its mutable state; failing to do so could result in data corruption and other 
+undesirable consequences. 
+Whenever  more  than  one  thread  accesses  a  given  state  variable,  and  one  of  them  might  write  to  it,  they  all  must 
+coordinate  their  access  to  it  using  synchronization.  The  primary  mechanism  for  synchronization  in  Java  is  the 
+synchronized  keyword,  which  provides  exclusive  locking,  but  the  term  "synchronization"  also  includes  the  use  of 
+volatile variables, explicit locks, and atomic variables. 
+You should avoid the temptation to think that there are "special" situations in which this rule does not apply. A program 
+that omits needed synchronization might appear to work, passing its tests and performing well for years, but it is still 
+broken and may fail at any moment. 
+If  multiple  threads  access  the  same  mutable  state  variable  without  appropriate  synchronization,  your  program  is 
+broken. There are three ways to fix it: 
+• 
+Don't share the state variable across threads; 
+• 
+Make the state variable immutable; or 
+• 
+Use synchronization whenever accessing the state variable. 
+If  you  haven't  considered  concurrent  access  in  your  class  design,  some  of  these  approaches  can  require  significant 
+design modifications, so fixing the problem might not be as trivial as this advice makes it sound. It is far easier to design 
+a class to be thread‐safe than to retrofit it for thread safety later. 
+In a large program, identifying whether multiple threads might access a given variable can be complicated. Fortunately, 
+the same object‐oriented techniques that help you write well‐organized, maintainable classes ‐ such as encapsulation 
+and data hiding ‐ can also help you create thread‐safe classes. The less code that has access to a particular variable, the 
+easier it is to ensure that all of it uses the proper synchronization, and the easier it is to reason about the conditions 
+under  which  a  given  variable  might  be  accessed.  The  Java  language  doesn't  force  you  to  encapsulate  state  ‐  it  is 
+perfectly  allowable  to  store  state  in  public  fields  (even  public  static  fields)  or  publish  a  reference  to  an  otherwise 
+internal object ‐ but the better encapsulated your program state, the easier it is to make your program thread‐safe and 
+to help maintainers keep it that way. 
+When  designing  thread‐safe  classes,  good  object‐oriented  techniques  ‐  encapsulation,  immutability,  and  clear 
+specification of invariants ‐ are your best friends. 
+There will be times when good object‐oriented design techniques are at odds with real‐world requirements; it may be 
+necessary  in  these  cases  to  compromise  the  rules  of  good  design  for  the  sake  of  performance  or  for  the  sake  of 
+backward  compatibility  with  legacy  code.  Sometimes  abstraction  and  encapsulation  are  at  odds  with  performance  ‐

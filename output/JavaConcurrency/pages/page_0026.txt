@@ -1,0 +1,18 @@
+9 
+3BChapter 1 ‐ Introduction ‐ 13B1.4. Threads are Everywhere
+[4] Answer: yes, but it's not all that clear from the Javadoc ‐ you have to read the RMI spec. 
+A  remote  object  must  guard  against  two  thread  safety  hazards:  properly  coordinating  access  to  state  that  may  be 
+shared with other objects, and properly coordinating access to the state of the remote object itself (since the same 
+object may be called in multiple threads simultaneously). Like servlets, RMI objects should be prepared for multiple 
+simultaneous calls and must provide their own thread safety. 
+Swing and AWT. GUI applications are inherently asynchronous. Users may select a menu item or press a button at any 
+time, and they expect that the application will respond promptly even if it is in the middle of doing something else. 
+Swing and AWT address this problem by creating a separate thread for handling user‐initiated events and updating the 
+graphical view presented to the user. 
+Swing  components,  such  as  JTable,  are  not  thread‐safe.  Instead,  Swing  programs  achieve  their  thread  safety  by 
+confining all access to GUI components to the event thread. If an application wants to manipulate the GUI from outside 
+the event thread, it must cause the code that will manipulate the GUI to run in the event thread instead. 
+When the user performs a UI action, an event handler is called in the event thread to perform whatever operation the 
+user requested. If the handler needs to access application state that is also accessed from other threads (such as a 
+document being edited), then the event handler, along with any other code that accesses that state, must do so in a 
+thread‐safe manner.

@@ -1,0 +1,52 @@
+104 
+Java Concurrency In Practice 
+Chapter 8. Applying Thread Pools 
+Chapter 6 introduced the task execution framework, which simplifies management of task and thread lifecycles and 
+provides a simple and flexible means for decoupling task submission from execution policy. Chapter 7 covered some of 
+the  messy  details  of  service  lifecycle  that  arise  from  using  the  task  execution  framework  in  real  applications.  This 
+chapter looks at advanced options for configuring and tuning thread pools, describes hazards to watch for when using 
+the task execution framework, and offers some more advanced  
+8.1. Implicit Couplings Between Tasks and Execution Policies 
+We claimed earlier that the Executor framework decouples task submission from task execution. Like many attempts at 
+decoupling complex processes, this was a bit of an overstatement. While the Executor framework offers substantial 
+flexibility in specifying and modifying execution policies, not all tasks are compatible with all execution policies. Types of 
+tasks that require specific execution policies include: 
+Dependent tasks. The most well behaved tasks are independent: those that do not depend on the timing, results, or side 
+effects  of  other  tasks.  When  executing  independent  tasks  in  a  thread  pool,  you  can  freely  vary  the  pool  size  and 
+configuration without affecting anything but performance. On the other hand, when you submit tasks that depend on 
+other tasks to a thread pool, you implicitly create constraints on the execution policy that must be carefully managed to 
+avoid liveness problems (see Section 8.1.1). 
+Tasks that exploit thread confinement. Single‐threaded executors make stronger promises about concurrency than do 
+arbitrary thread pools. They guarantee that tasks are not executed concurrently, which allows you to relax the thread 
+safety of task code. Objects can be confined to the task thread, thus enabling tasks designed to run in that thread to 
+access  those  objects  without  synchronization,  even  if  those  resources  are  not  thread‐safe.  This  forms  an  implicit 
+coupling between the task and the execution policy ‐ the tasks require their executor to be single‐threaded.[1] In this 
+case, if you changed the Executor from a single‐threaded one to a thread pool, thread safety could be lost. 
+[1]  The  requirement  is  not  quite  this  strong;  it  would  be  enough  to  ensure  only  that  tasks  not  execute  concurrently  and  provide  enough 
+synchronization so that the memory effects of one task are guaranteed to be visible to the next task ‐ which is precisely the guarantee offered by 
+newSingle-ThreadExecutor. 
+Response‐time‐sensitive  tasks.  GUI  applications  are  sensitive  to  response  time:  users  are  annoyed  at  long  delays 
+between  a  button  click  and  the  corresponding  visual  feedback.  Submitting  a  long‐running  task  to  a  single‐threaded 
+executor, or submitting several long‐running tasks to a thread pool with a small number of threads, may impair the 
+responsiveness of the service managed by that Executor. 
+Tasks that use ThreadLocal. ThreadLocal allows each thread to have its own private "version" of a variable. However, 
+executors are free to reuse threads as they see fit. The standard Executor implementations may reap idle threads when 
+demand  is  low  and  add  new  ones  when  demand  is  high,  and  also  replace  a  worker  thread  with  a  fresh  one  if  an 
+unchecked exception is thrown from a task. ThreadLocal makes sense to use in pool threads only if the thread‐local 
+value has a lifetime that is bounded by that of a task; Thread-Local should not be used in pool threads to communicate 
+values between tasks. 
+Thread pools work best when tasks are homogeneous and independent. Mixing long‐running and short‐running tasks 
+risks "clogging" the pool unless it is very large; submitting tasks that depend on other tasks risks deadlock unless the 
+pool is unbounded. Fortunately, requests in typical network‐based server applications ‐ web servers, mail servers, file 
+servers ‐ usually meet these guidelines. 
+Some tasks have characteristics that require or preclude a specific execution policy. Tasks that depend on other tasks 
+require  that  the  thread  pool  be  large  enough  that  tasks  are  never  queued  or  rejected;  tasks  that  exploit  thread 
+confinement require sequential execution. Document these requirements so that future maintainers do not undermine 
+safety or liveness by substituting an incompatible execution policy. 
+8.1.1. Thread Starvation Deadlock 
+If tasks that depend on other tasks execute in a thread pool, they can deadlock. In a single‐threaded executor, a task 
+that submits another task to the same executor and waits for its result will always deadlock. The second task sits on the 
+work  queue  until  the  first  task  completes,  but  the  first  will  not  complete  because  it  is  waiting  for  the  result  of  the 
+second task. The same thing can happen in larger thread pools if all threads are executing tasks that are blocked waiting 
+for other tasks still on the work queue. This is called thread starvation deadlock, and can occur whenever a pool task 
+initiates  an  unbounded  blocking  wait  for  some  resource  or  condition  that  can  succeed  only  through  the  action  of

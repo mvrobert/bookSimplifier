@@ -1,0 +1,62 @@
+125 
+5BPart II: Structuring Concurrent Applications ‐ 21BChapter 9. GUI Applications
+completes, you have to get the data into the tree model somehow. This could be done by using a thread‐safe tree 
+model, by "pushing" the data from the background task to the event thread by posting a task with invokeLater, or by 
+having the event thread poll to see if the data is available. 
+9.4.1. Thread­safe Data Models 
+As long as responsiveness is not unduly affected by blocking, the problem of multiple threads operating on the data can 
+be addressed with a thread‐safe data model. If the data model supports fine‐grained concurrency, the event thread and 
+background 
+threads 
+should 
+be 
+able 
+to 
+share 
+it 
+without 
+responsiveness 
+problems. 
+For 
+example, 
+DelegatingVehicleTracker  on  page  65  uses  an  underlying  ConcurrentHashMap  whose  retrieval  operations  offer  a 
+high degree of concurrency. The downside is that it does not offer a consistent snapshot of the data, which may or may 
+not be a requirement. Thread‐safe data models must also generate events when the model has been updated, so that 
+views can be updated when the data changes. 
+It may sometimes be possible to get thread safety, consistency and good responsiveness with a versioned data model 
+such as CopyOnWriteArrayList [CPJ 2.2.3.3]. When you acquire an iterator for a copy‐on‐write collection, that iterator 
+traverses  the  collection  as  it  existed  when  the  iterator  was  created.  However,  copy‐on‐write  collections  offer  good 
+performance only when traversals greatly outnumber modifications, which would probably not be the case in, say, a 
+vehicle  tracking  application.  More  specialized  versioned  data  structures  may  avoid  this  restriction,  but  building 
+versioned data structures that provide both efficient concurrent access and do not retain old versions of data longer 
+than needed is not easy, and thus should be considered only when other approaches are not practical. 
+9.4.2. Split Data Models 
+From  the  perspective  of  the  GUI,  the  Swing  table  model  classes  like  TableModel  and  treeModel  are  the  official 
+repository  for  data  to  be  displayed.  However,  these  model  objects  are  often  themselves  "views"  of  other  objects 
+managed by the application. A program that has both a presentation‐domain and an applicationdomain data model is 
+said to have a split‐model design (Fowler, 2005). 
+In a split‐model design, the presentation model is confined to the event thread and the other model, the shared model, 
+is thread‐safe and may be accessed by both the event thread and application threads. The presentation model registers 
+listeners with the shared model so it can be notified of updates. The presentation model can then be updated from the 
+shared model by embedding a snapshot of the relevant state in the update message or by having the presentation 
+model retrieve the data directly from the shared model when it receives an update event. 
+The snapshot approach is simple, but has limitations. It works well when the data model is small, updates are not too 
+frequent, and the structure of the two models is similar. If the data model is large or updates are very frequent, or if one 
+or  both  sides  of  the  split  contain  information  that  is  not  visible  to  the  other  side,  it  can  be  more  efficient  to  send 
+incremental  updates  instead  of  entire  snapshots.  This  approach  has  the  effect  of  serializing  updates  on  the  shared 
+model  and  recreating  them  in  the  event  thread  against  the  presentation  model.  Another  advantage  of  incremental 
+updates is that finer‐grained information about what changed can improve the perceived quality of the displayif only 
+one vehicle moves, we don't have to repaint the entire display, just the affected regions. 
+Consider a split‐model design when a data model must be shared by more than one thread and implementing a thread‐
+safe data model would be inadvisable because of blocking, consistency, or complexity reasons. 
+9.5. Other Forms of Single­threaded Subsystems 
+Thread confinement is not restricted to GUIs: it can be used whenever a facility is implemented as a single‐threaded 
+subsystem. Sometimes thread confinement is forced on the developer for reasons that have nothing to do with avoiding 
+synchronization or deadlock. For example, some native libraries require that all access to the library, even loading the 
+library with System.loadLibrary, be made from the same thread. 
+Borrowing from the approach taken by GUI frameworks, you can easily create a dedicated thread or single‐threaded 
+executor for accessing the native library, and provide a proxy object that intercepts calls to the thread‐confined object 
+and submits them as tasks to the dedicated thread. Future and newSingleThreadExecutor work together to make this 
+easy; the proxy method can submit the task and immediately call Future.get to wait for the result. (If the class to be 
+thread‐confined implements an interface, you can automate the process of having each method submit a Callable to a 
+background thread executor and waiting for the result using dynamic proxies.)

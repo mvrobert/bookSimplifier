@@ -1,0 +1,71 @@
+42 
+Java Concurrency In Practice 
+Listing 4.4. Monitor­based Vehicle Tracker Implementation. 
+@ThreadSafe 
+public class MonitorVehicleTracker { 
+    @GuardedBy("this") 
+    private final Map<String, MutablePoint> locations; 
+ 
+    public MonitorVehicleTracker( 
+            Map<String, MutablePoint> locations) { 
+        this.locations = deepCopy(locations); 
+    } 
+ 
+    public synchronized Map<String, MutablePoint> getLocations() { 
+        return deepCopy(locations); 
+    } 
+ 
+    public synchronized  MutablePoint getLocation(String id) { 
+        MutablePoint loc = locations.get(id); 
+        return loc == null ? null : new MutablePoint(loc); 
+    } 
+ 
+    public synchronized  void setLocation(String id, int x, int y) { 
+        MutablePoint loc = locations.get(id); 
+        if (loc == null) 
+            throw new IllegalArgumentException("No such ID: " + id); 
+        loc.x = x; 
+        loc.y = y; 
+    } 
+ 
+    private static Map<String, MutablePoint> deepCopy( 
+            Map<String, MutablePoint> m) { 
+        Map<String, MutablePoint> result = 
+                new HashMap<String, MutablePoint>(); 
+        for (String id : m.keySet()) 
+            result.put(id, new MutablePoint(m.get(id))); 
+        return Collections.unmodifiableMap(result); 
+    } 
+} 
+ 
+public class MutablePoint { /*  Listing 4.5  */ } 
+Listing 4.5. Mutable Point Class Similar to Java.awt.Point. 
+ 
+@NotThreadSafe 
+public class MutablePoint { 
+    public int x, y; 
+ 
+    public MutablePoint() { x = 0; y = 0; } 
+    public MutablePoint(MutablePoint p) { 
+        this.x = p.x; 
+        this.y = p.y; 
+    } 
+} 
+4.3.1. Example: Vehicle Tracker Using Delegation 
+As a more substantial example of delegation, let's construct a version of the vehicle tracker that delegates to a thread‐
+safe class. We store the locations in a Map, so we start with a thread‐safe Map implementation, ConcurrentHashMap. We 
+also store the location using an immutable Point class instead of MutablePoint, shown in Listing 4.6. 
+Listing 4.6. Immutable Point class used by DelegatingVehicleTracker. 
+@Immutable 
+public class Point { 
+    public final int x, y; 
+ 
+    public Point(int x, int y) { 
+        this.x = x; 
+        this.y = y; 
+    } 
+} 
+Point is thread‐safe because it is immutable. Immutable values can be freely shared and published, so we no longer 
+need to copy the locations when returning them. 
+DelegatingVehicleTracker in Listing 4.7 does not use any explicit synchronization; all access to state is managed by 
+ConcurrentHashMap, and all the keys and values of the Map are immutable.

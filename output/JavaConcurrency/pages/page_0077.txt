@@ -1,0 +1,60 @@
+60 
+Java Concurrency In Practice 
+Listing 5.10. Restoring the Interrupted Status so as Not to Swallow the Interrupt. 
+public class TaskRunnable implements Runnable { 
+    BlockingQueue<Task> queue; 
+    ... 
+    public void run() { 
+        try { 
+            processTask(queue.take()); 
+        } catch (InterruptedException e) { 
+             // restore interrupted status 
+             Thread.currentThread().interrupt(); 
+        } 
+    } 
+} 
+5.5. Synchronizers 
+Blocking queues are unique among the collections classes: not only do they act as containers for objects, but they can 
+also coordinate the control flow of producer and consumer threads because take and put block until the queue enters 
+the desired state (not empty or not full). 
+A synchronizer is any object that coordinates the control flow of threads based on its state. Blocking queues can act as 
+synchronizers;  other  types  of  synchronizers  include  semaphores,  barriers,  and  latches.  There  are  a  number  of 
+synchronizer classes in the platform library; if these do not meet your needs, you can also create your own using the 
+mechanisms described in Chapter 14. 
+All synchronizers share certain structural properties: they encapsulate state that determines whether threads arriving at 
+the synchronizer should be allowed to pass or forced to wait, provide methods to manipulate that state, and provide 
+methods to wait efficiently for the synchronizer to enter the desired state. 
+5.5.1. Latches 
+A latch is a synchronizer that can delay the progress of threads until it reaches its terminal state [CPJ 3.4.2]. A latch acts 
+as a gate: until the latch reaches the terminal state the gate is closed and no thread can pass, and in the terminal state 
+the gate opens, allowing all threads to pass. Once the latch reaches the terminal state, it cannot change state again, so it 
+remains  open  forever.  Latches  can  be  used  to  ensure  that  certain  activities  do  not  proceed  until  other  one‐time 
+activities complete, such as: 
+• 
+Ensuring that a computation does not proceed until resources it needs have been initialized. A simple binary 
+(two‐state) latch could be used to indicate "Resource R has been initialized", and any activity that requires R 
+would wait first on this latch. 
+• 
+Ensuring that a service does not start until other services on which it depends have started. Each service would 
+have an associated binary latch; starting service S would involve first waiting on the latches for other services on 
+which S depends, and then releasing the S latch after startup completes so any services that depend on S can 
+then proceed. 
+• 
+Waiting until all the parties involved in an activity, for instance the players in a multi‐player game, are ready to 
+proceed. In this case, the latch reaches the terminal state after all the players are ready. 
+CountDownLatch is a flexible latch implementation that can be used in any of these situations; it allows one or more 
+threads  to  wait  for  a  set  of  events  to  occur.  The  latch  state  consists  of  a  counter  initialized  to  a  positive  number, 
+representing the number of events to wait for. The countDown method decrements the counter, indicating that an event 
+has occurred, and the  await methods wait for the counter to reach zero, which happens when all the events have 
+occurred.  If  the  counter  is  nonzero  on  entry,  await  blocks  until  the  counter  reaches  zero,  the  waiting  thread  is 
+interrupted, or the wait times out. 
+TestHarness in Listing 5.11 illustrates two common uses for latches. TestHarness creates a number of threads that run 
+a given task concurrently. It uses two latches, a "starting gate" and an "ending gate". The starting gate is initialized with 
+a count of one; the ending gate is initialized with a count equal to the number of worker threads. The first thing each 
+worker thread does is wait on the starting gate; this ensures that none of them starts working until they all are ready to 
+start. The last thing each does is count down on the ending gate; this allows the master thread to wait efficiently until 
+the last of the worker threads has finished, so it can calculate the elapsed time. 
+Why did we bother with the latches in  TestHarness instead of just starting the threads immediately after they are 
+created? Presumably, we wanted to measure how long it takes to run a task n times concurrently. If we simply created 
+and started the threads, the threads started earlier would have a "head start" on the later threads, and the degree of 
+contention would vary over time as the number of active threads increased or decreased. Using a starting gate allows

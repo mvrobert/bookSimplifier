@@ -1,0 +1,61 @@
+91 
+5BPart II: Structuring Concurrent Applications ‐ 19BChapter 7. Cancellation and Shutdown
+Listing 7.9 addresses the exception‐handling problem of aSecondOfPrimes and the problems with the previous attempt. 
+The  thread  created  to  run  the  task  can  have  its  own  execution  policy,  and  even  if  the  task  doesn't  respond  to  the 
+interrupt, the timed run method can still return to its caller. After starting the task thread, timedRun executes a timed 
+join with the newly created thread. After join returns, it checks if an exception was thrown from the task and if so, 
+rethrows it in the thread calling timedRun. The saved Throwable is shared between the two threads, and so is declared 
+volatile to safely publish it from the task thread to the timedRun thread. 
+This  version  addresses  the  problems  in  the  previous  examples,  but  because  it  relies  on  a  timed  join,  it  shares  a 
+deficiency with join: we don't know if control was returned because the thread exited normally or because the join 
+timed out.[2] 
+[2] This is a flaw in the Thread API, because whether or not the join completes successfully has memory visibility consequences in the Java 
+Memory Model, but join does not return a status indicating whether it was successful. 
+7.1.5. Cancellation Via Future 
+We've  already  used  an  abstraction  for  managing  the  lifecycle  of  a  task,  dealing  with  exceptions,  and  facilitating 
+cancellationFuture. Following the general principle that it is better to use existing library classes than to roll your own, 
+let's build timedRun using Future and the task execution framework. 
+Listing 7.9. Interrupting a Task in a Dedicated Thread. 
+ 
+public static void timedRun(final Runnable r, 
+                            long timeout, TimeUnit unit) 
+                            throws InterruptedException { 
+    class RethrowableTask implements Runnable { 
+        private volatile Throwable t; 
+        public void run() { 
+            try { r.run(); } 
+            catch (Throwable t) { this.t = t; } 
+        } 
+        void rethrow() { 
+            if (t != null) 
+                throw launderThrowable(t); 
+        } 
+    } 
+ 
+    RethrowableTask task = new RethrowableTask(); 
+    final Thread taskThread = new Thread(task); 
+    taskThread.start(); 
+    cancelExec.schedule(new Runnable() { 
+        public void run() { taskThread.interrupt();  } 
+    }, timeout, unit); 
+    taskThread.join(unit.toMillis(timeout)); 
+    task.rethrow(); 
+} 
+ExecutorService.submit  returns  a  Future  describing  the  task.  Future  has  a  cancel  method  that  takes  a  boolean 
+argument, mayInterruptIfRunning, and returns a value indicating whether the cancellation attempt was successful. 
+(This tells you only whether it was able to deliver the interruption, not whether the task detected and acted on it.) 
+When  mayInterruptIfRunning  is  true  and  the  task  is  currently  running  in  some  thread,  then  that  thread  is 
+interrupted. Setting this argument to false means "don't run this task if it hasn't started yet", and should be used for 
+tasks that are not designed to handle interruption. 
+Since you shouldn't interrupt a thread unless you know its interruption policy, when is it OK to call  cancel with an 
+argument  of  TRue?  The  task  execution  threads  created  by  the  standard  Executor  implementations  implement  an 
+interruption policy that lets tasks be cancelled using interruption, so it is safe to set  mayInterruptIfRunning when 
+cancelling tasks through their Futures when they are running in a standard Executor. You should not interrupt a pool 
+thread directly when attempting to cancel a task, because you won't know what task is running when the interrupt 
+request  is  delivered  ‐  do  this  only  through  the  task's  Future.  This  is  yet  another  reason  to  code  tasks  to  treat 
+interruption as a cancellation request: then they can be cancelled through their Futures. 
+Listing 7.10 shows a version of timedRun that submits the task to an ExecutorService and retrieves the result with a 
+timed Future.get. If get terminates with a TimeoutException, the task is cancelled via its Future. (To simplify coding, 
+this  version  calls  Future.cancel  unconditionally  in  a  finally  block,  taking  advantage  of  the  fact  that  cancelling  a 
+completed task has no effect.) If the underlying computation throws an exception prior to cancellation, it is rethrown 
+from timedRun, which is the most convenient way for the caller to deal with the exception. Listing 7.10 also illustrates

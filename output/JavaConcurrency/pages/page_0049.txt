@@ -1,0 +1,52 @@
+32 
+Java Concurrency In Practice 
+Listing 3.11. Immutable Class Built Out of Mutable Underlying Objects. 
+@Immutable 
+public final class ThreeStooges { 
+    private final Set<String> stooges = new HashSet<String>(); 
+ 
+    public ThreeStooges() { 
+        stooges.add("Moe"); 
+        stooges.add("Larry"); 
+        stooges.add("Curly"); 
+    } 
+ 
+    public boolean isStooge(String name) { 
+        return stooges.contains(name); 
+    } 
+} 
+Because program state changes all the time, you might be tempted to think that immutable objects are of limited use, 
+but  this  is  not  the  case.  There  is  a  difference  between  an  object  being  immutable  and  the  reference  to  it  being 
+immutable. Program state stored in immutable objects can still be updated by "replacing" immutable objects with a new 
+instance holding new state; the next section offers an example of this technique.[13] 
+[13] Many developers fear that this approach will create performance problems, but these fears are usually unwarranted. Allocation is cheaper 
+than you might think, and immutable objects offer additional performance advantages such as reduced need for locking or defensive copies and 
+reduced impact on generational garbage collection. 
+3.4.1. Final Fields 
+The final keyword, a more limited version of the const mechanism from C++, supports the construction of immutable 
+objects. Final fields can't be modified (although the objects they refer to can be modified if they are mutable), but they 
+also have special semantics under the Java Memory Model. It is the use of final fields that makes possible the guarantee 
+of  initialization  safety  (see  Section  3.5.2)  that  lets  immutable  objects  be  freely  accessed  and  shared  without 
+synchronization. 
+Even if an object is mutable, making some fields  final can still simplify reasoning about its state, since limiting the 
+mutability of an object restricts its set of possible  states. An object  that is "mostly immutable" but has one or two 
+mutable state variables is still simpler than one that has many mutable variables. Declaring fields final also documents 
+to maintainers that these fields are not expected to change. 
+Just as it is a good practice to make all fields private unless they need greater visibility [EJ Item 12], it is a good practice 
+to make all fields final unless they need to be mutable. 
+3.4.2. Example: Using Volatile to Publish Immutable Objects 
+In  UnsafeCachingFactorizer on page 24,we tried to use two  AtomicReferences to store the last number and last 
+factors, but this was not thread‐safe because we could not fetch or update the two related values atomically. Using 
+volatile  variables  for  these  values  would  not  be  thread‐safe  for  the  same  reason.  However,  immutable  objects  can 
+sometimes provide a weak form of atomicity. 
+The  factoring  servlet  performs  two  operations  that  must  be  atomic:  updating  the  cached  result  and  conditionally 
+fetching the cached factors if the cached number matches the requested number. Whenever a group of related data 
+items must be acted on atomically, consider creating an immutable holder class for them, such as OneValueCache[14] in 
+Listing 3.12. 
+[14] OneValueCache wouldn't be immutable without the copyOf calls in the constructor and getter. Arrays.copyOf was added as a convenience in 
+Java 6; clone would also work. 
+Race conditions in accessing or updating multiple related variables can be eliminated by using an immutable object to 
+hold  all  the  variables.  With  a  mutable  holder  object,  you  would  have  to  use  locking  to  ensure  atomicity;  with  an 
+immutable one, once a thread acquires a reference to it, it need never worry about another thread modifying its state. If 
+the variables are to be updated, a new holder object is created, but any threads working with the previous holder still 
+see it in a consistent state.

@@ -1,0 +1,64 @@
+30 
+Java Concurrency In Practice 
+Listing 3.9. Thread Confinement of Local Primitive and Reference Variables. 
+public int loadTheArk(Collection<Animal> candidates) { 
+    SortedSet<Animal> animals; 
+    int numPairs = 0; 
+    Animal candidate = null; 
+ 
+    // animals confined to method, don't let them escape! 
+    animals = new TreeSet<Animal>(new SpeciesGenderComparator()); 
+    animals.addAll(candidates); 
+    for (Animal a : animals) { 
+        if (candidate == null || !candidate.isPotentialMate(a)) 
+            candidate = a; 
+        else { 
+            ark.load(new AnimalPair(candidate, a)); 
+            ++numPairs; 
+            candidate = null; 
+        } 
+    } 
+    return numPairs; 
+} 
+Maintaining stack confinement for object references requires a little more assistance from the programmer to ensure 
+that the referent does not escape. In loadTheArk, we instantiate a treeSet and store a reference to it in animals. At 
+this point, there is exactly one reference to the Set, held in a local variable and therefore confined to the executing 
+thread.  However,  if  we  were  to  publish  a  reference  to  the  Set  (or  any  of  its  internals),  the  confinement  would  be 
+violated and the animals would escape. 
+Using  a  non‐thread‐safe  object  in  a  within‐thread  context  is  still  thread‐safe.  However,  be  careful:  the  design 
+requirement  that  the  object  be  confined  to  the  executing  thread,  or  the  awareness  that  the  confined  object  is  not 
+thread‐safe, often exists only in the head of the developer when the code is written. If the assumption of within‐thread 
+usage is not clearly documented, future maintainers might mistakenly allow the object to escape. 
+3.3.3. ThreadLocal 
+A more formal means of maintaining thread confinement is ThreadLocal, which allows you to associate a per‐thread 
+value with a value‐holding object. Thread-Local provides get and set accessor methods that maintain a separate copy 
+of  the  value  for  each  thread  that  uses  it,  so a  get  returns  the  most  recent  value  passed  to  set  from  the  currently 
+executing thread. 
+Thread‐local variables are often used to prevent sharing in designs based on mutable Singletons or global variables. For 
+example, a single‐threaded application might maintain a global database connection that is initialized at startup to avoid 
+having  to  pass  a  Connection  to  every  method.  Since  JDBC  connections  may  not  be  thread‐safe,  a  multithreaded 
+application  that  uses  a  global  connection  without  additional  coordination  is  not  thread‐safe  either.  By  using  a 
+ThreadLocal  to  store  the  JDBC  connection,  as  in  ConnectionHolder  in  Listing  3.10,  each  thread  will  have  its  own 
+connection. 
+Listing 3.10. Using ThreadLocal to Ensure thread Confinement. 
+private static ThreadLocal<Connection> connectionHolder 
+    = new ThreadLocal<Connection>() { 
+        public Connection initialValue() { 
+            return DriverManager.getConnection(DB_URL); 
+        } 
+    }; 
+ 
+public static Connection getConnection() { 
+    return connectionHolder.get(); 
+} 
+This technique can also be used when a frequently used operation requires a temporary object such as a buffer and 
+wants to avoid reallocating the temporary object on each invocation. For example, before Java 5.0, Integer.toString 
+used a ThreadLocal to store the 12‐byte buffer used for formatting its result, rather than using a shared static buffer 
+(which would require locking) or allocating a new buffer for each invocation.[11] 
+[11] This technique is unlikely to be a performance win unless the operation is performed very frequently or the allocation is unusually expensive. 
+In Java 5.0, it was replaced with the more straightforward approach of allocating a new buffer for every invocation, suggesting that for something 
+as mundane as a temporary buffer, it is not a performance win. 
+When a thread calls ThreadLocal.get for the first time, initialValue is consulted to provide the initial value for that 
+thread. Conceptually, you can think of a ThreadLocal<T> as holding a Map<Thread,T> that stores the thread‐specific 
+values, though this is not how it is actually implemented. The thread‐specific values are stored in the Thread object 
+itself; when the thread terminates, the thread‐specific values can be garbage collected.

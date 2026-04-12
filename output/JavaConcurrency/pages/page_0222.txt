@@ -1,0 +1,73 @@
+205 
+7BPart IV: Advanced Topics ‐ 27BChapter 15. Atomic Variables and Non‐blocking Synchronization
+Listing 15.7. Insertion in the Michael­Scott Non­blocking Queue Algorithm (Michael and Scott, 1996). 
+@ThreadSafe 
+public class LinkedQueue <E> { 
+    private static class Node <E> { 
+        final E item; 
+        final AtomicReference<Node<E>> next; 
+ 
+        public Node(E item, Node<E> next) { 
+            this.item = item; 
+            this.next = new AtomicReference<Node<E>>(next); 
+        } 
+    } 
+ 
+    private final Node<E> dummy = new Node<E>(null, null); 
+    private final AtomicReference<Node<E>> head 
+            = new AtomicReference<Node<E>>(dummy); 
+    private final AtomicReference<Node<E>> tail 
+            = new AtomicReference<Node<E>>(dummy); 
+ 
+    public boolean put(E item) { 
+        Node<E> newNode = new Node<E>(item, null); 
+        while (true) { 
+            Node<E> curTail = tail.get(); 
+            Node<E> tailNext = curTail.next.get(); 
+            if (curTail == tail.get()) { 
+                if (tailNext != null) {                     
+ 
+                    // Queue in intermediate state, advance tail 
+                    tail.compareAndSet(curTail, tailNext);   
+ 
+                } else { 
+                    // In quiescent state, try inserting new node 
+                    if (curTail.next.compareAndSet(null, newNode)) { 
+ 
+                        // Insertion succeeded, try advancing tail 
+                        tail.compareAndSet(curTail, newNode);        
+ 
+                        return true; 
+                   } 
+                } 
+            } 
+        } 
+    } 
+} 
+15.4.3. Atomic Field Updaters 
+Listing 15.7 illustrates the algorithm used by ConcurrentLinkedQueue, but the actual implementation is a bit different. 
+Instead  of  representing  each  Node  with  an  atomic  reference,  ConcurrentLinkedQueue  uses  an  ordinary  volatile 
+reference and updates it through the reflection‐based AtomicReferenceFieldUpdater, as shown in Listing 15.8. 
+Listing 15.8. Using Atomic Field Updaters in ConcurrentLinkedQueue. 
+private class Node<E> { 
+    private final E item; 
+    private volatile Node<E> next; 
+ 
+    public Node(E item) { 
+        this.item = item; 
+    } 
+} 
+ 
+private static AtomicReferenceFieldUpdater<Node, Node> nextUpdater 
+        = AtomicReferenceFieldUpdater.newUpdater( 
+                Node.class, Node.class, "next"); 
+The  atomic  field  updater  classes  (available  in  Integer,  Long,  and  Reference  versions)  represent  a  reflection‐based 
+"view"  of  an  existing  volatile  field  so  that  CAS  can  be  used  on  existing  volatile  fields.  The  updater  classes  have  no 
+constructors;  to  create  one,  you  call  the  newUpdater  factory  method,  specifying  the  class  and  field  name.  The  field 
+updater classes are not tied to a specific instance; one can be used to update the target field for any instance of the 
+target class. The atomicity guarantees for the updater classes are weaker than for the regular atomic classes because 
+you  cannot  guarantee  that  the  underlying  fields  will  not  be  modified  directlythe  compareAndSet  and  arithmetic 
+methods guarantee atomicity only with respect to other threads using the atomic field updater methods. 
+In  ConcurrentLinkedQueue,  updates  to  the  next  field  of  a  Node  are  applied  using  the  compareAndSet  method  of 
+nextUpdater. This somewhat circuitous approach is used entirely for performance reasons. For frequently allocated, 
+short‐lived objects like queue link nodes, eliminating the creation of an AtomicReference for each Node is significant

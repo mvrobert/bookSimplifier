@@ -1,0 +1,57 @@
+94 
+Java Concurrency In Practice 
+7.2.1. Example: A Logging Service 
+Most server applications use logging, which can be as simple as inserting  println statements into the code. Stream 
+classes like PrintWriter are thread‐safe, so this simple approach would require no explicit synchronization.[3] However, 
+as  we'll  see  in  Section  11.6,  inline  logging  can  have  some  performance  costs  in  highvolume  applications.  Another 
+alternative is have the log call queue the log message for processing by another thread. 
+[3] If you are logging multiple lines as part of a single log message, you may need to use additional client‐side locking to prevent undesirable 
+interleaving of output from multiple threads. If two threads logged multiline stack traces to the same stream with one println call per line, the 
+results would be interleaved unpredictably, and could easily look like one large but meaningless stack trace. 
+Listing 7.12. Encapsulating Nonstandard Cancellation in a Task with Newtaskfor. 
+public interface CancellableTask<T> extends Callable<T> { 
+    void cancel(); 
+    RunnableFuture<T> newTask(); 
+} 
+ 
+@ThreadSafe 
+public class CancellingExecutor extends ThreadPoolExecutor { 
+    ... 
+    protected<T> RunnableFuture<T> newTaskFor(Callable<T> callable) { 
+        if (callable instanceof CancellableTask) 
+            return ((CancellableTask<T>) callable).newTask(); 
+        else 
+            return super.newTaskFor(callable); 
+    } 
+} 
+ 
+public abstract class SocketUsingTask<T> 
+        implements CancellableTask<T> { 
+    @GuardedBy("this") private Socket socket; 
+ 
+    protected synchronized void setSocket(Socket s) { socket = s; } 
+ 
+    public synchronized void cancel() { 
+        try { 
+            if (socket != null) 
+                socket.close(); 
+        } catch (IOException ignored) { } 
+    } 
+ 
+    public RunnableFuture<T> newTask() { 
+        return new FutureTask<T>(this) { 
+            public boolean cancel(boolean mayInterruptIfRunning) { 
+                try { 
+                    SocketUsingTask.this.cancel(); 
+                } finally { 
+                    return super.cancel(mayInterruptIfRunning); 
+                } 
+            } 
+        }; 
+    } 
+} 
+LogWriter in Listing 7.13 shows a simple logging service in which the logging activity is moved to a separate logger 
+thread. Instead of having the thread that produces the message write it directly to the output stream, LogWriter hands 
+it off to the logger thread via a BlockingQueue and the logger thread writes it out. This is a multiple‐producer, single‐
+consumer design: any activity calling log is acting as a producer, and the background logger thread is the consumer. If 
+the logger thread falls behind, the BlockingQueue eventually blocks the producers until the logger thread catches up.

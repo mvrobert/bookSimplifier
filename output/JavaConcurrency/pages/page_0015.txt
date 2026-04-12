@@ -1,0 +1,48 @@
+xiv 
+Java Concurrency In Practice 
+Chapters 2 (Thread Safety) and 3 (Sharing Objects) form the foundation for the book. Nearly all of the rules on avoiding 
+concurrency  hazards,  constructing  thread‐safe  classes,  and  verifying  thread  safety  are  here.  Readers  who  prefer 
+"practice" to "theory" may be tempted to skip ahead to Part II, but make sure to come back and read Chapters 2 and 3 
+before writing any concurrent code! 
+Chapter  4  (Composing  Objects)  covers  techniques  for  composing  thread‐safe  classes  into  larger  thread‐safe  classes. 
+Chapter 5 (Building Blocks) covers the concurrent building blocks ‐ thread‐safe collections and synchronizers ‐ provided 
+by the platform libraries. 
+Structuring Concurrent Applications. Part II (Chapters 6‐9) describes how to exploit threads to improve the throughput 
+or  responsiveness  of  concurrent  applications.  Chapter  6  (Task  Execution)  covers  identifying  parallelizable  tasks  and 
+executing them within the task‐execution framework. Chapter 7 (Cancellation and Shutdown) deals with techniques for 
+convincing tasks and threads to terminate before they would normally do so; how programs deal with cancellation and 
+shutdown is often one of the factors that separate truly robust concurrent applications from those that merely work. 
+Chapter 8 (Applying Thread Pools) addresses some of the more advanced features of the task‐execution framework. 
+Chapter 9 (GUI Applications) focuses on techniques for improving responsiveness in single‐threaded subsystems. 
+Liveness, Performance, and Testing. Part III (Chapters 10‐12) concerns itself with ensuring that concurrent programs 
+actually do what you want them to do and do so with acceptable performance. Chapter 10 (Avoiding Liveness Hazards) 
+describes  how  to  avoid  liveness  failures  that  can  prevent  programs  from  making  forward  progress.  Chapter  11 
+(Performance  and  Scalability)  covers  techniques  for  improving  the  performance  and  scalability  of  concurrent  code. 
+Chapter  12  (Testing  Concurrent  Programs)  covers  techniques  for  testing  concurrent  code  for  both  correctness  and 
+performance. 
+Advanced Topics. Part IV (Chapters 13‐16) covers topics that are likely to be of interest only to experienced developers: 
+explicit locks, atomic variables, non‐blocking algorithms, and developing custom synchronizers. 
+Code Examples 
+While many of the general concepts in this book are applicable to versions of Java prior to Java 5.0 and even to non‐Java 
+environments, most of the code examples (and all the statements about the Java Memory Model) assume Java 5.0 or 
+later. Some of the code examples may use library features added in Java 6. 
+The code examples have been compressed to reduce their size and to highlight the relevant portions. The full versions 
+of  the  code  examples,  as  well  as  supplementary  examples  and  errata,  are  available  from  the  book's  website, 
+http://www.javaconcurrencyinpractice.com. 
+The code examples are of three sorts: "good" examples, "not so good" examples, and "bad" examples. Good examples 
+illustrate  techniques  that  should  be  emulated.  Bad  examples  illustrate  techniques  that  should  definitely  not  be 
+emulated, and are identified with a "Mr. Yuk" icon[1] to make it clear that this is "toxic" code (see Listing 1). Not‐so‐good 
+examples illustrate techniques that are not necessarily wrong but are fragile, risky, or perform poorly, and are decorated 
+with a "Mr. CouldBeHappier" icon as in Listing 2. 
+[1] Mr. Yuk is a registered trademark of the Children's Hospital of Pittsburgh and appears by permission. 
+Listing 1. Bad Way to Sort a List. Don't Do this. 
+ 
+ 
+public <T extends Comparable<? super T>> void sort(List<T> list) { 
+    // Never returns the wrong answer! 
+    System.exit(0); 
+} 
+Some readers may question the role of the "bad" examples in this book; after all, a book should show how to do things 
+right, not wrong. The bad examples have two purposes. They illustrate common pitfalls, but more importantly they 
+demonstrate how to analyze a program for thread safety ‐ and the best way to do that is to see the ways in which 
+thread safety is compromised.

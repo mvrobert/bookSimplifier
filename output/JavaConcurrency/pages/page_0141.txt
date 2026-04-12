@@ -1,0 +1,80 @@
+124 
+Java Concurrency In Practice 
+Listing 9.7. Background Task Class Supporting Cancellation, Completion Notification, and Progress Notification. 
+abstract class BackgroundTask<V> implements Runnable, Future<V> { 
+    private final FutureTask<V> computation = new Computation(); 
+ 
+    private class Computation extends FutureTask<V> { 
+        public Computation() { 
+            super(new Callable<V>() { 
+                public V call() throws Exception { 
+                    return BackgroundTask.this.compute() ; 
+                } 
+            }); 
+        } 
+        protected final void done() { 
+            GuiExecutor.instance().execute(new Runnable() { 
+                public void run() { 
+                    V value = null; 
+                    Throwable thrown = null; 
+                    boolean cancelled = false; 
+                    try { 
+                        value = get(); 
+                    } catch (ExecutionException e) { 
+                        thrown = e.getCause(); 
+                    } catch (CancellationException e) { 
+                        cancelled = true; 
+                    } catch (InterruptedException consumed) { 
+                    } finally { 
+                        onCompletion(value, thrown, cancelled); 
+                    } 
+                }; 
+            }); 
+        } 
+    } 
+    protected void setProgress(final int current, final int max) { 
+        GuiExecutor.instance().execute(new Runnable() { 
+            public void run() { onProgress(current, max); } 
+        }); 
+    } 
+    // Called in the background thread 
+    protected abstract V compute()  throws Exception; 
+    // Called in the event thread 
+    protected void onCompletion(V result, Throwable exception, 
+                                     boolean cancelled)  { } 
+    protected void  onProgress(int current, int max)  { } 
+    // Other Future methods forwarded to computation 
+} 
+Listing 9.8. Initiating a Long­running, Cancellable Task with BackgroundTask. 
+public void runInBackground(final Runnable task) { 
+    startButton.addActionListener(new ActionListener() { 
+        public void actionPerformed(ActionEvent e) { 
+            class CancelListener implements ActionListener { 
+                BackgroundTask<?> task; 
+                public void actionPerformed(ActionEvent event) { 
+                    if (task != null) 
+                        task.cancel(true); 
+                } 
+            } 
+            final CancelListener listener = new CancelListener(); 
+            listener.task = new BackgroundTask<Void>() { 
+                public Void compute() { 
+                   while (moreWork() && !isCancelled()) 
+                       doSomeWork(); 
+                   return null; 
+                } 
+                public void onCompletion(boolean cancelled, String s, 
+                                       Throwable exception) { 
+                   cancelButton.removeActionListener(listener); 
+                   label.setText("done"); 
+                } 
+            }; 
+            cancelButton.addActionListener(listener); 
+            backgroundExec.execute(task); 
+        } 
+    }); 
+} 
+For  example,  you  might  display  the  contents  of  a  remote  file  system  using  a  tree  control.  You  wouldn't  want  to 
+enumerate the entire file system before you can display the tree controlthat would take too much time and memory. 
+Instead,  the  tree  can  be  lazily  populated  as  nodes  are  expanded.  Enumerating  even  a  single  directory  on  a  remote 
+volume can take a long time, so you may want to do the enumeration in a background task. When the background task

@@ -1,0 +1,61 @@
+129 
+6BPart III: Liveness, Performance, and Testing ‐ 22BChapter 10. Avoiding Liveness Hazards
+The deadlock in LeftRightDeadlock came about because the two threads attempted to acquire the same locks in a 
+different order. If they asked for the locks in the same order, there would be no cyclic locking dependency and therefore 
+no deadlock. If you can guarantee that every thread that needs locks L and M at the same time always acquires L and M 
+in the same order, there will be no deadlock. 
+A program will be free of lock‐ordering deadlocks if all threads acquire the locks they need in a fixed global order. 
+Verifying consistent lock ordering requires a global analysis of your program's locking behavior. It is not sufficient to 
+inspect code paths that acquire multiple locks individually; both leftRight and rightLeft are "reasonable" ways to 
+acquire the two locks, they are just not compatible. When it comes to locking, the left hand needs to know what the 
+right hand is doing. 
+Listing 10.1. Simple Lock­ordering Deadlock. Don't Do this. 
+ 
+// Warning: deadlock-prone! 
+public class LeftRightDeadlock { 
+    private final Object left = new Object(); 
+    private final Object right = new Object(); 
+ 
+    public void leftRight() { 
+        synchronized (left) { 
+            synchronized (right) { 
+                doSomething(); 
+            } 
+        } 
+    } 
+ 
+    public void rightLeft() { 
+        synchronized (right) { 
+            synchronized (left) { 
+                doSomethingElse(); 
+            } 
+        } 
+    } 
+} 
+10.1.2. Dynamic Lock Order Deadlocks 
+Sometimes  it  is  not  obvious  that  you  have  sufficient  control  over  lock  ordering  to  prevent  deadlocks.  Consider  the 
+harmless‐looking code in Listing 10.2 that transfers funds from one account to another. It acquires the locks on both 
+Account objects before executing the transfer, ensuring that the balances are updated atomically and without violating 
+invariants such as "an account cannot have a negative balance". 
+How can TRansferMoney deadlock? It may appear as if all the threads acquire their locks in the same order, but in fact 
+the  lock  order  depends  on  the  order  of  arguments  passed  to  transferMoney,  and  these  in  turn  might  depend  on 
+external inputs. Deadlock can occur if two threads call transferMoney at the same time, one transferring from X to Y, 
+and the other doing the opposite: 
+Listing 10.2. Dynamic Lock­ordering Deadlock. Don't Do this. 
+ 
+// Warning: deadlock-prone! 
+public void transferMoney(Account fromAccount, 
+                          Account toAccount, 
+                          DollarAmount amount) 
+        throws InsufficientFundsException { 
+    synchronized (fromAccount) { 
+        synchronized (toAccount) { 
+            if (fromAccount.getBalance().compareTo(amount) < 0) 
+                throw new InsufficientFundsException(); 
+            else { 
+                fromAccount.debit(amount); 
+                toAccount.credit(amount); 
+            } 
+        } 
+    } 
+}

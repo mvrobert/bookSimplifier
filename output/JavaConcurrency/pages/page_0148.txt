@@ -1,0 +1,63 @@
+131 
+6BPart III: Liveness, Performance, and Testing ‐ 22BChapter 10. Avoiding Liveness Hazards
+[1] Ironically, holding locks for short periods of time, as you are supposed to do to reduce lock contention, increases the likelihood that testing will 
+not disclose latent deadlock risks. 
+[2] For simplicity, DemonstrateDeadlock ignores the issue of negative account balances. 
+Listing 10.4. Driver Loop that Induces Deadlock Under Typical Conditions. 
+public class DemonstrateDeadlock { 
+    private static final int NUM_THREADS = 20; 
+    private static final int NUM_ACCOUNTS = 5; 
+    private static final int NUM_ITERATIONS = 1000000; 
+ 
+    public static void main(String[] args) { 
+        final Random rnd = new Random(); 
+        final Account[] accounts = new Account[NUM_ACCOUNTS]; 
+ 
+        for (int i = 0; i < accounts.length; i++) 
+            accounts[i] = new Account(); 
+ 
+        class TransferThread extends Thread { 
+            public void run() { 
+                for (int i=0; i<NUM_ITERATIONS; i++) { 
+                    int fromAcct = rnd.nextInt(NUM_ACCOUNTS); 
+                    int toAcct = rnd.nextInt(NUM_ACCOUNTS); 
+                    DollarAmount amount = 
+                        new DollarAmount(rnd.nextInt(1000)); 
+                    transferMoney(accounts[fromAcct], 
+                                  accounts[toAcct], amount); 
+                } 
+            } 
+        } 
+        for (int i = 0; i < NUM_THREADS; i++) 
+            new TransferThread().start(); 
+    } 
+} 
+10.1.3. Deadlocks Between Cooperating Objects 
+Multiple lock acquisition is not always as obvious as in LeftRightDeadlock or TRansferMoney; the two locks need not 
+be acquired by the same method. Consider the cooperating classes in Listing 10.5, which might be used in a taxicab 
+dispatching application. Taxi represents an individual taxi with a location and a destination; Dispatcher represents a 
+fleet of taxis. 
+While no method explicitly acquires two locks, callers of  setLocation and  getImage can acquire two locks just the 
+same. If a thread calls setLocation in response to an update from a GPS receiver, it first updates the taxi's location and 
+then checks to see if it has reached its destination. If it has, it informs the dispatcher that it needs a new destination. 
+Since both setLocation and notifyAvailable are synchronized, the thread calling setLocation acquires the Taxi 
+lock and then the Dispatcher lock. Similarly, a thread calling getImage acquires the Dispatcher lock and then each 
+Taxi lock (one at at time). Just as in LeftRightDeadlock, two locks are acquired by two threads in different orders, 
+risking deadlock. 
+It  was  easy  to  spot  the  deadlock  possibility  in  LeftRightDeadlock  or  transferMoney  by  looking  for  methods  that 
+acquire two locks. Spotting the deadlock possibility in Taxi and Dispatcher is a little harder: the warning sign is that an 
+alien method (defined on page 40) is being called while holding a lock. 
+Invoking an alien method with a lock held is asking for liveness trouble. The alien method might acquire other locks 
+(risking deadlock) or block for an unexpectedly long time, stalling other threads that need the lock you hold. 
+10.1.4. Open Calls 
+Of  course,  Taxi  and  Dispatcher  didn't  know  that  they  were  each  half  of  a  deadlock  waiting  to  happen.  And  they 
+shouldn't have to; a method call is an abstraction barrier intended to shield you from the details of what happens on the 
+other side. But because you don't know what is happening on the other side of the call, calling an alien method with a 
+lock held is difficult to analyze and therefore risky. 
+Calling a method with no locks held is called an open call [CPJ 2.4.1.3], and classes that rely on open calls are more well‐
+behaved and composable than classes that make calls with locks held. Using open calls to avoid deadlock is analogous to 
+using  encapsulation  to  provide  thread  safety:  while  one  can  certainly  construct  a  thread‐safe  program  without  any 
+encapsulation, the thread safety analysis of a program that makes effective use of encapsulation is far easier than that 
+of one that does not. Similarly, the liveness analysis of a program that relies exclusively on open calls is far easier than 
+that of one that does not. Restricting yourself to open calls makes it far easier to identify the code paths that acquire 
+multiple locks and therefore to ensure that locks are acquired in a consistent order.[3]

@@ -1,0 +1,37 @@
+110 
+Java Concurrency In Practice 
+Listing 8.6. Custom Thread Factory. 
+public class MyThreadFactory implements ThreadFactory { 
+    private final String poolName; 
+ 
+    public MyThreadFactory(String poolName) { 
+        this.poolName = poolName; 
+    } 
+ 
+    public Thread newThread(Runnable runnable) { 
+        return new MyAppThread(runnable, poolName); 
+    } 
+} 
+The interesting customization takes place in MyAppThread, shown in Listing 8.7, which lets you provide a thread name, 
+sets  a  custom  UncaughtException-Handler  that  writes  a  message  to  a  Logger,  maintains  statistics  on  how  many 
+threads have been created and destroyed, and optionally writes a debug message to the log when a thread is created or 
+terminates. 
+If your application takes advantage of security policies to grant permissions to particular codebases, you may want to 
+use  the  privilegedThreadFactory  factory  method  in  Executors  to  construct  your  thread  factory.  It  creates  pool 
+threads that have the same permissions, AccessControlContext, and contextClassLoader as the thread creating the 
+privilegedThreadFactory. Otherwise, threads created by the thread pool inherit permissions from whatever client 
+happens to be calling execute or submit at the time a new thread is needed, which could cause confusing security‐
+related exceptions. 
+8.3.5. Customizing ThreadPoolExecutor After Construction 
+Most of the options passed to the ThreadPoolExecutor constructors can also be modified after construction via setters 
+(such as the core thread pool size, maximum thread pool size, keep‐alive time, thread factory, and rejected execution 
+handler).  If  the 
+Executor  is  created  through  one  of  the  factory  methods  in 
+Executors  (except 
+newSingleThreadExecutor), you can cast the result to Thread-PoolExecutor to access the setters as in Listing 8.8. 
+Executors  includes  a  factory  method,  unconfigurableExecutorService,  which  takes  an  existing  ExecutorService 
+and wraps it with one exposing only the methods of ExecutorService so it cannot be further configured. Unlike the 
+pooled implementations, newSingleThreadExecutor returns an ExecutorService wrapped in this manner, rather than 
+a  raw  ThreadPoolExecutor.  While  a  single‐threaded  executor  is  actually  implemented  as  a  thread  pool  with  one 
+thread, it also promises not to execute tasks concurrently. If some misguided code were to increase the pool size on a 
+single‐threaded executor, it would undermine the intended execution semantics.

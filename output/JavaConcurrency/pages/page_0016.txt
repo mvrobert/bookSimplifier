@@ -1,0 +1,32 @@
+xv
+2BPreface
+Listing 2. Less than Optimal Way to Sort a List. 
+ 
+ 
+public <T extends Comparable<? super T>> void sort(List<T> list) { 
+    for (int i=0; i<1000000; i++) 
+        doNothing(); 
+    Collections.sort(list); 
+} 
+Acknowledgments 
+This book grew out of the development process for the java.util.concurrent package that was created by the Java 
+Community Process JSR 166 for inclusion in Java 5.0. Many others contributed to JSR 166; in particular we thank Martin 
+Buchholz  for  doing  all  the  work  related  to  getting  the  code  into  the  JDK,  and  all  the  readers  of  the  concurrency-
+interest mailing list who offered their suggestions and feedback on the draft APIs. 
+This book has been tremendously improved by the suggestions and assistance of a small army of reviewers, advisors, 
+cheerleaders, and armchair critics. We would like to thank Dion Almaer, Tracy Bialik, Cindy Bloch, Martin Buchholz, Paul 
+Christmann, Cliff Click, Stuart Halloway, David Hovemeyer, Jason Hunter, Michael Hunter, Jeremy Hylton, Heinz Kabutz, 
+Robert  Kuhar,  Ramnivas  Laddad,  Jared  Levy,  Nicole  Lewis,  Victor  Luchangco,  Jeremy  Manson,  Paul  Martin,  Berna 
+Massingill, Michael Maurer, Ted Neward, Kirk Pepperdine, Bill Pugh, Sam Pullara, Russ Rufer, Bill Scherer, Jeffrey Siegal, 
+Bruce  Tate,  Gil  Tene,  Paul  Tyma,  and  members  of  the  Silicon  Valley  Patterns  Group  who,  through  many  interesting 
+technical conversations, offered guidance and made suggestions that helped make this book better. 
+We are especially grateful to Cliff Biffle, Barry Hayes, Dawid Kurzyniec, Angelika Langer, Doron Rajwan, and Bill Venners, 
+who reviewed the entire manuscript in excruciating detail, found bugs in the code examples, and suggested numerous 
+improvements. 
+We thank Katrina Avery for a great copy‐editing job and Rosemary Simpson for producing the index under unreasonable 
+time pressure. We thank Ami Dewar for doing the illustrations. 
+Thanks to the whole team at Addison‐Wesley who helped make this book a reality. Ann Sellers got the project launched 
+and Greg Doench shepherded it to a smooth completion; Elizabeth Ryan guided it through the production process. 
+We would also like to thank the thousands of software engineers who contributed indirectly by creating the software 
+used to create this book, including TEX, LATEX, Adobe Acrobat, pic, grap, Adobe Illustrator, Perl, Apache Ant, IntelliJ 
+IDEA, GNU emacs, Subversion, TortoiseSVN, and of course, the Java platform and class libraries.

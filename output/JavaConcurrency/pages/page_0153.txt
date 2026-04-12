@@ -1,0 +1,42 @@
+136 
+Java Concurrency In Practice 
+Avoid  the  temptation  to  use  thread  priorities,  since  they  increase  platform  dependence  and  can  cause  liveness 
+problems. Most concurrent applications can use the default priority for all threads. 
+10.3.2. Poor Responsiveness 
+One  step  removed  from  starvation  is  poor  responsiveness,  which  is  not  uncommon  in  GUI  applications  using 
+background threads. Chapter 9 developed a framework for offloading long‐running tasks onto background threads so as 
+not  to  freeze  the  user  interface.  CPU‐intensive  background  tasks  can  still  affect  responsiveness  because  they  can 
+compete for CPU cycles with the event thread. This is one case where altering thread priorities makes sense; when 
+compute‐intensive background computations would affect responsiveness. If the work done by other threads are truly 
+background tasks, lowering their priority can make the foreground tasks more responsive. 
+Poor responsiveness can also be caused by poor lock management. If a thread holds a lock for a long time (perhaps 
+while iterating a large collection and performing substantial work for each element), other threads that need to access 
+that collection may have to wait a very long time. 
+10.3.3. Livelock 
+Livelock is a form of liveness failure in which a thread, while not blocked, still cannot make progress because it keeps 
+retrying  an  operation  that  will  always  fail.  Livelock  often  occurs  in  transactional  messaging  applications,  where  the 
+messaging infrastructure rolls back a transaction if a message cannot be processed successfully, and puts it back at the 
+head of the queue. If a bug in the message handler for a particular type of message causes it to fail, every time the 
+message is dequeued and passed to the buggy handler, the transaction is rolled back. Since the message is now back at 
+the head of the queue, the handler is called over and over with the same result. (This is sometimes called the poison 
+message problem.) The message handling thread is not blocked, but it will never make progress either. This form of 
+livelock often comes from overeager error‐recovery code that mistakenly treats an unrecoverable error as a recoverable 
+one. 
+Livelock can also occur when multiple cooperating threads change their state in response to the others in such a way 
+that no thread can ever make progress. This is similar to what happens when two overly polite people are walking in 
+opposite directions in a hallway: each steps out of the other's way, and now they are again in each other's way. So they 
+both step aside again, and again, and again. . . 
+The solution for this variety of livelock is to introduce some randomness into the retry mechanism. For example, when 
+two stations in an Ethernet network try to send a packet on the shared carrier at the same time, the packets collide. The 
+stations detect the collision, and each tries to send their packet again later. If they each retry exactly one second later, 
+they collide over and over, and neither packet ever goes out, even if there is plenty of available bandwidth. To avoid 
+this, we make each wait an amount of time that includes a random component. (The Ethernet protocol also includes 
+exponential back‐off after repeated collisions, reducing both congestion and the risk of repeated failure with multiple 
+colliding stations.) Retrying with random waits and back‐offs can be equally effective for avoiding livelock in concurrent 
+applications. 
+Summary 
+Liveness failures are a serious problem because there is no way to recover from them short of aborting the application. 
+The most common form of liveness failure is lock‐ordering deadlock. Avoiding lock ordering deadlock starts at design 
+time: ensure that when threads acquire multiple locks, they do so in a consistent order. The best way to do this is by 
+using open calls throughout your program. This greatly reduces the number of places where multiple locks are held at 
+once, and makes it more obvious where those places are.

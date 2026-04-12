@@ -1,0 +1,53 @@
+89 
+5BPart II: Structuring Concurrent Applications ‐ 19BChapter 7. Cancellation and Shutdown
+InterruptedException  or  otherwise  indicating  interruption.  This  technique  can  protect  data  structures  from 
+corruption when an activity is interrupted in the middle of an update. 
+A task should not assume anything about the interruption policy of its executing thread unless it is explicitly designed to 
+run within a service that has a specific interruption policy. Whether a task interprets interruption as cancellation or 
+takes some other action on interruption, it should take care to preserve the executing thread's interruption status. If it is 
+not  simply  going  to  propagate  InterruptedException  to  its  caller,  it  should  restore  the  interruption  status  after 
+catching InterruptedException: 
+Thread.currentThread().interrupt(); 
+Just as task code should not make assumptions about what interruption means to its executing thread, cancellation 
+code should not make assumptions about the interruption policy of arbitrary threads. A thread should be interrupted 
+only  by  its  owner;  the  owner  can  encapsulate  knowledge  of  the  thread's  interruption  policy  in  an  appropriate 
+cancellation mechanism such as a shutdown method. 
+Because  each  thread  has  its  own  interruption  policy,  you  should  not  interrupt  a  thread  unless  you  know  what 
+interruption means to that thread. 
+Critics have derided the Java interruption facility because it does not provide a preemptive interruption capability and 
+yet  forces  developers  to  handle  InterruptedException.  However,  the  ability  to  postpone  an  interruption  request 
+enables developers to craft flexible interruption policies that balance responsiveness and robustness as appropriate for 
+the application. 
+7.1.3. Responding to Interruption 
+As  mentioned  in  Section  5.4,  when  you  call  an  interruptible  blocking  method  such  as  Thread.sleep  or 
+BlockingQueue.put, there are two practical strategies for handling InterruptedException: 
+• 
+Propagate  the  exception  (possibly  after  some  task‐specific  cleanup),  making  your  method  an  interruptible 
+blocking method, too; or 
+• 
+Restore the interruption status so that code higher up on the call stack can deal with it. 
+Propagating InterruptedException can be as easy as adding InterruptedException to the throws clause, as shown 
+by getNextTask in Listing 7.6. 
+Listing 7.6. Propagating InterruptedException to Callers. 
+BlockingQueue<Task> queue; 
+... 
+public Task getNextTask() throws InterruptedException { 
+    return queue.take(); 
+} 
+If you don't want to or cannot propagate InterruptedException (perhaps because your task is defined by a Runnable), 
+you  need  to  find  another  way  to  preserve  the  interruption  request.  The  standard  way  to  do  this  is  to  restore  the 
+interrupted  status  by  calling  interrupt  again.  What  you  should  not  do  is  swallow  the  InterruptedException  by 
+catching it and doing nothing in the catch block, unless your code is actually implementing the interruption policy for a 
+thread. PrimeProducer swallows the interrupt, but does so with the knowledge that the thread is about to terminate 
+and that therefore there is no code higher up on the call stack that needs to know about the interruption. Most code 
+does not know what thread it will run in and so should preserve the interrupted status. 
+Only code that implements a thread's interruption policy may swallow an interruption request. General‐purpose task 
+and library code should never swallow interruption requests. 
+Activities that do not support cancellation but still call interruptible blocking methods will have to call them in a loop, 
+retrying when interruption is detected. In this case, they should save the interruption status locally and restore it just 
+before returning, as shown in Listing 7.7, rather than immediately upon catching InterruptedException. Setting the 
+interrupted status too early could result in an infinite loop, because most interruptible blocking  methods check  the 
+interrupted status on entry and throw InterruptedException immediately if it is set. (Interruptible methods usually 
+poll for interruption before blocking or doing any significant work, so as to be as responsive to interruption as possible.) 
+If your code does not call interruptible blocking methods, it can still be made responsive to interruption by polling the 
+current  thread's  interrupted  status  throughout  the  task  code.  Choosing  a  polling  frequency  is  a  tradeoff  between

@@ -1,0 +1,64 @@
+180 
+Java Concurrency In Practice 
+While this approach is easy enough to implement, it is annoying to use. Exceptions are supposed to be for exceptional 
+conditions [EJ Item 39]. "Buffer is full" is not an exceptional condition for a bounded buffer any more than "red" is an 
+exceptional condition for a traffic signal. The simplification in implementing the buffer (forcing the caller to manage the 
+state dependence) is more than made up for by the substantial complication in using it, since now the caller must be 
+prepared to catch exceptions and possibly retry for every buffer operation.[1] A well‐structured call to take is shown in 
+Listing 14.4not very pretty, especially if put and take are called throughout the program. 
+[1] Pushing the state dependence back to the caller also makes it nearly impossible to do things like preserve FIFO ordering; by forcing the caller to 
+retry, you lose the information of who arrived first. 
+Listing 14.2. Base Class for Bounded Buffer Implementations. 
+@ThreadSafe 
+public abstract class BaseBoundedBuffer<V> { 
+    @GuardedBy("this") private final V[] buf; 
+    @GuardedBy("this") private int tail; 
+    @GuardedBy("this") private int head; 
+    @GuardedBy("this") private int count; 
+ 
+    protected BaseBoundedBuffer(int capacity) { 
+        this.buf = (V[]) new Object[capacity]; 
+    } 
+ 
+    protected synchronized final void doPut(V v) { 
+        buf[tail] = v; 
+        if (++tail == buf.length) 
+            tail = 0; 
+        ++count; 
+    } 
+ 
+    protected synchronized final V doTake() { 
+        V v = buf[head]; 
+        buf[head] = null; 
+        if (++head == buf.length) 
+            head = 0; 
+        --count; 
+        return v; 
+    } 
+ 
+    public synchronized final boolean isFull() { 
+        return count == buf.length; 
+    } 
+ 
+    public synchronized final boolean isEmpty() { 
+        return count == 0; 
+    } 
+} 
+Listing 14.3. Bounded Buffer that Balks When Preconditions are Not Met. 
+ 
+@ThreadSafe 
+public class GrumpyBoundedBuffer<V> extends BaseBoundedBuffer<V> { 
+    public GrumpyBoundedBuffer(int size) { super(size); } 
+ 
+    public synchronized  void put(V v) throws BufferFullException { 
+        if (isFull()) 
+            throw new BufferFullException(); 
+        doPut(v); 
+    } 
+ 
+    public synchronized  V take() throws BufferEmptyException { 
+        if (isEmpty()) 
+               throw new BufferEmptyException(); 
+        return doTake(); 
+    } 
+}

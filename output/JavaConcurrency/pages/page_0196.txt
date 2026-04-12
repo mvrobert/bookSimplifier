@@ -1,0 +1,55 @@
+179 
+7BPart IV: Advanced Topics ‐ 26BChapter 14 ‐ Building Custom Synchronizers
+Chapter 14 ­ Building Custom Synchronizers 
+The  class  libraries  include  a  number  of  state‐dependent  classes  ‐  those  having  operations  with  state‐based 
+preconditions ‐ such as FutureTask, Semaphore, and BlockingQueue. For example, you cannot remove an item from an 
+empty queue or retrieve the result of a task that has not yet finished; before these operations can proceed, you must 
+wait until the queue enters the "nonempty" state or the task enters the "completed" state. 
+The easiest way to construct a state‐dependent class is usually to build on top of an existing state‐dependent library 
+class; we did this in ValueLatch on page 187, using a CountDownLatch to provide the required blocking behavior. But if 
+the library classes do not provide the functionality you need, you can also build your own synchronizers using the low‐
+level  mechanisms  provided  by  the  language  and  libraries,  including  intrinsic  condition  queues,  explicit  Condition 
+objects, and the AbstractQueuedSynchronizer framework. This chapter explores the various options for implementing 
+state dependence and the rules for using the state dependence mechanisms provided by the platform. 
+14.1. Managing State Dependence 
+In a single‐threaded program, if a state‐based precondition (like "the connection pool is nonempty") does not hold when 
+a method is called, it will never become true. Therefore, classes in sequential programs can be coded to fail when their 
+preconditions do not hold. But in a concurrent program, state‐based conditions can change through the actions of other 
+threads:  a  pool  that  was  empty  a  few  instructions  ago  can  become  nonempty  because  another  thread  returned  an 
+element.  State‐dependent  methods  on  concurrent  objects  can  sometimes  get  away  with  failing  when  their 
+preconditions are not met, but there is often a better alternative: wait for the precondition to become true. 
+State‐dependent operations that block until the operation can proceed are more convenient and less error‐prone than 
+those that simply fail. The built‐in condition queue mechanism enables threads to block until an object has entered a 
+state that allows progress and to wake blocked threads when they may be able to make further progress. We cover the 
+details of condition queues in Section 14.2, but to motivate the value of an efficient condition wait mechanism, we first 
+show how state dependence might be (painfully) tackled using polling and sleeping. 
+A blocking state‐dependent action takes the form shown in Listing 14.1. The pattern of locking is somewhat unusual in 
+that  the  lock  is  released  and  reacquired  in  the  middle  of  the  operation.  The  state  variables  that  make  up  the 
+precondition must be guarded by the object's lock, so that they can remain constant while the precondition is tested. 
+But if the precondition does not hold, the lock must be released so another thread can modify the object stateotherwise 
+the precondition will never become true. The lock must then be reacquired before testing the precondition again. 
+Listing 14.1. Structure of Blocking State­dependent Actions. 
+void blockingAction() throws InterruptedException { 
+    acquire lock on object state 
+    while (precondition does not hold) { 
+        release lock 
+        wait until precondition might hold 
+        optionally fail if interrupted or timeout expires 
+        reacquire lock 
+    } 
+    perform action 
+} 
+Bounded buffers such as ArrayBlockingQueue are commonly used in producer‐consumer designs. A bounded buffer 
+provides put and take operations, each of which has preconditions: you cannot take an element from an empty buffer, 
+nor put an element into a full buffer. State dependent operations can deal with precondition failure by throwing an 
+exception or returning an error status (making it the caller's problem), or by blocking until the object transitions to the 
+right state. 
+We're  going  to  develop  several  implementations  of  a  bounded  buffer  that  take  different  approaches  to  handling 
+precondition failure. Each extends BaseBoundedBuffer in Listing 14.2, which implements a classic array‐based circular 
+buffer  where  the  buffer  state  variables  (buf,  head,  tail,  and  count)  are  guarded  by  the  buffer's  intrinsic  lock.  It 
+provides  synchronized  doPut  and  doTake  methods  that  are  used  by  subclasses  to  implement  the  put  and  take 
+operations; the underlying state is hidden from the subclasses. 
+14.1.1. Example: Propagating Precondition Failure to Callers 
+GrumpyBoundedBuffer in  Listing 14.3 is a crude first attempt at  implementing a bounded buffer. The  put and  take 
+methods are synchronized to ensure exclusive access to the buffer state, since both employ check‐then‐act logic in 
+accessing the buffer.

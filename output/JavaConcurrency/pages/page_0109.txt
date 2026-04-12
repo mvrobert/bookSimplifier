@@ -1,0 +1,58 @@
+92 
+Java Concurrency In Practice 
+another good practice: cancelling tasks whose result is no longer needed. (This technique was also used in Listing 6.13 
+on page 128 and Listing 6.16 on page 132.) 
+Listing 7.10. Cancelling a Task Using Future. 
+public static void timedRun(Runnable r, 
+                            long timeout, TimeUnit unit) 
+                            throws InterruptedException { 
+    Future<?> task = taskExec.submit(r); 
+    try { 
+        task.get(timeout, unit); 
+    } catch (TimeoutException e) { 
+        // task will be cancelled below 
+    } catch (ExecutionException e) { 
+        // exception thrown in task; rethrow 
+        throw launderThrowable(e.getCause()); 
+    } finally { 
+        // Harmless if task already completed 
+        task.cancel(true);  // interrupt if running 
+    } 
+} 
+ 
+When  Future.get  throws  InterruptedException  or  TimeoutException  and  you  know  that  the  result  is  no  longer 
+needed by the program, cancel the task with Future.cancel. 
+ 
+7.1.6. Dealing with Non‐interruptible Blocking 
+Many blocking library methods respond to interruption by returning early and throwing InterruptedException, which 
+makes  it  easier  to  build  tasks  that  are  responsive  to  cancellation.  However,  not  all  blocking  methods  or  blocking 
+mechanisms  are  responsive  to  interruption;  if  a  thread  is  blocked  performing  synchronous  socket  I/O  or  waiting  to 
+acquire  an  intrinsic  lock,  interruption  has  no  effect  other  than  setting  the  thread's  interrupted  status.  We  can 
+sometimes convince threads blocked in non‐interruptible activities to stop by means similar to interruption, but this 
+requires greater awareness of why the thread is blocked. 
+Synchronous socket I/O in java.io. The common form of blocking I/O in server applications is reading or writing to a 
+socket.  Unfortunately,  the  read  and  write  methods  in  InputStream  and  OutputStream  are  not  responsive  to 
+interruption, but closing the underlying socket makes any threads blocked in read or write throw a SocketException. 
+Synchronous  I/O  in  java.nio.  Interrupting  a  thread  waiting  on  an  InterruptibleChannel  causes  it  to  throw 
+ClosedByInterruptException  and  close  the  channel  (and  also  causes  all  other  threads  blocked  on  the  channel  to 
+throw  ClosedByInterruptException).  Closing  an  InterruptibleChannel  causes  threads  blocked  on  channel 
+operations to throw AsynchronousCloseException. Most standard Channels implement InterruptibleChannel. 
+Asynchronous I/O with Selector. If a thread is blocked in Selector.select (in java.nio.channels), wakeup causes it to 
+return prematurely by throwing a ClosedSelectorException. 
+Lock  acquisition.  If  a  thread  is  blocked  waiting  for  an  intrinsic  lock,  there  is  nothing  you  can  do  to  stop  it  short  of 
+ensuring that it eventually acquires the lock and makes enough progress that you can get its attention some other way. 
+However, the explicit Lock classes offer the lockInterruptibly method, which allows you to wait for a lock and still be 
+responsive to interrupts ‐ see Chapter 13. 
+ReaderThread in Listing 7.11 shows a technique for encapsulating nonstandard cancellation. ReaderThread manages a 
+single socket connection, reading synchronously from the socket and passing any data received to processBuffer. To 
+facilitate terminating a user connection or shutting down the server, ReaderThread overrides interrupt to both deliver 
+a standard interrupt and close the underlying socket; thus interrupting a ReaderThread makes it stop what it is doing 
+whether it is blocked in read or in an interruptible blocking method. 
+7.1.7. Encapsulating Nonstandard Cancellation with Newtaskfor 
+The technique used in  ReaderThread to encapsulate nonstandard cancellation can be refined using the  newTaskFor 
+hook added to ThreadPoolExecutor in Java 6. When a Callable is submitted to an ExecutorService, submit returns 
+a  Future  that  can  be  used  to  cancel  the  task.  The  newTaskFor  hook  is  a  factory  method  that  creates  the  Future 
+representing  the  task.  It  returns  a  RunnableFuture,  an  interface  that  extends  both  Future  and  Runnable  (and  is 
+implemented by FutureTask). 
+Customizing the task Future allows you to override Future.cancel. Custom cancellation code can perform logging or 
+gather  statistics  on  cancellation,  and  can  also  be  used  to  cancel  activities  that  are  not  responsive  to  interruption.

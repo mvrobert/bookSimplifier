@@ -1,0 +1,66 @@
+133 
+6BPart III: Liveness, Performance, and Testing ‐ 22BChapter 10. Avoiding Liveness Hazards
+down" so that other threads wanting to start new operationsincluding shutting down the servicesee that the service is 
+unavailable, and do not try. You can then wait for shutdown to complete, knowing that only the shutdown thread has 
+access to the service state after the open call completes. Thus, rather than using locking to keep the other threads out 
+of a critical section of code, this technique relies on constructing protocols so that other threads don't try to get in. 
+10.1.5. Resource Deadlocks 
+Just as threads can deadlock when they are each waiting for a lock that the other holds and will not release, they can 
+also deadlock when waiting for resources. 
+Listing 10.6. Using Open Calls to Avoiding Deadlock Between Cooperating Objects. 
+@ThreadSafe 
+class Taxi { 
+    @GuardedBy("this") private Point location, destination; 
+    private final Dispatcher dispatcher; 
+    ... 
+    public synchronized Point getLocation() { 
+        return location; 
+    } 
+ 
+    public synchronized void setLocation(Point location) { 
+        boolean reachedDestination; 
+        synchronized  (this) { 
+            this.location = location; 
+            reachedDestination = location.equals(destination); 
+        } 
+        if (reachedDestination) 
+            dispatcher.notifyAvailable(this); 
+    } 
+} 
+ 
+@ThreadSafe 
+class Dispatcher { 
+    @GuardedBy("this") private final Set<Taxi> taxis; 
+    @GuardedBy("this") private final Set<Taxi> availableTaxis; 
+    ... 
+    public synchronized void notifyAvailable(Taxi taxi) { 
+        availableTaxis.add(taxi); 
+    } 
+ 
+    public Image getImage() { 
+        Set<Taxi> copy; 
+        synchronized  (this) { 
+            copy = new HashSet<Taxi>(taxis); 
+        } 
+        Image image = new Image(); 
+        for (Taxi t : copy) 
+            image.drawMarker(t.getLocation()); 
+        return image; 
+    } 
+} 
+Say you have two pooled resources, such as connection pools for two different databases. Resource pools are usually 
+implemented  with  semaphores  (see  Section  5.5.3)  to  facilitate  blocking  when  the  pool  is  empty.  If  a  task  requires 
+connections to both databases and the two resources are not always requested in the same order, thread A could be 
+holding a connection to database D1 while waiting for a connection to database D2, and thread B could be holding a 
+connection to D2 while waiting for a connection to D1. (The larger the pools are, the less likely this is to occur; if each 
+pool has N connections, deadlock requires N sets of cyclically waiting threads and a lot of unlucky timing.) 
+Another form of resource‐based deadlock is thread‐starvation deadlock. We saw an example of this hazard in Section 
+8.1.1, where a task that submits a task and waits for its result executes in a single‐threaded Executor. In that case, the 
+first task will wait forever, permanently stalling that task and all others waiting to execute in that Executor. Tasks that 
+wait  for  the  results  of  other  tasks  are  the  primary  source  of  thread‐starvation  deadlock;  bounded  pools  and 
+interdependent tasks do not mix well. 
+10.2. Avoiding and Diagnosing Deadlocks 
+A program that never acquires more than one lock at a time cannot experience lock‐ordering deadlock. Of course, this is 
+not always practical, but if you can get away with it, it's a lot less work. If you must acquire multiple locks, lock ordering 
+must be a part of your design: try to minimize the number of potential locking interactions, and follow and document a 
+lock‐ordering protocol for locks that may be acquired together.

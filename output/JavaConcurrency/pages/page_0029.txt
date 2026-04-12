@@ -1,0 +1,50 @@
+12 
+Java Concurrency In Practice 
+although not nearly as often as many developers believe ‐ but it is always a good practice first to make your code right, 
+and then make it fast. Even then, pursue optimization only if your performance measurements and requirements tell 
+you that you must, and if those same measurements tell you that your optimizations actually made a difference under 
+realistic conditions. [1] 
+[1] In concurrent code, this practice should be adhered to even more than usual. Because concurrency bugs are so difficult to reproduce and 
+debug, the benefit of a small performance gain on some infrequently used code path may well be dwarfed by the risk that the program will fail in 
+the field. 
+If you decide that you simply must break encapsulation, all is not lost. It is still possible to make your program thread‐
+safe,  it  is  just  a  lot  harder.  Moreover,  the  thread  safety  of  your  program  will  be  more  fragile,  increasing  not  only 
+development cost and risk but maintenance cost and risk as well. Chapter 4 characterizes the conditions under which it 
+is safe to relax encapsulation of state variables. 
+We've used the terms "thread‐safe class" and "thread‐safe program" nearly interchangeably thus far. Is a thread‐safe 
+program one that is constructed entirely of thread‐safe classes? Not necessarily ‐ a program that consists entirely of 
+thread‐safe classes may not be thread‐safe, and a thread‐safe program may contain classes that are not thread‐safe. 
+The issues surrounding the composition of thread‐safe classes are also taken up in Chapter 4. In any case, the concept of 
+a thread‐safe class makes sense only if the class encapsulates its own state. Thread safety may be a term that is applied 
+to code, but it is about state, and it can only be applied to the entire body of code that encapsulates its state, which may 
+be an object or an entire program. 
+2.1. What is Thread Safety? 
+Defining thread safety is surprisingly tricky. The more formal attempts are so complicated  as to offer little practical 
+guidance or intuitive understanding, and the rest are informal descriptions that can seem downright circular. A quick 
+Google search turns up numerous "definitions" like these: 
+. . . can be called from multiple program threads without unwanted interactions between the threads. 
+. . .may be called by more than one thread at a time without requiring any other action on the caller's part. 
+Given  definitions like these, it's no wonder we find thread safety confusing!  They sound  suspiciously like "a  class is 
+thread‐safe if it can be used safely from multiple threads." You can't really argue with such a statement, but it doesn't 
+offer much practical help either. How do we tell a thread‐safe class from an unsafe one? What do we even mean by 
+"safe"? 
+At the heart of any reasonable definition of thread safety is the concept of correctness. If our definition of thread safety 
+is fuzzy, it is because we lack a clear definition of correctness. 
+Correctness  means  that  a  class  conforms  to  its  specification.  A  good  specification  defines  invariants  constraining  an 
+object's  state  and  post  ‐  conditions  describing  the  effects  of  its  operations.  Since  we  often  don't  write  adequate 
+specifications for our classes, how can we possibly know they are correct? We can't, but that doesn't stop us from using 
+them anyway once we've convinced ourselves that "the code works". This "code confidence" is about as close as many 
+of us get to correctness, so let's just assume that single‐threaded correctness is something that "we know it when we 
+see it". Having optimistically defined "correctness" as something that can be recognized, we can now define thread 
+safety in a somewhat less circular way: a class is thread‐safe when it continues to behave correctly when accessed from 
+multiple threads. 
+A  class  is  thread‐safe  if  it  behaves  correctly  when  accessed  from  multiple  threads,  regardless  of  the  scheduling  or 
+interleaving of the execution of those threads by the runtime environment, and with no additional synchronization or 
+other coordination on the part of the calling code. 
+Since  any  single‐threaded  program  is  also  a  valid  multithreaded  program,  it  cannot  be  thread‐safe  if  it  is  not  even 
+correct in a single‐threaded environment. [2] If an object is correctly implemented, no sequence of operations ‐ calls to 
+public methods and reads or writes of public fields ‐ should be able to violate any of its invariants or post‐conditions. No 
+set of operations performed sequentially or concurrently on instances of a thread‐safe class can cause an instance to be 
+in an invalid state. 
+[2] If the loose use of "correctness" here bothers you, you may prefer to think of a thread‐safe class as one that is no more broken in a concurrent 
+environment than in a single‐threaded environment.

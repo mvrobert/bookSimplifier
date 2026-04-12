@@ -1,0 +1,14 @@
+22 
+Java Concurrency In Practice 
+This preserves thread safety without unduly affecting concurrency; the code paths in each of the synchronized blocks 
+are "short enough". 
+Deciding  how  big  or  small  to  make  synchronized  blocks  may  require  tradeoffs  among  competing  design  forces, 
+including safety (which must not be compromised), simplicity, and performance. Sometimes simplicity and performance 
+are at odds with each other, although as CachedFactorizer illustrates, a reasonable balance can usually be found. 
+There is frequently a tension between simplicity and performance. When implementing a synchronization policy, resist 
+the temptation to prematurely sacrifice simplicity (potentially compromising safety) for the sake of performance. 
+Whenever you use locking, you should be aware of what the code in the block is doing and how likely it is to take a long 
+time to execute. Holding a lock for a long time, either because you are doing something compute‐intensive or because 
+you execute a potentially blocking operation, introduces the risk of liveness or performance problems. 
+Avoid holding locks during lengthy computations or operations at risk of not completing quickly such as network or 
+console I/O.

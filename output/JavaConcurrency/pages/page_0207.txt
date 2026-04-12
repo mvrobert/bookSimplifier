@@ -1,0 +1,67 @@
+190 
+Java Concurrency In Practice 
+Listing 14.12. Counting Semaphore Implemented Using Lock. 
+// Not really how java.util.concurrent.Semaphore is implemented 
+@ThreadSafe 
+public class SemaphoreOnLock { 
+    private final Lock lock = new ReentrantLock(); 
+    // CONDITION PREDICATE: permitsAvailable (permits > 0) 
+    private final Condition permitsAvailable = lock.newCondition(); 
+    @GuardedBy("lock") private int permits; 
+ 
+    SemaphoreOnLock(int initialPermits) { 
+        lock.lock(); 
+        try { 
+            permits = initialPermits; 
+        } finally { 
+            lock.unlock(); 
+        } 
+    } 
+ 
+    // BLOCKS-UNTIL: permitsAvailable 
+    public void acquire() throws InterruptedException { 
+        lock.lock(); 
+        try { 
+            while (permits <= 0) 
+                permitsAvailable.await(); 
+            --permits; 
+        } finally { 
+            lock.unlock(); 
+        } 
+    } 
+ 
+    public void release() { 
+        lock.lock(); 
+        try { 
+            ++permits; 
+            permitsAvailable.signal(); 
+        } finally { 
+            lock.unlock(); 
+        } 
+    } 
+} 
+AQS handles many of the details of implementing a synchronizer, such as FIFO queuing of waiting threads. Individual 
+synchronizers can define flexible criteria for whether a thread should be allowed to pass or be required to wait. 
+Using  AQS  to  build  synchronizers  offers  several  benefits.  Not  only  does  it  substantially  reduce  the  implementation 
+effort, but you also needn't pay for multiple points of contention, as you would when constructing one synchronizer on 
+top of another. In SemaphoreOnLock, acquiring a permit has two places where it might block ‐ once at the lock guarding 
+the semaphore state, and then again if a permit is not available. Synchronizers built with AQS have only one point where 
+they might block, reducing context‐switch overhead and improving throughput. AQS was designed for scalability, and all 
+the synchronizers in java.util.concurrent that are built with AQS benefit from this. 
+14.5. AbstractQueuedSynchronizer 
+Most developers will probably never use AQS directly; the standard set of synchronizers covers a fairly wide range of 
+situations. But seeing how the standard synchronizers are implemented can help clarify how they work. 
+The basic operations that an AQS‐based synchronizer performs are some variants of acquire and release. Acquisition is 
+the  state‐dependent  operation  and  can  always  block.  With  a  lock  or  semaphore,  the  meaning  of  acquire  is 
+straightforward ‐ acquire the lock or a permit ‐ and the caller may have to wait until the synchronizer is in a state where 
+that can happen. With CountDownLatch, acquire means "wait until the latch has reached its terminal state", and with 
+FutureTask, it means "wait until the task has completed". Release is not a blocking operation; a release may allow 
+threads blocked in acquire to proceed. 
+For a class to be state‐dependent, it must have some state. AQS takes on the task of managing some of the state for the 
+synchronizer  class:  it  manages  a  single  integer  of  state  information  that  can  be  manipulated  through  the  protected 
+getState, setState, and compareAndSetState methods. This can be used to represent arbitrary state; for example, 
+ReentrantLock uses it to represent the count of times the owning thread has acquired the lock, Semaphore uses it to 
+represent the number of permits remaining, and FutureTask uses it to represent the state of the task (not yet started, 
+running,  completed,  cancelled).  Synchronizers  can  also  manage  additional  state  variables  themselves;  for  example, 
+ReentrantLock  keeps  track  of  the  current  lock  owner  so  it  can  distinguish  between  reentrant  and  contended  lock‐
+acquisition requests.

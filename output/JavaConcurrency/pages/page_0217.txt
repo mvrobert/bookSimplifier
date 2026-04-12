@@ -1,0 +1,29 @@
+200 
+Java Concurrency In Practice 
+Figure 15.1. Lock and AtomicInteger Performance Under High Contention. 
+ 
+ 
+Figure 15.2. Lock and AtomicInteger Performance Under Moderate Contention. 
+ 
+Listing 15.4. Random Number Generator Using ReentrantLock. 
+@ThreadSafe 
+public class ReentrantLockPseudoRandom extends PseudoRandom { 
+    private final Lock lock = new ReentrantLock(false); 
+    private int seed; 
+ 
+    ReentrantLockPseudoRandom(int seed) { 
+        this.seed = seed; 
+    } 
+ 
+    public int nextInt(int n) { 
+        lock.lock(); 
+        try { 
+            int s = seed; 
+            seed = calculateNext(s); 
+            int remainder = s % n; 
+            return remainder > 0 ? remainder : remainder + n; 
+        } finally { 
+            lock.unlock(); 
+        } 
+    } 
+}

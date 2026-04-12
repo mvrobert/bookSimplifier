@@ -1,0 +1,25 @@
+210 
+Java Concurrency In Practice 
+Figure 16.2. Illustration of Happens­before in the Java Memory Model. 
+ 
+ 
+ 
+16.1.4. Piggybacking on Synchronization 
+Because of the strength of the happens‐before ordering, you can sometimes piggyback on the visibility properties of an 
+existing  synchronization.  This  entails  combining  the  program  order  rule  for  happens‐before  with  one  of  the  other 
+ordering rules (usually the monitor lock or volatile variable rule) to order accesses to a variable not otherwise guarded 
+by a lock. This technique is very sensitive to the order in which statements occur and is therefore quite fragile; it is an 
+advanced technique that should be reserved for squeezing the last drop of performance out of the most performance‐
+critical classes like ReentrantLock. 
+The implementation of the protected AbstractQueuedSynchronizer methods in FutureTask illustrates piggybacking. 
+AQS maintains an integer of synchronizer state that FutureTask uses to store the task state: running, completed, or 
+cancelled. But FutureTask also maintains additional variables, such as the result of the computation. When one thread 
+calls set to save the result and another thread calls get to retrieve it, the two had better be ordered by happens‐before. 
+This could be done by making the reference to the result volatile, but it is possible to exploit existing synchronization 
+to achieve the same result at lower cost. 
+FutureTask  is  carefully  crafted  to  ensure  that  a  successful  call  to  tryReleaseShared  always  happens‐before  a 
+subsequent  call  to  TRyAcquireShared;  try-ReleaseShared  always  writes  to  a  volatile  variable  that  is  read  by 
+TRyAcquire-Shared. Listing 16.2 shows the innerSet and innerGet methods that are called when the result is saved or 
+retrieved; since innerSet writes result before calling releaseShared (which calls tryReleaseShared) and innerGet 
+reads result after calling acquireShared (which calls TRyAcquireShared), the program order rule combines with the 
+volatile variable rule to ensure that the write of result in innerGet happens‐before the read of result in innerGet.

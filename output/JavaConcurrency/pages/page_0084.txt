@@ -1,0 +1,52 @@
+67 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 17BChapter 5. Building 
+Blocks
+Memorizer2  certainly  has  better  concurrent  behavior  than  Memorizer1:  multiple  threads  can  actually  use  it 
+concurrently. But it still has some defects as a cache ‐ there is a window of vulnerability in which two threads calling 
+compute  at  the  same  time  could  end  up  computing  the  same  value.  In  the  case  of  memorization,  this  is  merely 
+inefficient  ‐  the  purpose  of  a  cache  is  to  prevent  the  same  data  from  being  calculated  multiple  times.  For  a  more 
+general‐purpose caching mechanism, it is far worse; for an object cache that is supposed to provide once‐and‐only‐once 
+initialization, this vulnerability would also pose a safety risk. 
+The problem with Memorizer2 is that if one thread starts an expensive computation, other threads are not aware that 
+the  computation  is  in  progress  and  so  may  start  the  same  computation,  as  illustrated  in  Figure  5.3.  We'd  like  to 
+somehow represent the notion that "thread X is currently computing f (27)", so that if another thread arrives looking for 
+f (27), it knows that the most efficient way to find it is to head over to Thread X's house, hang out there until X is 
+finished, and then ask "Hey, what did you get for f (27)?" 
+Figure 5.3. Two Threads Computing the Same Value When Using Memorizer2. 
+ 
+ 
+ 
+Listing 5.17. Replacing HashMap with ConcurrentHashMap. 
+ 
+public class Memorizer2<A, V> implements Computable<A, V> { 
+    private final Map<A, V> cache = new ConcurrentHashMap<A, V>(); 
+    private final Computable<A, V> c; 
+ 
+    public Memorizer2(Computable<A, V> c) { this.c = c; } 
+ 
+    public V compute(A arg) throws InterruptedException { 
+        V result = cache.get(arg); 
+        if (result == null) { 
+            result = c.compute(arg); 
+            cache.put(arg, result); 
+        } 
+        return result; 
+    } 
+} 
+We've already seen a class that does almost exactly this: FutureTask. FutureTask represents a computational process 
+that may or may not already have completed. FutureTask.get returns the result of the computation immediately if it is 
+available; otherwise it blocks until the result has been computed and then returns it. 
+Memorizer3  in  Listing  5.18  redefines  the  backing  Map  for  the  value  cache  as  a  ConcurrentHashMap<A,Future<V>> 
+instead of a ConcurrentHashMap<A,V>. Memorizer3 first checks to see if the appropriate calculation has been started 
+(as  opposed  to  finished,  as  in  Memorizer2).  If  not,  it  creates  a  FutureTask,  registers  it  in  the  Map,  and  starts  the 
+computation; otherwise it waits for the result of the existing computation. The result might be available immediately or 
+might be in the process of being computed ‐ but this is transparent to the caller of Future.get. 
+The Memorizer3 implementation is almost perfect: it exhibits very good concurrency (mostly derived from the excellent 
+concurrency of ConcurrentHashMap), the result is returned efficiently if it is already known, and if the computation is in 
+progress by another thread, newly arriving threads wait patiently for the result. It has only one defect ‐ there is still a 
+small window of vulnerability in which two threads might compute the same value. This window is far smaller than in 
+Memorizer2, but because the if block in compute is still a non‐atomic check‐then‐act sequence, it is possible for two 
+threads to call compute with the same value at roughly the same time, both see that the cache does not contain the 
+desired value, and both start the computation. This unlucky timing is illustrated in Figure 5.4.

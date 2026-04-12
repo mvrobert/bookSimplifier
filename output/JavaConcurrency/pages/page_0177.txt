@@ -1,0 +1,65 @@
+160 
+Java Concurrency In Practice 
+Listing 12.8. Thread Factory for Testing ThreadPoolExecutor. 
+class TestingThreadFactory implements ThreadFactory { 
+    public final AtomicInteger numCreated = new AtomicInteger(); 
+    private final ThreadFactory factory 
+            = Executors.defaultThreadFactory(); 
+ 
+    public Thread newThread(Runnable r) { 
+        numCreated.incrementAndGet(); 
+        return factory.newThread(r); 
+    } 
+} 
+If the core pool size is smaller than the maximum size, the thread pool should grow as demand for execution increases. 
+Submitting long‐running tasks to the pool makes the number of executing tasks stay constant for long enough to make a 
+few assertions, such as testing that the pool is expanded as expected, as shown in Listing 12.9. 
+Listing 12.9. Test Method to Verify Thread Pool Expansion. 
+public void testPoolExpansion() throws InterruptedException { 
+    int MAX_SIZE = 10; 
+    ExecutorService exec = Executors.newFixedThreadPool(MAX_SIZE); 
+ 
+    for (int i = 0; i < 10*  MAX_SIZE; i++) 
+        exec.execute(new Runnable() { 
+            public void run() { 
+                try { 
+                    Thread.sleep(Long.MAX_VALUE); 
+                } catch (InterruptedException e) { 
+                    Thread.currentThread().interrupt(); 
+                } 
+            } 
+        }); 
+    for (int i = 0; 
+         i < 20 && threadFactory.numCreated.get() < MAX_SIZE; 
+         i++) 
+        Thread.sleep(100); 
+    assertEquals(threadFactory.numCreated.get(), MAX_SIZE); 
+    exec.shutdownNow(); 
+} 
+12.1.6. Generating More Interleavings 
+Since many of the potential failures in concurrent code are low‐probability events, testing for concurrency errors is a 
+numbers game, but there are some things you can do to improve your chances. We've already mentioned how running 
+on multiprocessor systems with fewer processors than active threads can generate more interleavings than either a 
+single‐processor system or one with many processors. Similarly, testing on a variety of systems with different processor 
+counts, operating systems, and processor architectures can disclose problems that might not occur on all systems. 
+A useful trick for increasing the number of interleavings, and therefore more effectively exploring the state space of 
+your programs, is to use Thread.yield to encourage more context switches during operations that access shared state. 
+(The effectiveness of this technique is platform‐specific, since the JVM is free to treat Thread.yield as a no‐op [JLS 
+17.9]; using a short but nonzero sleep would be slower but more reliable.) The method in Listing 12.10 transfers credits 
+from one account to another; between the two update operations, invariants such as "sum of all accounts equals zero" 
+do not hold. By sometimes yielding in the middle of an operation, you may activate timing‐sensitive bugs in code that 
+does not use adequate synchronization to access state. The inconvenience of adding these calls for testing and removing 
+them for production can be reduced by adding them using aspect‐oriented programming (AOP) tools. 
+Listing 12.10. Using Thread.yield to Generate More Interleavings. 
+public synchronized void transferCredits(Account from, 
+                                         Account to, 
+                                         int amount) { 
+    from.setBalance(from.getBalance() - amount); 
+    if (random.nextInt(1000) > THRESHOLD) 
+        Thread.yield(); 
+    to.setBalance(to.getBalance() + amount); 
+} 
+12.2. Testing for Performance 
+Performance tests are often extended versions of functionality tests. In fact, it is almost always worthwhile to include 
+some basic functionality testing within performance tests to ensure that you are not testing the performance of broken 
+code.

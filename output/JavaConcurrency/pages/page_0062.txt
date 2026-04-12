@@ -1,0 +1,54 @@
+45 
+5288B5287B5286B5249B5230B5229B5200B5148B4916B4722B4721B4720B4719B4594B4593B4569B4568B4567B45
+66B4565B4564B4427B4426B4410B4409B4345B4218B4217B4216B4215B3636B3635B3469B3468B3465B3455B3454
+B3453B3449B3221B3220B3219B3214B3059B3058B3057B2535B2534B2190B2189B2188B2 ‐ 16BChapter 4. 
+Composing Objects
+Listing 4.10. Number Range Class that does Not Sufficiently Protect Its Invariants. Don't Do this. 
+ 
+public class NumberRange { 
+    // INVARIANT: lower <= upper 
+    private final AtomicInteger lower = new AtomicInteger(0); 
+    private final AtomicInteger upper = new AtomicInteger(0); 
+ 
+    public void setLower(int i) { 
+        // Warning -- unsafe check-then-act 
+        if (i > upper.get()) 
+            throw new IllegalArgumentException( 
+                    "can't set lower to " + i + " > upper"); 
+        lower.set(i); 
+    } 
+ 
+    public void setUpper(int i) { 
+        // Warning -- unsafe check-then-act 
+        if (i < lower.get()) 
+            throw new IllegalArgumentException( 
+                    "can't set upper to " + i + " < lower"); 
+        upper.set(i); 
+    } 
+ 
+    public boolean isInRange(int i) { 
+        return (i >= lower.get() && i <= upper.get()); 
+    } 
+} 
+The problem that prevented NumberRange from being thread‐safe even though its state components were thread‐safe is 
+very  similar  to  one  of  the  rules  about  volatile  variables  described  in  Section  3.1.4:  a  variable  is  suitable  for  being 
+declared volatile only if it does not participate in invariants involving other state variables. 
+4.3.4. Publishing Underlying State Variables 
+When you delegate thread safety to an object's underlying state variables, under what conditions can you publish those 
+variables  so  that  other  classes  can  modify  them  as  well?  Again,  the  answer  depends  on  what  invariants  your  class 
+imposes  on  those  variables.  While  the  underlying  value  field  in  Counter  could  take  on  any  integer  value,  Counter 
+constrains it to take on only positive values, and the increment operation constrains the set of valid next states given 
+any current state. If you were to make the value field public, clients could change it to an invalid value, so publishing it 
+would render the class incorrect. On the other hand, if a variable represents the current temperature or the ID of the 
+last user to log on, then having another class modify this value at any time probably would not violate any invariants, so 
+publishing  this  variable  might  be  acceptable.  (It  still  may  not  be  a  good  idea,  since  publishing  mutable  variables 
+constrains  future  development  and  opportunities  for  subclassing,  but  it  would  not  necessarily  render  the  class  not 
+thread‐safe.) 
+If a state variable is thread‐safe, does not participate in any invariants that constrain its value, and has no prohibited 
+state transitions for any of its operations, then it can safely be published. 
+For  example,  it  would  be  safe  to  publish  mouseListeners  or  keyListeners  in  VisualComponent.  Because 
+VisualComponent does not impose any constraints on the valid states of its listener lists, these fields could be made 
+public or otherwise published without compromising thread safety. 
+4.3.5. Example: Vehicle Tracker that Publishes Its State 
+Let's construct another version of the vehicle tracker that publishes its underlying mutable state. Again, we need to 
+modify the interface a little bit to accommodate this change, this time using mutable but thread‐safe points.

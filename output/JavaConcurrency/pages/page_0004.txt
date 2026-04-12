@@ -1,0 +1,104 @@
+iii
+<Index
+Part II: Structuring Concurrent Applications 
+71 
+Chapter 6. Task Execution 
+72 
+6.1. Executing Tasks in Threads 
+72 
+6.2. The Executor Framework 
+74 
+6.3. Finding Exploitable Parallelism 
+78 
+Summary 
+83 
+Chapter 7. Cancellation and Shutdown 
+85 
+7.1. Task Cancellation 
+85 
+7.2. Stopping a Thread‐based Service 
+93 
+7.3. Handling Abnormal Thread Termination 
+100 
+7.4. JVM Shutdown 
+102 
+Summary 
+103 
+Chapter 8. Applying Thread Pools 
+104 
+8.1. Implicit Couplings Between Tasks and Execution Policies 
+104 
+8.2. Sizing Thread Pools 
+105 
+8.3. Configuring ThreadPoolExecutor 
+106 
+8.4. Extending ThreadPoolExecutor 
+111 
+8.5. Parallelizing Recursive Algorithms 
+112 
+Summary 
+116 
+Chapter 9. GUI Applications 
+117 
+9.1. Why are GUIs Single‐threaded? 
+117 
+9.2. Short‐running GUI Tasks 
+119 
+9.3. Long‐running GUI Tasks 
+121 
+9.4. Shared Data Models 
+123 
+9.5. Other Forms of Single‐threaded Subsystems 
+125 
+Summary 
+126 
+Part III: Liveness, Performance, and Testing 
+127 
+Chapter 10. Avoiding Liveness Hazards 
+128 
+10.1. Deadlock 
+128 
+10.2. Avoiding and Diagnosing Deadlocks 
+133 
+10.3. Other Liveness Hazards 
+135 
+Summary 
+136 
+Chapter 11. Performance and Scalability 
+137 
+11.1. Thinking about Performance 
+137 
+11.2. Amdahl's Law 
+139 
+11.3. Costs Introduced by Threads 
+142 
+11.4. Reducing Lock Contention 
+144 
+11.5. Example: Comparing Map Performance 
+150 
+11.6. Reducing Context Switch Overhead 
+151 
+Summary 
+152 
+Chapter 12. Testing Concurrent Programs 
+153 
+12.1. Testing for Correctness 
+153 
+12.2. Testing for Performance 
+160 
+12.3. Avoiding Performance Testing Pitfalls 
+165 
+12.4. Complementary Testing Approaches 
+167 
+Summary 
+169 
+Part IV: Advanced Topics 
+170 
+Chapter 13 - Explicit Locks 
+171 
+13.1. Lock and ReentrantLock 
+171 
+13.2. Performance Considerations 
+174 
+13.3. Fairness 
+175
