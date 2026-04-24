@@ -8,7 +8,7 @@ from pathlib import Path
 
 import generate_workshop as base
 
-from effective_java_common import attach_question_ids
+from effective_java_common import attach_question_ids, strip_image_blocks
 
 
 def parse_args() -> argparse.Namespace:
@@ -47,6 +47,11 @@ def prepare_modules(
                     "../../page_previews/",
                     "page_previews/",
                 )
+                slide_data["content"] = strip_image_blocks(slide_data["content"])
+    else:
+        for module_data in modules:
+            for slide_data in module_data["slides"]:
+                slide_data["content"] = strip_image_blocks(slide_data["content"])
     return modules
 
 

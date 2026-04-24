@@ -24,6 +24,16 @@ def image_block(path: str, caption: str) -> str:
     )
 
 
+IMAGE_BLOCK_RE = re.compile(
+    r'<div style="margin:18px 0 10px;"><img\b[^>]*><p style="font-size:0\.95rem;color:#475569;margin-top:8px;">.*?</p></div>',
+    re.DOTALL,
+)
+
+
+def strip_image_blocks(content: str) -> str:
+    return IMAGE_BLOCK_RE.sub("", content)
+
+
 def callout(kind: str, text: str) -> str:
     return f'<div class="{html.escape(kind, quote=True)}">{text}</div>'
 
